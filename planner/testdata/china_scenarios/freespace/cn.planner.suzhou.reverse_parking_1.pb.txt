@@ -1,0 +1,53 @@
+name: "suzhou.planner.parking"
+edit_attr { test_sets: "suzhou" }
+execution {
+  sim_duration: 100
+  playback_sources { run_or_stf_path: "" duration: 100 start_offset: 0 }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE disable: true }
+    positioning_module { module: POSITIONING_MODULE disable: true }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module { module: GNSS_IMU_DRIVER_MODULE disable: true }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 0.3
+          initial_pose {
+            pos_smooth { x: 3684.0 y: 14098.6 }
+            vel_body { x: 0 y: 0 }
+            accel_body { x: 0 y: 0 }
+            yaw: -1.851
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {}
+      }
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    vision_module { module: VISION_MODULE disable: true }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+commandline_flags: "--route=multi_stops{stops{stop_point{off_road{parking_spot{specified_parking_spot_ids:53577}}}}}"
+commandline_flags: "--map=suzhou"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--use_run_map=false"

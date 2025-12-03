@@ -1,0 +1,56 @@
+name: "test_issue"
+edit_attr {
+  edit_history {
+    edit_timestamp: 1585725192082186
+    log: "migration from local scenario file"
+  }
+  test_sets: "experimental"
+}
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/s3/run_data/20210104_142747_Q8008"
+    duration: 10000
+    start_offset: 776
+
+  }
+
+  sim_modules {
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE playback_source_id: 0 }
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    routing_module { module: ROUTING_MODULE enable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] { engage_start_time: 0.2 }
+      }
+    }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+commandline_flags: "--map=futian"
+commandline_flags: "--prediction_enable_vehicle_motion_predictor=true"
+commandline_flags: "--multi_stops_route=stops{stop_name:'p1'}stops{stop_name:'c8'}stops{stop_name:'c4'}stops{stop_name:'phlips'}stops{stop_name:'hongmian'}stops{stop_name:'HGST'}stops{stop_name:'289'}stops{stop_name:'jiuce'}infinite_loop:1"
+commandline_flags: "--route_send_canvas=1"
+commandline_flags: "--allow_routed_lane_change=1"

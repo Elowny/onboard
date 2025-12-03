@@ -1,0 +1,58 @@
+# commandline_flags:  "--tcontrol_enable_start_acceleration_preview=false"
+# commandline_flags:  "--vehicle_engine_kappa_delay=300"
+# commandline_flags:  "--vehicle_engine_kappa_adjustment_ratio=1.0"
+commandline_flags: "--route_str=office_back_door"
+commandline_flags: "--map=village"
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/s3/run_data/20191231_170330_Q0001"
+    duration: 18
+    start_offset: 110
+  }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE disable: true }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module {
+      module: SPIN_PUBLISHER_MODULE
+      playback_source_id: 0
+    }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module {
+      module: IMAGE_PUBLISHER_MODULE
+      playback_source_id: 0
+    }
+    routing_module { module: ROUTING_MODULE enable: true }
+    planner_module {
+      module: PLANNER_MODULE
+      enable: true
+      # playback_source_id: 0
+    }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] { engage_start_time: 1 }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+  }
+}
+
+metrics { name: "control_performance_metric"
+          control_performance_metric { weighted_rms_error_metric: 10
+                                       lateral_metric { error_max: 10
+;
+      error_rms: 0.5;
+    }
+    longitudinal_metric {
+      error_max: 10;
+      error_rms: 0.5;
+    }
+  }
+}

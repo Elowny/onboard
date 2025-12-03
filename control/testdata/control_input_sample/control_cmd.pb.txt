@@ -1,0 +1,93 @@
+# run: 20221228_180745_Q2404
+# relative_in_sec=700.054, channel=control_command
+header {
+  timestamp: 1672222768896795
+  domain: ""
+  seq_number: 108573
+  module_id: 11
+  channel: "control_command"
+  tag_number: 24
+  log_timestamp: 1672222768899039
+  full_node_name: "/omc/main_node_1"
+  channel_seq_number: 34481
+}
+throttle: 1.2594901851109039
+brake: 0
+steering_target: 3.2616721678295093
+speed: 0
+acceleration: 0.01
+gear_location: GEAR_DRIVE
+debug {
+  simple_mpc_debug {
+    lateral_error: 0.10767652889009309
+    ref_heading: -3.6703570332086004
+    heading_error: 0.0048432219399998644
+    steer_percentage_feedforward: 3.1062654954638536
+    speed_reference: 13.380770323746519
+    acceleration_reference: 0.0048206358141591413
+    is_full_stop: false
+    acceleration_cmd_closeloop: -0.077625908867108115
+    acceleration_cmd: -0.077625908867108115
+    calibration_value: 1.2594901851109039
+    kappa_feedforward: 0.0058695092498978595
+    steering_protection_result {
+      kappa_rate_limit_static: 0.1448113979756904
+      kappa_rate_limit_wrt_lat_jerk: 0.019542702702783282
+      kappa_output_upper: 0.0061646175050967308
+      kappa_output_upper: 0.010073158045653386
+      kappa_output_upper: 0.013981698586210043
+      kappa_output_upper: 0.0178902391267667
+      kappa_output_upper: 0.021798779667323357
+      kappa_output_upper: 0.025707320207880014
+      kappa_output_upper: 0.027918146718261833
+      kappa_output_upper: 0.027918146718261833
+      kappa_output_upper: 0.027918146718261833
+      kappa_output_upper: 0.027918146718261833
+      kappa_output_lower: 0.0053829093969853994
+      kappa_output_lower: 0.0014743688564287432
+      kappa_output_lower: -0.0024341716841279129
+      kappa_output_lower: -0.006342712224684569
+      kappa_output_lower: -0.010251252765241225
+      kappa_output_lower: -0.01415979330579788
+      kappa_output_lower: -0.018068333846354537
+      kappa_output_lower: -0.021976874386911194
+      kappa_output_lower: -0.025885414927467851
+      kappa_output_lower: -0.027918146718261833
+      kappa_rate_upper: 0.019542702702783282
+      kappa_rate_lower: -0.019542702702783282
+      kappa_limit_wrt_geometry: 0.20879206512491943
+      kappa_limit_wrt_lat_a: 0.027918146718261833
+    }
+    av_s_projected_on_traj: 3.0577522659997061
+  }
+  bias_estimation_debug {
+    steer_bias: 0.0024202568138157912
+    heading_bias: -0.011684760802277405
+    is_bias_updated: false
+    is_steer_calib_overbound: false
+    is_heading_calib_overbound: true
+    steer_delay_online: 0.3
+    steer_bias_curr: -0.0032474835019307069
+    heading_bias_curr: 0.0048432219399998644
+  }
+  control_error {
+    lateral_error: 0.096230681610405738
+    heading_error: 0.004521335930897763
+    speed_error: 0.0042192449762907813
+    station_error: 0.24842405924911443
+    lateral_error_canbus: 0.017304577675162615
+  }
+  timestamp_adding_steering_delay: 1672222769.1960239
+}
+signal { turn_signal: TURN_NONE emergency_light: false }
+curvature: 0.0057561153440417933
+door_open: false
+aeb_triggered: false
+acceleration_offset: 0.052722916732081695
+steer_angle_bias: 0.0024202568138157912
+acceleration_calibration: -0.024902992135026419
+custom_command { low_speed_freespace: false }
+steering_target_wrt_bias: 3.2321568408317556
+steer_speed_target: -0.038286385775789612
+speed_mode: ACC_MODE
+longitudinal_jerk: -0.0094197068740611151

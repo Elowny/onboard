@@ -1,0 +1,122 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/prediction/proto/prediction_lane_selection";
+
+message LaneSelectionDumpedFeatureProto {
+  message AgentDumpedFeature {
+    // SL position sequence.
+    repeated float sl_pos = 1 [packed = true];
+    // L leap
+    optional float l_leap = 2;
+    // SL speed sequence.
+    repeated float sl_speed = 3 [packed = true];
+    // SL acc sequence.
+    repeated float sl_acc = 4 [packed = true];
+    // length & width.
+    repeated float length_width = 5 [packed = true];
+    // SL shape sequence.
+    repeated float sl_shape = 6 [packed = true];
+    // Agent type.
+    optional float type = 7;
+
+    // Agent yaw diff of its last yaw and starting yaw.
+    repeated float yaw_diff_self_leap = 8 [packed = true];
+
+    // Yaw diff to lane center path
+    repeated float yaw_diff_lane_path = 9 [packed = true];
+    repeated float yaw_diff_lane_path_leap = 10 [packed = true];
+
+    // History relative positions to the left and right lane boundaries of the
+    // agent current lane.
+    repeated float dist_to_left_lane_boundary = 11 [packed = true];
+    optional float dist_to_left_lane_boundary_leap = 12;
+
+    repeated float dist_to_right_lane_boundary = 13 [packed = true];
+    optional float dist_to_right_lane_boundary_leap = 14;
+
+    // History relative positions to the left and right lane boundaries of the
+    // agent current lane.
+    repeated float shape_dist_to_left_lane_boundary = 15 [packed = true];
+    repeated float shape_dist_to_right_lane_boundary = 16 [packed = true];
+
+    // History lane width of agent current lane.
+    repeated float lane_width = 17 [packed = true];
+  }
+
+  // max objects num is 8.
+  message ObjectsDumpedFeature {
+    // SL position sequence.
+    repeated float sl_pos = 1 [packed = true];
+    // SL speed sequence.
+    repeated float sl_speed = 2 [packed = true];
+    // Yaw diff to the agent lane center path
+    repeated float yaw_diff_lane_path = 3 [packed = true];
+    // length & width.
+    repeated float length_width = 4;
+    // SL shape sequence.
+    repeated float sl_shape = 5 [packed = true];
+
+    // Additional info of agent to agent:
+    // Relative SL position sequence to agent.
+    repeated float sl_pos_to_agent = 6 [packed = true];
+    // Relative SL speed sequence to agent.
+    repeated float sl_speed_to_agent = 7 [packed = true];
+    // Yaw diff to agent
+    repeated float yaw_diff_to_agent = 8 [packed = true];
+    // Relative distance to agent.
+    repeated float dist_to_agent = 9 [packed = true];
+
+    // Object type
+    repeated float type = 10 [packed = true];
+  }
+
+  message MapDumpedFeature {
+    // SL segment sequence [p0, p1] four dims.
+    repeated float sl_seg = 1 [packed = true];
+    // segement length
+    repeated float seg_len = 2 [packed = true];
+    // agent min distance to segment. Min dist point is r
+    repeated float dist = 3 [packed = true];
+    // distance from p1 to r.
+    repeated float nearest_to_end_dist = 4 [packed = true];
+    // Yaw diff of segment heading & agent-segment perpendicular vector.
+    repeated float yaw_diff_to_agent = 5 [packed = true];
+    // Consider lane center, curb, solid lane, double solid lane, pedestrian
+    // crossing.
+    repeated float type = 6 [packed = true];
+    // Consider red, yellow, green, unknown, none.
+    repeated float light = 7 [packed = true];
+    // Validity mask.
+    repeated float mask = 8 [packed = true];
+  }
+
+  optional AgentDumpedFeature agent_sl_feature = 1;
+  optional ObjectsDumpedFeature objects_sl_feature = 2;
+  optional double timestamp = 3;
+  optional MapDumpedFeature lane_centers_sl_features = 4;
+  optional MapDumpedFeature lane_boundaries_sl_features = 5;
+  optional MapDumpedFeature crosswalks_sl_features = 6;
+  // Extracted from current lane path
+  repeated float left_lane_path_boundary_sl_pos = 7 [packed = true];
+  repeated float right_lane_path_boundary_sl_pos = 8 [packed = true];
+
+  // Agent current lane center path in xy coordinates.
+  repeated float lane_path_center_xy_seg = 9 [packed = true];
+
+  // Masks
+  repeated float lcs_masks = 10 [packed = true];
+  repeated float lbs_masks = 11 [packed = true];
+  repeated float cws_masks = 12 [packed = true];
+
+  optional string agent_id = 16;
+  optional int32 lane_path_num = 17 [default = 0];
+  optional int32 lane_path_id = 18 [default = 0];
+
+  // Ground truth in SL coordinates.
+  repeated float agent_sl_gt = 19 [packed = true];
+  optional bool is_on_lane_path = 20 [default = false];
+  optional float agent_end_vel = 21;
+
+  // Next id: 22
+}

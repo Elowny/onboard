@@ -1,0 +1,213 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/initializer/proto/initializer_config";
+
+import "onboard/planner/initializer/proto/initializer.proto";
+
+message InitializerConfig {
+  optional int32 traj_steps = 12;
+
+  enum SearchAlgorithm {
+    DP = 2;
+    Astar = 3;
+    reserved 1;
+  }
+  optional SearchAlgorithm search_algorithm = 1;
+
+  message DpFeatureCostConfig {
+    message DpAccelerationFeature {
+      // Weight.
+      optional double accel = 1;
+    }
+
+    message DpLaneBoundaryFeature {
+      // Weight.
+      optional double ref_center = 1;
+      optional double inner_bound = 2;
+      optional double outer_bound = 3;
+    }
+    message DpCurvatureFeautre {
+      // Weight.
+      optional double curvature = 1;
+    }
+    message DpLateralAcclerationFeature {
+      // Weight.
+      optional double acc_hard = 1;
+      optional double acc_soft = 2;
+      optional double jerk = 3;
+    }
+
+    message DpStopConstraintFeature {
+      // Weight.
+      optional double stop_constraint = 1;
+    }
+
+    message DpRefSpeedFeature {
+      // Weight.
+      optional double exceeds_speed_limit = 1;
+      optional double exceeds_ref_speed = 2;
+      optional double below_ref_speed = 3;
+    }
+
+    message DpDynamicCollisionFeature {
+      // Weight.
+      optional double collision_cost = 1;
+    }
+
+    message DpLeadingObjectFeature {
+      // Weight.
+      optional double leading_object = 1;
+    }
+
+    message DpRefTrajectoryFeatureCost {
+      // Weight.
+      optional double ref_traj = 1;
+    }
+
+    message DpFinalProgressFeature {
+      // Weight.
+      optional double longitudinal = 1;
+      optional double lateral = 2;
+    }
+
+    optional DpAccelerationFeature dp_acceleration = 1;
+    optional DpLaneBoundaryFeature dp_lane_boundary = 2;
+    optional DpLateralAcclerationFeature dp_lateral_acceleration = 3;
+    optional DpStopConstraintFeature dp_stop_constraint = 4;
+    optional DpRefSpeedFeature dp_ref_speed = 5;
+    optional DpDynamicCollisionFeature dp_dynamic_collision = 6;
+    optional DpCurvatureFeautre dp_curvature = 7;
+    reserved 8, 9;
+    optional DpLeadingObjectFeature dp_leading_object = 10;
+    optional DpRefTrajectoryFeatureCost dp_ref_traj = 12;
+    optional DpFinalProgressFeature dp_final_progress = 11;
+  }
+
+  message AstarFeatureCostConfig {
+    message AstarAccelerationFeature {
+      // Weight.
+      optional double accel = 1;
+    }
+
+    message AstarLaneBoundaryFeature {
+      // Weight.
+      optional double ref_center = 1;
+      optional double inner_bound = 2;
+      optional double outer_bound = 3;
+    }
+    message AstarCurvatureFeautre {
+      // Weight.
+      optional double curvature = 1;
+    }
+    message AstarLateralAcclerationFeature {
+      // Weight.
+      optional double acc_hard = 1;
+      optional double acc_soft = 2;
+      optional double jerk = 3;
+    }
+
+    message AstarStopConstraintFeature {
+      // Weight.
+      optional double stop_constraint = 1;
+    }
+
+    message AstarRefSpeedFeature {
+      // Weight.
+      optional double exceeds_speed_limit = 1;
+      optional double exceeds_ref_speed = 2;
+      optional double below_ref_speed = 3;
+    }
+
+    message AstarDynamicCollisionFeature {
+      // Weight.
+      optional double collision_cost = 1;
+    }
+
+    message AstarLeadingObjectFeature {
+      // Weight.
+      optional double leading_object = 1;
+    }
+
+    message AstarRefTrajectoryFeatureCost {
+      // Weight.
+      optional double ref_traj = 1;
+    }
+
+    message AstarFinalProgressFeature {
+      // Weight.
+      optional double longitudinal = 1;
+      optional double lateral = 2;
+    }
+
+    optional AstarAccelerationFeature astar_acceleration = 1;
+    optional AstarLaneBoundaryFeature astar_lane_boundary = 2;
+    optional AstarLateralAcclerationFeature astar_lateral_acceleration = 3;
+    optional AstarStopConstraintFeature astar_stop_constraint = 4;
+    optional AstarRefSpeedFeature astar_ref_speed = 5;
+    optional AstarDynamicCollisionFeature astar_dynamic_collision = 6;
+    optional AstarCurvatureFeautre astar_curvature = 7;
+    reserved 8, 9;
+    optional AstarLeadingObjectFeature astar_leading_object = 10;
+    optional AstarRefTrajectoryFeatureCost astar_ref_traj = 12;
+    optional AstarFinalProgressFeature astar_final_progress = 11;
+  }
+
+  message RefLineFeatureCostConfig {
+    message RefLineStationaryObjectFeature {
+      // Weight.
+      optional double distance = 1;
+    }
+
+    message RefLineProgressFeature {
+      // Weight.
+      optional double longitudinal = 1;
+      optional double lateral = 2;
+    }
+
+    message RefLinePathBoundaryFeature {
+      // Weight.
+      optional double center = 1;
+      optional double target_boundary = 2;
+      optional double boundary = 3;
+    }
+
+    message RefLineCurvatureFeature {
+      // Weight.
+      optional double absolute = 1;
+    }
+    optional RefLineStationaryObjectFeature ref_line_stationary_object = 1;
+    optional RefLineProgressFeature ref_line_progress = 2;
+    optional RefLinePathBoundaryFeature ref_line_path_boundary = 3;
+    optional RefLineCurvatureFeature ref_line_curvature = 4;
+  }
+
+  message InitializerSamplePattern {
+    enum Scenario {
+      SCENARIO_NONE = 0;
+      SCENARIO_LANE_KEEPING = 1;  // Lane keeping.
+      SCENARIO_LANE_CHANGE = 2;   // Lane change.
+      SCENARIO_LANE_BORROW = 3;   // Lane borrow.
+    }
+    message SampleConfig {
+      repeated double range = 1;               // m.
+      repeated double layer_gap = 2;           // m.
+      repeated double lateral_resolution = 3;  // m.
+      repeated int64 cross_layer_connection = 4;
+      repeated double unit_length_lateral_span = 5;
+    }
+
+    optional InitializerSamplePatternConfig config_name = 1;
+    optional Scenario scenario = 2;
+    optional SampleConfig config = 3;
+  }
+
+  optional DpFeatureCostConfig dp_cost_config = 3;
+  repeated InitializerSamplePattern sample_patterns = 4;
+  optional RefLineFeatureCostConfig ref_line_cost_config = 5;
+  optional DpFeatureCostConfig dp_post_cost_config = 10;
+  optional AstarFeatureCostConfig astar_cost_config = 11;
+
+  // Next id: 13.
+  reserved 2, 8;
+}

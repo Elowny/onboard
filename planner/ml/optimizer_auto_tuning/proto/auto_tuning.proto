@@ -1,0 +1,47 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/ml/optimizer_auto_tuning/proto/auto_tuning";
+
+import "onboard/proto/trajectory.proto";
+import "onboard/planner/ml/proto/auto_tuning.proto";
+
+message FeatureCostProto {
+  optional string feature = 1;
+  optional double cost = 2 [default = 0.0];
+}
+
+message AccumulatedDiscountedCostsProto {
+  repeated FeatureCostProto feature_costs = 1;
+}
+
+message AutoTuningTrajectoryProto {
+  optional AccumulatedDiscountedCostsProto costs = 1;
+  optional TrajectoryProto trajectory = 2;
+  optional bool valid_for_train = 3 [default = false];
+  optional int32 original_index = 4;
+}
+
+message WeightSetProto {
+  repeated FeatureWeightProto feature_weights = 1;
+}
+
+message AutoTuningDataProto {
+  enum ReturnCode {
+    TRAIN_HAS_LIST_OF_ERROR = 80;
+    TRAIN_HAS_CRITICAL_ERROR = 81;
+
+    NOT_EST_PLANNER = 88;
+
+    TRAIN_MODE_ERROR = 99;
+
+    SMALL_SPEED = 100;
+
+    NOT_ON_ROUTE_ERROR = 110;
+    SPEED_OVER_LIMIT_ERROR = 111;
+
+    FILTERED_BY_INTENTION_IN_PREPROCESS = 120;
+  }
+  repeated AutoTuningTrajectoryProto candidate_auto_tuning_trajs = 1;
+  optional AutoTuningTrajectoryProto expert_auto_tuning_traj = 2;
+}

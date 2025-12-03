@@ -1,0 +1,79 @@
+name: "dojo.planner.lanechange"
+edit_attr {
+  description: "Forced lane change before a dead end"
+  labels { key: "PlannerCoverageCategory" value: "Lanechange" }
+  test_sets: "planner_virtual_coverage"
+}
+execution {
+  sim_duration: 100
+  playback_sources { run_or_stf_path: "" }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 0.1
+          initial_pose {
+            pos_smooth { x: 341 y: -217 }
+            accel_body { x: 2 }
+            yaw: 0
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {}
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    synthesized_traffic_flow_module {
+      module: SYNTHESIZED_TRAFFIC_FLOW_MODULE
+      enable: true
+    }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+commandline_flags: "--map=dojo"
+commandline_flags: "--route=destinations {\n  global_point {\n    longitude: 7.0161670067493334e-05\n    latitude: -3.5080835033746667e-05\n    altitude: 0\n  }\n}\n"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"
+commandline_flags: "--allow_routed_lane_change=1"
+commandline_flags: "--route_send_canvas=1"

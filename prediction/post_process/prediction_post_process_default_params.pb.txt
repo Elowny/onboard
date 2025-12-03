@@ -1,0 +1,126 @@
+# Default params for conflict resolver module in prediction.
+resolution_level: CRL_STATIONARY
+dp_speed_cost_config {
+  svt_object_collision { stationary: 8.0 }
+  svt_stopline { tl_red_light: 1e3 }
+  svt_reference_speed { abs_v_diff: 15.0 s_progress: 4.0 }
+}
+
+general_config {
+  sampling_s_step_dp: 0.5
+  sampling_s_step_final: 0.2
+  v_discrete: 3.0
+  t_discrete: 1.0
+  min_s_seg_length: 3.0
+  stationary_object_shrink_ratio: 0.5
+  dynamic_object_shrink_ratio: 0.5
+  min_width: 0.3
+  min_length: 0.3
+  max_aspect_ratio: 5.0
+}
+
+object_config {
+  object_type: OT_VEHICLE
+  ego_box_buffer: 0.3
+  stationary_follow_distance: 2.0
+  acc_samples: -2.0
+  acc_samples: -1.0
+  acc_samples: 0.0
+  acc_samples: 0.5
+  acc_samples: 1.0
+  relative_speed_follow_distance_factor: -0.25
+  check_out_curb: false
+  out_curb_max_threshold: 1e5
+  curb_cutoff_to_static_max_speed: 2.5
+  curb_safe_horizon: 8.0
+  curb_kept_horizon: 5.0
+  curb_nominal_brake: -2.0
+}
+
+object_config {
+  object_type: OT_PEDESTRIAN
+  ego_box_buffer: 0.1
+  stationary_follow_distance: 1.0
+  acc_samples: -0.5
+  acc_samples: 0.0
+  acc_samples: 0.5
+  relative_speed_follow_distance_factor: -0.25
+  check_out_curb: true
+  out_curb_max_threshold: 8.0
+  curb_cutoff_to_static_max_speed: 1.0
+  curb_safe_horizon: 8.0
+  curb_kept_horizon: 5.0
+  curb_nominal_brake: -0.5
+}
+
+object_config {
+  object_type: OT_CYCLIST
+  stationary_follow_distance: 2.0
+  ego_box_buffer: 0.2
+  acc_samples: -1.0
+  acc_samples: -0.5
+  acc_samples: 0.0
+  acc_samples: 0.5
+  acc_samples: 1.0
+  relative_speed_follow_distance_factor: -0.25
+  check_out_curb: true
+  out_curb_max_threshold: 3.5
+  curb_cutoff_to_static_max_speed: 1.5
+  curb_safe_horizon: 5.0
+  curb_kept_horizon: 3.0
+  curb_nominal_brake: -2.5
+}
+
+object_config {
+  object_type: OT_MOTORCYCLIST
+  stationary_follow_distance: 2.0
+  ego_box_buffer: 0.2
+  acc_samples: -2.0
+  acc_samples: -1.0
+  acc_samples: 0.0
+  acc_samples: 0.5
+  acc_samples: 1.0
+  relative_speed_follow_distance_factor: -0.25
+  check_out_curb: true
+  out_curb_max_threshold: 3.5
+  curb_cutoff_to_static_max_speed: 1.5
+  curb_safe_horizon: 5.0
+  curb_kept_horizon: 3.0
+  curb_nominal_brake: -2.5
+}
+
+object_config {
+  object_type: OT_TRICYCLIST
+  stationary_follow_distance: 2.0
+  ego_box_buffer: 0.2
+  acc_samples: -1.0
+  acc_samples: -0.5
+  acc_samples: 0.0
+  acc_samples: 0.5
+  acc_samples: 1.0
+  relative_speed_follow_distance_factor: -0.25
+  check_out_curb: true
+  out_curb_max_threshold: 3.5
+  curb_cutoff_to_static_max_speed: 1.5
+  curb_safe_horizon: 5.0
+  curb_kept_horizon: 3.0
+  curb_nominal_brake: -2.5
+}
+
+default_object_config {
+  object_type: OT_UNKNOWN_MOVABLE
+  stationary_follow_distance: 2.0
+  ego_box_buffer: 0.2
+  acc_samples: -2.0
+  acc_samples: -1.0
+  acc_samples: 0.0
+  acc_samples: 0.5
+  acc_samples: 1.0
+  relative_speed_follow_distance_factor: -0.25
+  check_out_curb: false
+  out_curb_max_threshold: 1e5
+  curb_cutoff_to_static_max_speed: 2.5
+  curb_safe_horizon: 8.0
+  curb_kept_horizon: 5.0
+  curb_nominal_brake: -2.0
+}

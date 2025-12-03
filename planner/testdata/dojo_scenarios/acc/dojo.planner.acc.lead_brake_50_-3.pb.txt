@@ -1,0 +1,209 @@
+name: "dojo.planner.acc.lead_brake_50_-3"
+edit_attr {
+  description: "ACC: stably following a vehicle at 50km/h and the lead suddenly brakes at -3m/s^2 to a full stop."
+  labels { key: "PlannerCoverageCategory" value: "ACC" }
+  labels { key: "PlannerCoverageClass" value: "LeadBrake" }
+  test_sets: "dojo"
+  test_sets: "planner_virtual_coverage"
+}
+execution {
+  sim_duration: 30
+  playback_sources { run_or_stf_path: "" }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 1
+          initial_pose {
+            pos_smooth { x: -35 y: 210 }
+            vel_body { x: 13.8 y: 0 }
+            accel_body { x: 0 y: 0 }
+            yaw: 0
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            virtual_perception_object {
+              id: "Agent0"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2
+              parked: false
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 0 y: 210 }
+                t: 0
+                v: 13.8
+                z: 0
+              }
+              waypoints {
+                pos { x: 69 y: 210 }
+                t: 5
+                v: 13.8
+                z: 0
+              }
+              waypoints {
+                pos { x: 73.43 y: 210 }
+                t: 5.33
+                v: 12.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 77.53 y: 210 }
+                t: 5.67
+                v: 11.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 81.30 y: 210 }
+                t: 6.00
+                v: 10.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 84.73 y: 210 }
+                t: 6.33
+                v: 9.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 87.83 y: 210 }
+                t: 6.67
+                v: 8.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 90.60 y: 210 }
+                t: 7.00
+                v: 7.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 93.03 y: 210 }
+                t: 7.33
+                v: 6.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 95.13 y: 210 }
+                t: 7.67
+                v: 5.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 96.90 y: 210 }
+                t: 8.00
+                v: 4.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 98.33 y: 210 }
+                t: 8.33
+                v: 3.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 99.43 y: 210 }
+                t: 8.67
+                v: 2.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 100.20 y: 210 }
+                t: 9.00
+                v: 1.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 100.63 y: 210 }
+                t: 9.33
+                v: 0.80
+                z: 0
+              }
+              waypoints {
+                pos { x: 100.64 y: 210 }
+                t: 10.0
+                v: 0.0
+                z: 0
+              }
+              waypoints {
+                pos { x: 100.65 y: 210 }
+                t: 30.0
+                v: 0.0
+                z: 0
+              }
+            }
+            start_sec: 0
+          }
+        }
+      }
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "trajectory_validation_metric"
+  trajectory_validation_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+metrics {
+  name: "lane_boundary_proximity_metric"
+  lane_boundary_proximity_metric {
+    buffer: 0.2
+    types: SOLID_DOUBLE_YELLOW
+    types: SOLID_YELLOW
+    types: BROKEN_YELLOW
+    types: SOLID_WHITE
+    types: BROKEN_WHITE
+    types: CURB
+  }
+}
+commandline_flags: "--map=dojo"
+commandline_flags: "--route_str=hw_e2_end"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"

@@ -1,0 +1,51 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/scheduler/proto/reference_line_qp_smoother";
+
+message ReferenceLineQpSmootherParamProto {
+  // Cost description:
+  // For each step i, denote l[i], l[i+1], l[i+2], l[i+3] as
+  // l0,l1,l2,l3.
+  // The four points on the target polyline can define
+  // following curvature related (approximated) items:
+  // delta_01: angle offset between base ployline segment and the target.
+  // kappa_1: the curvature at point 1.
+  // lambda_12: the curvature's derivative over length at segment 12.
+  // length_01: the length of segment 01,
+
+  // Denote the length from base_point[i] to base_point[i+1] as x01[i].
+  //
+  // g[i] = delta_weight * x01[i] * delta_01^2  +
+  // kappa_weight * 0.5 * (x01[i]+x12[i]) * kappa_1^2 +
+  // lambda_weight * x12[i]* lambda_12^2 +
+  // length_weight * length_01[i]^2.
+  // G = \Sigma_{i=0}^n g[i].
+
+  // Currently, lateral_offset_weight is NOT IN USE.
+  optional double lateral_offset_weight = 1 [default = 0.0];
+  optional double delta_weight = 2 [default = 0.0];
+  optional double kappa_weight = 3 [default = 0.0];
+  optional double lambda_weight = 4 [default = 0.0];
+
+  // When doing kappa^2 optimization, the essence of the process is simply
+  // "countering the kappa introduced by base polyline", by applying a d2l_ds2
+  // with negative sign and same magnitude with base kappa.
+  // However, due to the limited representation power of QP, there can be
+  // error in the approximation of kappa using d2l_ds2. When the "countering
+  // effort" yields even larger kappa than base line, reflexed shape will
+  // occur. To prevent that, the following parameter is introduced to shrink
+  // the estimation of base line kappa, so as to avoid large reflexing
+  // d2l_ds2.
+  optional double base_kappa_gain = 5 [default = 1.0];
+
+  // When supressing original arc length, the lateral offset "zero point" should
+  // be kept away from arc_length == 0, as such value indicates all sample
+  // points gathering at the circus center of base line, which is with highly
+  // non-linear property and geometric degeneration. For such purpose base
+  // length gain is introduced. For example, base_length_gain == 0.2 indicates
+  // lateral offset will try to decrease the original arc length by 20%,
+  // reckoning 0.8 times orginal arc length as the optimum point.
+  optional double length_weight = 6 [default = 0.0];
+  optional double base_length_gain = 7 [default = 0.2];
+}

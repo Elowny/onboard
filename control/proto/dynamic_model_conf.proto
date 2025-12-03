@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package qcraft.control;
+option go_package = "qcraft-proto.ai/onboard/control/proto/dynamic_model_conf";
+
+message DynamicModelConfProto {
+  optional GeometryParamProto geo_params = 1;
+  optional TireParamProto tire_params = 2;
+  optional double mass_f = 5
+      [deprecated = true];  // kg, weight on the front axis.
+  optional double mass_r = 6
+      [deprecated = true];   // kg, weight on the rear axis.
+  optional double mass = 7;  // kg, overall vehicle mass.
+
+  message GeometryParamProto {
+    optional double lf = 1;        // m, front axis to center of mass.
+    optional double lr = 2;        // m. rear  axis to center of mass.
+    optional double cg_ratio = 3;  // the CoG relative ratio on wheel base.
+  }
+
+  message TireParamProto {
+    optional double c_af = 1;  // N/rad, front tire corning stiffness.
+    optional double c_ar = 2;  // N/rad, tire  tire corning stiffness.
+  }
+
+  reserved 3, 4;
+}

@@ -1,0 +1,21 @@
+
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/common/proto/lane_change_safety";
+import "onboard/math/geometry/proto/affine_transformation.proto";
+
+message AlignedObjectInfo {
+  optional string id = 1;
+  repeated Vec2dProto contour_points = 2;
+  optional double heading = 3;
+  optional double v = 4;
+  optional double a = 5;
+  optional string safety_decison = 6;
+}
+
+message LaneChangeSafetyDebugProto {
+  optional AlignedObjectInfo ego_aligned_info = 1;
+  repeated AlignedObjectInfo object_aligned_infos = 2;
+  optional double conservative_factor = 3;
+}

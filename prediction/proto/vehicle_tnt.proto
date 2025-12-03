@@ -1,0 +1,52 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/prediction/proto/vehicle_tnt";
+
+import "onboard/prediction/proto/prediction_common.proto";
+
+message VehicleTNTDumpedFeatureProto {
+  message ObjectsDumpedFeature {
+    repeated float ego_traj = 1 [packed = true];
+    repeated float ego_speeds = 2 [packed = true];
+    repeated float ego_headings = 3 [packed = true];
+    // AV occupies the first position in context data.
+    repeated float trajs = 4 [packed = true];
+    repeated float speeds = 5 [packed = true];
+    repeated float headings = 6 [packed = true];
+    repeated float cur_poses = 7 [packed = true];
+    repeated PredictionObjectType types = 8 [packed = true];
+    repeated float ego_history_masks = 9 [packed = true];
+    repeated float history_masks = 10 [packed = true];
+  }
+
+  message LanesDumpedFeature {
+    repeated float lane_centers = 1 [packed = true];
+    repeated float lane_segments = 2 [packed = true];
+    repeated float lane_controls = 3 [packed = true];
+    repeated float lane_lights = 4 [packed = true];
+  }
+  message Targets {
+    repeated float targets = 1 [packed = true];
+    repeated float controls = 2 [packed = true];
+  }
+  message LabelsProto {
+    optional float turn_angle = 2;
+    optional float speed_diff = 4;
+    optional bool is_static = 6;
+    reserved 1, 3, 5;
+  }
+  message GroundTruthProto {
+    repeated float target = 1 [packed = true];
+    optional TrajectoryGroundTruth gt_traj = 2;
+  }
+  optional ObjectsDumpedFeature objects_feature = 1;
+  optional LanesDumpedFeature lanes_feature = 2;
+  optional Targets targets = 3;
+  optional GroundTruthProto gt = 4;
+  optional ObjectPredictionScenario scenario = 5;
+  optional ObjectPredictionPriority priority = 6;
+  optional LabelsProto labels = 7;
+  optional double timestamp = 8;
+  optional GroundTruthProto av_gt = 9;
+}

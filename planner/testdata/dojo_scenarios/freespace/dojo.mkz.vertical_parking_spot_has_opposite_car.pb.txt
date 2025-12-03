@@ -1,0 +1,206 @@
+name: "dojo.mkz.vertical_parking_spot_has_opposite_car"
+edit_attr {
+  labels { key: "Comfort_Severity" value: "" }
+  labels { key: "Country" value: "China" }
+  labels { key: "Critical_State" value: "" }
+  labels { key: "Detailed_Root_Cause" value: "" }
+  labels { key: "Issue" value: "" }
+  labels { key: "Location" value: "us.dojo" }
+  labels { key: "Milestone" value: "" }
+  labels { key: "Module_Root_Cause" value: "" }
+  labels { key: "Original_Release_Version" value: "" }
+  labels { key: "Scenario_Edit_State" value: "" }
+  labels { key: "Scenario_Type" value: "" }
+  edit_history {
+    edit_timestamp: 1642059451518994
+    log: "save as a new scenario"
+    author: "zx"
+  }
+  edit_history { edit_timestamp: 1643097362222421 log: "route" author: "zx" }
+  edit_history {
+    edit_timestamp: 1645084075288886
+    log: "Scenario mutation"
+    author: ""
+  }
+  edit_history {
+    edit_timestamp: 1646108190726970
+    log: "Scenario mutation"
+    author: ""
+  }
+  edit_history {
+    edit_timestamp: 1646124756437712
+    log: "true"
+    author: "zhangxin1"
+  }
+  edit_history {
+    edit_timestamp: 1646751443276319
+    log: "Scenario mutation"
+    author: ""
+  }
+  edit_history {
+    edit_timestamp: 1646823971830611
+    log: "Scenario mutation"
+    author: ""
+  }
+  test_sets: "parking"
+}
+execution {
+  sim_duration: 60
+  playback_sources { run_or_stf_path: "" duration: 60 start_offset: 0 }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE disable: true }
+    positioning_module { module: POSITIONING_MODULE disable: true }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module { module: GNSS_IMU_DRIVER_MODULE disable: true }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 1
+          initial_pose {
+            pos_smooth { x: 574.92767513023421 y: 21.2580210154242 }
+            yaw: 3.131691529657195
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            virtual_perception_object {
+              id: "Phantom 1"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2
+              parked: true
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 573.62300178213252 y: 25.838897733797747 }
+                t: 0
+                v: 1e-09
+                z: 0
+                a: 0
+              }
+              waypoints {
+                pos { x: 573.50481384587272 y: 23.162251863796364 }
+                t: 2679253816.6046143
+                v: 1e-09
+                z: 0
+                a: 0
+              }
+            }
+            start_sec: 0
+          }
+          objects {
+            virtual_perception_object {
+              id: "Phantom 2"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2
+              parked: true
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 568.65346283084364 y: 26.0125 }
+                t: 0
+                v: 1e-09
+                z: 0
+                a: 0
+              }
+              waypoints {
+                pos { x: 568.507 y: 23.3737 }
+                t: 2642861604.6905518
+                v: 1e-09
+                z: 0
+                a: 0
+              }
+            }
+            start_sec: 0
+          }
+          objects {
+            virtual_perception_object {
+              id: "Phantom 3"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2
+              parked: true
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 569.517 y: 14.894 }
+                t: 0
+                v: 1e-09
+                z: 0
+                a: 0
+              }
+              waypoints {
+                pos { x: 571.694 y: 14.594 }
+                t: 2642861604.6905518
+                v: 1e-09
+                z: 0
+                a: 0
+              }
+            }
+            start_sec: 0
+          }
+        }
+      }
+    }
+    create_sim_messages_module { disable: true }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE playback_source_id: 0 }
+    synthesized_traffic_flow_module {
+      module: SYNTHESIZED_TRAFFIC_FLOW_MODULE
+      enable: true
+    }
+    vision_module { module: VISION_MODULE disable: true }
+    routing_module { module: ROUTING_MODULE enable: true }
+    localization_module { module: LOCALIZATION_MODULE disable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+    tracker_module { module: TRACKER_MODULE disable: true }
+  }
+  run_conf_name: "mkz_logless_simulation"
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+metrics {
+  name: "lane_speed_limit_metric"
+  lane_speed_limit_metric {}
+}
+metrics {
+  name: "reach_parking_spot_metric"
+  reach_parking_spot_metric { parking_spot_id: 4002 }
+}
+metrics {
+  name: "gear_change_metric"
+  gear_change_metric { max_gear_change: 2 }
+}
+commandline_flags: "--route=multi_stops{stops{stop_point{off_road{parking_spot{specified_parking_spot_ids:4002}}}}}"
+commandline_flags: "--map=dojo"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--use_run_map=false"

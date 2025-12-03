@@ -1,0 +1,2 @@
+# Map: mindys_lunch
+lane_ids: 229 lane_ids: 232 lane_ids: 231 start_fraction: 0.0 end_fraction: 1.0

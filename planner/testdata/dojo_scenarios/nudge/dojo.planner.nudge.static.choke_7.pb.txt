@@ -1,0 +1,235 @@
+name: "dojo.planner.nudge.static.choke_7"
+edit_attr {
+  description: "Nudge: nudge for three static objects on both sides of the road, forming a choke point. Almost no nudge is necessary but the AV should decelerate."
+  labels { key: "PlannerCoverageCategory" value: "Nudge" }
+  labels { key: "PlannerCoverageClass" value: "StaticObject" }
+  test_sets: "dojo"
+  test_sets: "planner_virtual_coverage"
+}
+execution {
+  sim_duration: 30
+  playback_sources { run_or_stf_path: "" }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 1
+          initial_pose {
+            pos_smooth { x: 110 y: 66.5 }
+            vel_body { x: 11.1 y: 0 }
+            accel_body { x: 0 y: 0 }
+            yaw: 0
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            virtual_perception_object {
+              id: "Object0"
+              type: OT_UNKNOWN_STATIC
+              length: 0.4
+              width: 0.4
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 185 y: 65 }
+                t: 0
+                v: 0
+                z: 0
+              }
+              waypoints {
+                pos { x: 185.0001 y: 65 }
+                t: 30
+                v: 0
+                z: 0
+              }
+            }
+            start_sec: 0
+          }
+          objects {
+            virtual_perception_object {
+              id: "Object1"
+              type: OT_UNKNOWN_STATIC
+              length: 0.4
+              width: 0.4
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 185 y: 68 }
+                t: 0
+                v: 0
+                z: 0
+              }
+              waypoints {
+                pos { x: 185.0001 y: 68 }
+                t: 30
+                v: 0
+                z: 0
+              }
+            }
+            start_sec: 0
+          }
+          objects {
+            virtual_perception_object {
+              id: "Object1"
+              type: OT_UNKNOWN_STATIC
+              length: 0.4
+              width: 0.4
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 185 y: 69.5 }
+                t: 0
+                v: 0
+                z: 0
+              }
+              waypoints {
+                pos { x: 185.0001 y: 69.5 }
+                t: 30
+                v: 0
+                z: 0
+              }
+            }
+            start_sec: 0
+          }
+          objects {
+            virtual_perception_object {
+              id: "Object1"
+              type: OT_UNKNOWN_STATIC
+              length: 0.4
+              width: 0.4
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 185 y: 63.5 }
+                t: 0
+                v: 0
+                z: 0
+              }
+              waypoints {
+                pos { x: 185.0001 y: 63.5 }
+                t: 30
+                v: 0
+                z: 0
+              }
+            }
+            start_sec: 0
+          }
+          objects {
+            virtual_perception_object {
+              id: "Object2"
+              type: OT_UNKNOWN_STATIC
+              length: 0.4
+              width: 0.4
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 185 y: 66.5 }
+                t: 0
+                v: 0
+                z: 0
+              }
+              waypoints {
+                pos { x: 185.0001 y: 66.5 }
+                t: 30
+                v: 0
+                z: 0
+              }
+            }
+            start_sec: 0
+          }
+          sim_world_conf {
+            tl_control {
+              tl_periods {
+                state {
+                  traffic_light_id: 916
+                  color: TL_RED
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+              tl_periods {
+                state {
+                  traffic_light_id: 917
+                  color: TL_GREEN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+            }
+            publish_tl_states: true
+          }
+        }
+      }
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "trajectory_validation_metric"
+  trajectory_validation_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+metrics {
+  name: "reach_destination_metric"
+  reach_destination_metric {
+    regions {
+      destination {
+        uuid: "{9e39b102-be05-4e83-b3d1-5472a720c85d}"
+        points { x: 220 y: 63 }
+        points { x: 255 y: 63 }
+        points { x: 255 y: 67 }
+        points { x: 220 y: 67 }
+      }
+      reach_within_secs: 30
+      approach: CAR_CONTOUR
+    }
+  }
+}
+commandline_flags: "--map=dojo"
+commandline_flags: "--route_str=a9_e2_end"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"

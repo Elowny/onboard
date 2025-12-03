@@ -1,0 +1,35 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/decision/proto/crosswalk_state";
+// This is the state. It is created when AV first stopped for the stop
+// sign.
+message CrosswalkStateProto {
+  optional sfixed64 crosswalk_id = 1;
+
+  // UNIX time in seconds to indicate when AV stopped for object before
+  // crosswalk.
+  optional double stop_time = 2;
+
+  enum StopState {
+    // AV is approaching the crosswalk, not stopped before crosswalk with a
+    // small constant distance yet. Currently, the threshold distance is 3.0m.
+    // State switch : APPROACHING ==> APPROACHING; APPROACHING ==> STOPPED;
+    // APPROACHING ==> PASSED;
+    APPROACHING = 1;
+    // In Stopped state,at the first 8.0s after stopped before crosswalk, AV
+    // will yield both moving and stationary objects. 8.0s later,automaticly
+    // switchs to PASSED state, whatever AV current moving state or behavior.
+    // State switch : STOPPED ==> STOPPED; STOPPED ==> PASSED.
+    STOPPED = 2;
+    // In PASSED state, AV only yield to Moving objects.
+    // State switch : PASSED ==> PASSED;
+    PASSED = 3;
+  }
+
+  optional StopState stop_state = 3;
+
+  // Add yield object in APPROACHING and STOPPED states, remove stationary
+  // object in PASSED state
+  repeated string must_yield_objects = 4;
+}

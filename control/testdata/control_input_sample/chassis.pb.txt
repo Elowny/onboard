@@ -1,0 +1,56 @@
+# run: 20221228_180745_Q2404
+# relative_in_sec=700.027, channel=chassis
+header {
+  timestamp: 1672222768866762
+  domain: ""
+  seq_number: 110498
+  module_id: 13
+  channel: "chassis"
+  tag_number: 23
+  log_timestamp: 1672222768872155
+  full_node_name: "/omc/main_node_1"
+  channel_seq_number: 34966
+}
+speed_mps: 13.3111115
+throttle_percentage: 1.20883703
+brake_percentage: 0
+steering_percentage: 3.02239943
+steering_torque_nm: -0.25
+parking_brake: false
+driving_mode: COMPLETE_AUTO_DRIVE
+error_code: NO_ERROR
+gear_location: GEAR_DRIVE
+signal { turn_signal: TURN_NONE }
+wheel_speed {
+  is_wheel_spd_rr_valid: true
+  wheel_direction_rr: FORWARD
+  wheel_spd_rr: 38.496637848222868
+  is_wheel_spd_rl_valid: true
+  wheel_direction_rl: FORWARD
+  wheel_spd_rl: 38.14441242395133
+  is_wheel_spd_fr_valid: true
+  wheel_direction_fr: FORWARD
+  wheel_spd_fr: 38.448607108549474
+  is_wheel_spd_fl_valid: true
+  wheel_direction_fl: FORWARD
+  wheel_spd_fl: 38.048350944604557
+}
+note_button: false
+lat_control_online: true
+lon_control_online: true
+timestamp: 1672222768.8639956
+steering_speed: 5
+auxiliary_button: false
+is_steer_out_limit: false
+turn_lever_state: TURNLEVER_NONE
+auxiliary_lever_feedback: AUXILIARYLEVER_NONE
+lon_state: LON_ONLINE
+driver_operation_check {
+  is_throttle_ready: true
+  is_brake_ready: true
+  is_door_ready: true
+  is_epb_ready: true
+  proper_epb_state: EPB_STATE_RELEASED
+  is_seat_belt_ready: true
+}
+acu_driver_seatbelt_status: true

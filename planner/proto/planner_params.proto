@@ -1,0 +1,696 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/planner/proto/planner_params";
+
+import "onboard/math/proto/piecewise_linear_function.proto";
+import "onboard/math/proto/piecewise_const_function.proto";
+import "onboard/planner/initializer/proto/initializer_config.proto";
+import "onboard/planner/selector/proto/selector_params.proto";
+import "onboard/planner/speed/proto/speed_finder_params.proto";
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Note about param loading here: Due to the para loading method which is
+// designed to be backward compatible as the param set evolves, special care
+// must be taken when adding certain types of params.
+//
+// * When adding repeated fields into an existing proto: usually you'll need to
+//   wrap it in a proto. Directly adding a repeated field into an existing proto
+//   will cause the field to have zero elements when loading the params of an
+//   old log, regardless of the default params, which is typically not what you
+//   want. This is because the old log's param file has zero elements, and
+//   having zero elements is not considered missing (unlike scalar fields where
+//   has_XXX() can be used to decide if the field is missing in old logs, for
+//   repeated fields, having zero elements is a valid and meaningful state).
+//   Wrapping it in a proto will solve this problem because the field becomes a
+//   scalar field of the proto type and param loading will recognize that the
+//   old log does not have this field, thus loading the default.
+//
+//   A common example is PiecewiseLinearFunctionXXXProto which wraps repeated
+//   fields.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+message DdpOptimizerParamsProto {
+  optional double line_search_min_alpha = 1 [default = 1e-3];
+  optional double convergence_tolerance_dx = 2 [default = 1e-7];
+  optional double convergence_tolerance_du = 3 [default = 1e-7];
+  optional double convergence_tolerance_dcost = 4 [default = 1e-7];
+  optional int32 max_iters = 6 [default = 100];
+  optional bool enable_adaptive_alpha = 7 [default = false];
+  optional bool line_search_to_min = 8 [default = true];
+
+  reserved 5;
+}
+
+message LaneChangeDecisionParamsProto {
+  optional double min_lane_change_length = 1;
+}
+
+message EmergencyStopParamsProto {
+  optional double max_deceleration = 1;
+  optional double min_detect_distance = 2;
+  optional double max_detect_distance = 3;
+  optional double vel_threshold = 4;
+  // When computing the emergency stop detection distance, use velocity times
+  // this number.
+  optional double speed_to_detection_distance_coeff = 5;
+}
+
+message ReferencePathParamsProto {
+  message BezierReferencePathParams {
+    optional double min_look_ahead_dist = 1;
+    optional double look_ahead_time = 2;
+    optional double look_ahead_offset = 3;
+  }
+  optional BezierReferencePathParams bezier_params = 1;
+}
+
+// Next ID: 39.
+message TrajectoryOptimizerCostWeightParamsProto {
+  message RegularizationCostParamsProto {
+    optional double multiplier = 1;
+    repeated double w = 2;
+  }
+  message CascadeProto {
+    optional double buffer = 1;  // Buffer.
+    optional double gain = 2;    // Gain.
+  }
+  message LongitudinalAccelerationCostParamsProto {
+    repeated CascadeProto accel_cascade = 1;
+    repeated CascadeProto decel_cascade = 2;
+  }
+  message CurvatureCostParamsProto {
+    repeated CascadeProto curvature_cascade = 1;
+  }
+  message CurvatureRateCostParamsProto {
+    repeated CascadeProto curvature_rate_cascade = 1;
+  }
+  message ImmediateFutureCostParamsProto {
+    optional PiecewiseLinearFunctionDoubleProto lon_weight_plf = 1;
+    optional PiecewiseLinearFunctionDoubleProto lat_weight_plf = 2;
+  }
+  message ReferencePathCostParamsProto {
+    optional double path_gain = 1;
+    optional double end_state_gain = 2;
+    optional double reference_path_cost_weight = 3;
+    optional double reference_heading_cost_weight = 4;
+    optional double destination_path_gain = 5;
+    optional double destination_theta_gain = 6;
+  }
+  message NudgeBufferParamsProto {
+    optional PiecewiseLinearFunctionDoubleProto
+        nudge_front_buffer_object_speed_plf = 1;
+    optional PiecewiseConstFunctionDoubleProto nudge_buffer_time_gain_pcf = 3;
+    optional PiecewiseLinearFunctionDoubleProto min_nudge_buffer_speed_plf = 4;
+    optional double min_nudge_buffer = 5;
+    optional double nudge_buffer_lane_width_gain = 6;
+    reserved 2;
+  }
+  message ObjectCostParamsProto {
+    optional double object_a_cost_weight = 3;
+    optional double object_b_cost_weight = 4;
+    optional double acc_standstill_standoff = 6;
+    optional double acc_static_object_standoff = 7;
+    optional double acc_safe_standstill_standoff = 8;
+    optional double leading_object_a_cost_weight = 9;
+    optional double leading_object_b_cost_weight = 10;
+    optional bool ignore_leading = 11;
+    optional NudgeBufferParamsProto nudge_buffer_params = 12;
+    reserved 5;
+  }
+  message UnidirectionalNudgeObjectCostParamsProto {
+    enum Source {
+      LARGE_VEHICLE = 0;
+      DRIVE_IN = 1;
+      VEHICLE = 2;
+    }
+    optional double nudge_buffer_a = 1;
+    optional double nudge_buffer_decay = 13;
+    optional double large_vehicle_nudge_time = 2;
+    optional double l_min_offset_to_center = 3;
+    optional double min_dist_to_lane_boundary = 4;
+    optional double look_ahead_time = 5;
+    optional double look_back_time = 6;
+    optional double object_a_cost_weight = 7;
+    optional Source source = 8;
+    optional double max_penetration_base = 10;
+    optional double max_penetration_gain = 11;
+    optional double l_hold_time = 14;
+    optional NudgeBufferParamsProto nudge_buffer_params = 12;
+  }
+  message PathBoundaryCostParamsProto {
+    optional double rear_path_boundary_cost_weight = 1;
+    optional double front_path_boundary_cost_weight = 2;
+    optional double left_path_boundary_cost_weight = 3;
+    optional double right_path_boundary_cost_weight = 4;
+    optional double buffer_min = 5;
+    optional double rear_buffer_max = 6;
+    optional double front_buffer_max = 7;
+    optional double decay_gain_look_ahead_time = 8;
+    optional double decay_gain = 9;
+    optional double clamped_buffer_offset = 10;
+  }
+  message ReferenceSingleStateDeviationCostParamsProto {
+    repeated double base_numbers = 1;
+    repeated double w = 2;
+    optional double weight = 3;
+  }
+  message SpeedLimitCostParamsProto {
+    optional double curvature_power = 1;
+    optional double curvature_numerator = 2;
+    optional double curvature_bias1 = 3;
+    optional double curvature_bias2 = 4;
+    optional double speed_limit_cost_weight = 5;
+  }
+  message AgggregateObjectCostParamsProto {
+    optional PiecewiseLinearFunctionDoubleProto nudge_buffer_speed_plf = 1;
+    optional double object_a_cost_weight = 2;
+    optional double object_b_cost_weight = 3;
+  }
+
+  optional RegularizationCostParamsProto state_regularization_coeffs = 1;
+  optional RegularizationCostParamsProto control_regularization_coeffs = 2;
+  optional double longitudinal_acceleration_cost_weight = 3;
+  optional LongitudinalAccelerationCostParamsProto
+      longitudinal_acceleration_cost_params = 4;
+  optional double lateral_acceleration_cost_weight = 5;
+  optional double intrinsic_jerk_cost_weight = 6;
+  optional double lateral_jerk_cost_weight = 7;
+  optional double intrinsic_lateral_snap_weight = 37;
+  optional PiecewiseLinearFunctionDoubleProto lateral_snap_speed_gain_plf = 46;
+  optional PiecewiseLinearFunctionDoubleProto
+      curb_penetration_lateral_snap_gain_plf = 43;
+  optional double curvature_cost_weight = 8;
+  optional CurvatureCostParamsProto curvature_cost_params = 9;
+  optional double curvature_rate_cost_weight = 10;
+  optional double curvature_rate_rate_cost_weight = 25;
+  optional CurvatureRateCostParamsProto curvature_rate_cost_params = 11;
+  optional double forward_speed_cost_weight = 12;
+  optional double immediate_future_cost_weight = 13;
+  optional double curvature_deviation_immediate_future_cost_weight = 27;
+  optional ImmediateFutureCostParamsProto immediate_future_cost_params = 14;
+  optional SpeedLimitCostParamsProto speed_limit_cost_params = 52;
+  optional double reference_state_deviation_end_attraction_cost_weight = 28;
+  optional double object_cost_weight = 33;
+  optional ObjectCostParamsProto object_cost_params = 15;
+  optional UnidirectionalNudgeObjectCostParamsProto
+      large_vehicle_object_cost_params = 49;
+  optional UnidirectionalNudgeObjectCostParamsProto
+      drive_in_object_cost_params = 50;
+  optional UnidirectionalNudgeObjectCostParamsProto nudge_object_cost_params =
+      51;
+  optional ReferencePathCostParamsProto reference_path_cost_weight = 44;
+  optional double static_boundary_soft_cost_weight = 20;
+  optional double static_boundary_hard_cost_weight = 21;
+  optional double static_boundary_solid_line_cost_weight = 41;
+  optional double left_static_boundary_cost_weight = 29;
+  optional double right_static_boundary_cost_weight = 30;
+  optional double msd_static_boundary_cost_weight = 39;
+  // Speed relevant soft curb buffer, must be non-decreasing function.
+  optional PiecewiseLinearFunctionDoubleProto
+      speed_rel_soft_curb_clearance_plf = 40;
+  // Speed relevant hard curb buffer, must be non-decreasing function.
+  optional PiecewiseLinearFunctionDoubleProto
+      speed_rel_hard_curb_clearance_plf = 42;
+  // Path curvature curb extra buffer, must be non-decreasing function.
+  optional PiecewiseLinearFunctionDoubleProto
+      kappa_rel_curb_clearance_buffer_plf = 45;
+  optional PathBoundaryCostParamsProto path_boundary_cost_params = 35;
+  optional PathBoundaryCostParamsProto target_path_boundary_cost_params = 36;
+  optional ReferenceSingleStateDeviationCostParamsProto end_state_cost_params =
+      47;
+  optional AgggregateObjectCostParamsProto aggregate_object_cost_params = 53;
+
+  // NEXT ID: 54
+  reserved 16, 17, 18, 19, 22, 23, 24, 26, 31, 32, 34, 38, 48;
+}
+
+// NEXT ID: 24
+message TrajectorySmootherCostWeightParamsProto {
+  optional double scale = 1;
+  optional double state_deviation_gain = 2;
+  optional double end_pose_deviation_gain = 3;
+  optional double end_heading_deviation_gain = 4;
+  optional double v_deviation_gain = 5;
+  optional double chi_penalty_gain = 6;
+  optional double jerk_penalty_gain = 7;
+  optional double forward_speed_cost_weight = 8;
+  optional double curvature_penalty = 9;
+  optional double curvature_rate_penalty = 10;
+  optional double ref_path_deviation_gain = 11;
+  optional double path_gain = 12;
+  optional double end_state_gain = 13;
+
+  optional double chi_penalty_gain_min_factor = 14;
+  optional double chi_penalty_speed_gain = 15;
+  optional double longitudinal_acceleration_cost_weight = 16;
+
+  optional bool enable_check = 17;
+  optional double lateral_dist_threshold = 18;
+  optional double longitudinal_dist_threshold = 19;
+  optional double theta_dist_threshold = 20;
+
+  optional double static_boundary_cost_weight = 21;
+  optional double static_boundary_cost_buffer = 22;
+
+  optional DdpOptimizerParamsProto optimizer_params = 23;
+}
+
+message VehicleCircleModelParamsProto {
+  enum Type {
+    REAR_AXIS_CENTER = 0;
+    MID_AXIS_CENTER = 1;
+    FRONT_AXIS_CENTER = 2;
+    FRONT_LEFT_CORNER = 3;
+    FRONT_RIGHT_CORNER = 4;
+    REAR_LEFT_CORNER = 5;
+    REAR_RIGHT_CORNER = 6;
+    LEFT_MIRROR = 7;
+    RIGHT_MIRROR = 8;
+  }
+  message CircleParams {
+    optional double dist_to_rac = 1;
+    // Axis points towards the forward direction of the vehicle.
+    optional double angle_to_axis = 2;
+    optional double radius = 3;
+    optional Type type = 4;
+  }
+  repeated CircleParams circles = 1;
+  repeated CircleParams mirror_circles = 2;
+  optional bool consider_mirrors_by_default = 3;
+  optional bool use_less_circles = 4;
+}
+
+message VehicleOctagonModelParamsProto {
+  optional double front_corner_side_length = 1;
+  optional double rear_corner_side_length = 2;
+  optional bool consider_mirror = 3;
+  optional double mirror_offset_x = 4;
+  optional double mirror_offset_y = 5;
+  optional double mirror_radius = 6;
+  optional double mirror_height = 7;
+}
+
+message PlannerVehicleModelParamsProto {
+  optional VehicleCircleModelParamsProto
+      trajectory_optimizer_vehicle_model_params = 1;
+  optional VehicleOctagonModelParamsProto
+      freespace_vehicle_octagon_model_params = 2;
+  optional VehicleCircleModelParamsProto
+      freespace_local_smoother_vehicle_model_params = 3;
+  optional bool is_vehicle_bus_model = 4;
+}
+
+message PathFinderVehicleModelParamsProto {
+  optional double front_corner_side_length = 1;
+  optional double rear_corner_side_length = 2;
+  optional bool consider_mirror = 3;
+  optional double mirror_offset_x = 4;
+  optional double mirror_offset_y = 5;
+  optional double mirror_radius = 6;
+  optional double max_ignore_mirror_height = 7;
+  optional double front_wheel_to_rac = 8;
+  optional double rear_wheel_to_rac = 9;
+  optional double max_ignore_body_height = 10;
+}
+
+message HybridAStarParamsProto {
+  optional int64 max_iters = 1;
+  optional bool use_sampling_rs = 2;
+  optional int64 sampling_rs_max_iters = 3;
+  optional bool enable_reverse_driving = 4;
+  optional double goal_xy_tolerance = 5;
+  optional double goal_theta_tolerance = 6;
+  optional double xy_resolution = 7;
+  optional double theta_resolution = 8;
+  optional double search_step = 9;
+  optional double kappa_slack_ratio = 10;
+  optional double forward_gear_weight = 11;
+  optional double backward_gear_weight = 12;
+  optional double gear_switch_weight = 13;
+  optional double steer_change_weight = 14;
+  optional double a_star_heuristic_weight = 15;
+  optional double rs_heuristic_weight = 16;
+  optional double a_star_vehicle_radius = 17;
+  optional double a_star_resolution = 18;
+  optional double spot_line_weight = 19;
+  optional double steer_weight = 20;
+  repeated double possible_steer_ratios = 21;
+  optional double a_star_distance_to_obstacle_weight = 22;
+  optional double a_star_distance_to_obstacle_scale = 23;
+}
+
+message GeometryMethodParamsProto {
+  optional double kappa_slack_ratio = 1;
+  optional double min_drive_distance = 2;
+  optional int64 parallel_parking_max_adjustments = 3;
+  optional int64 perpendicular_parking_max_adjustments = 4;
+  repeated double transition_pose_x_candidates = 5;
+  repeated double transition_pose_y_candidates = 6;
+  repeated double transition_pose_theta_rate_candidates = 7;
+  optional double forward_line_path_max_distance = 8;
+  optional double forward_line_path_distance_step = 9;
+  repeated double forward_circle_path_theta_candidates_pi = 10;
+  repeated double forward_circle_path_kappa_rate_candidates = 11;
+  optional double forward_perpendicular_drive_out_max_dist_buffer = 12;
+  optional double forward_perpendicular_drive_out_dist_step = 13;
+  optional double forward_perpendicular_adjust_max_dist = 14;
+  optional double forward_perpendicular_adjust_dist_step = 15;
+  optional int64 parallel_parking_out_max_adjustments = 16;
+  optional int64 perpendicular_parking_out_max_adjustments = 17;
+}
+
+message SqpSmootherParamsProto {
+  optional double weight_pos = 3;
+  optional double weight_theta = 4;
+  optional double weight_speed = 5;
+  optional double weight_acc = 6;
+  optional double weight_psi = 7;
+  optional double weight_kappa = 8;
+  optional double weight_slack_quadratic = 9;
+  optional double weight_slack_linear = 10;
+  message ModelInputProto {
+    optional double default_pos_velocity = 1;
+    optional double default_neg_velocity = 2;
+    optional double max_pos_velocity = 3;
+    optional double max_neg_velocity = 4;
+    optional double max_acc = 5;
+    optional double max_curvature_rate = 6;
+    optional double step_length = 7;
+    optional double kappa_slack_ratio = 8;
+  }
+  optional ModelInputProto model_params = 11;
+  reserved 1, 2;
+}
+
+message FreespacePathFinderParamsProto {
+  optional HybridAStarParamsProto hybrid_a_star_params = 1;
+  optional GeometryMethodParamsProto geometry_method_params = 2;
+  optional double region_half_width = 20;
+  optional double mirror_height_buffer = 3;
+  optional double object_lateral_buffer = 4;
+  optional double object_longitudinal_buffer = 5;
+  optional double curb_lateral_buffer = 6;
+  optional double curb_longitudinal_buffer = 7;
+  optional double barrier_lateral_buffer = 8;
+  optional double barrier_longitudinal_buffer = 9;
+  optional double solid_lane_lateral_buffer = 10;
+  optional double solid_lane_longitudinal_buffer = 11;
+  optional double spot_line_lateral_buffer = 12;
+  optional double spot_line_longitudinal_buffer = 13;
+  optional double parking_stopper_lateral_buffer = 14;
+  optional double parking_stopper_longitudinal_buffer = 15;
+  optional double near_spot_curb_lateral_buffer = 16;
+  optional double near_spot_curb_longitudinal_buffer = 17;
+  optional double virtual_boundary_lateral_buffer = 18;
+  optional double virtual_boundary_longitudinal_buffer = 19;
+
+  // Next ID 20.
+}
+
+message FreespaceLocalSmootherParamsProto {
+  optional double end_pose_deviation_cost_weight = 1;
+  optional double end_theta_deviation_cost_weight = 2;
+  optional double ref_path_deviation_cost_weight = 3;
+  optional double curvature_cost_weight = 4;
+  optional double curvature_rate_cost_weight = 5;
+  optional double intrinsic_jerk_cost_weight = 6;
+  optional double mirror_height_buffer = 7;
+  optional double object_cost_weight = 8;
+  optional double object_buffer = 9;
+  optional double curb_hard_cost_weight = 10;
+  optional double curb_hard_buffer = 11;
+  optional double curb_soft_cost_weight = 12;
+  optional double curb_soft_buffer = 13;
+  optional double barrier_cost_weight = 14;
+  optional double barrier_buffer = 15;
+  optional double solid_lane_cost_weight = 16;
+  optional double solid_lane_buffer = 17;
+  optional double crossable_lane_cost_weight = 18;
+  optional double crossable_lane_buffer = 19;
+  optional double spot_line_cost_weight = 20;
+  optional double spot_line_buffer = 21;
+  optional DdpOptimizerParamsProto optimizer_params = 22;
+  optional double near_spot_curb_buffer = 23;
+  optional double near_spot_curb_cost_weight = 24;
+  optional double virtual_boundary_buffer = 25;
+  optional double virtual_boundary_cost_weight = 26;
+}
+
+message FreespaceParamsProto {
+  optional FreespacePathFinderParamsProto path_finder_params = 1;
+  optional FreespaceLocalSmootherParamsProto local_smoother_params = 2;
+  optional SpeedFinderParamsProto speed_finder_params = 3;
+  optional MotionConstraintParamsProto motion_constraint_params = 4;
+  optional SqpSmootherParamsProto sqp_smoother_params = 5;
+}
+
+message TrajectoryOptimizerValidationParamsProto {
+  optional double max_final_cost = 1;
+  optional double max_lateral_acc = 2;
+  optional double max_lateral_jerk = 3;
+  optional double max_deceleration = 5;
+  optional double max_psi = 6;
+  optional double theta_diff = 7;
+  optional double min_jerk = 8;
+  optional double min_jerk_check_time = 9;
+  reserved 10, 11;
+}
+
+message TrajectoryOptimizerParamsProto {
+  optional TrajectoryOptimizerCostWeightParamsProto cost_weight_params = 1;
+  optional DdpOptimizerParamsProto optimizer_params = 2;
+  optional TrajectoryOptimizerCostConfigProto cost_config = 3;
+  optional TrajectorySmootherCostWeightParamsProto smoother_params = 4;
+  optional TrajectoryOptimizerValidationParamsProto
+      trajectory_optimizer_validation_params = 5;
+
+  // General settings.
+  optional int32 trajectory_steps = 6;
+  optional double trajectory_time_step = 7;  // In seconds.
+}
+
+message TrajectoryOptimizerCostConfigProto {
+  optional bool enable_regularizers_cost = 1;
+  optional bool enable_acceleration_and_jerk_cost = 2;
+  optional bool enable_curvature_cost = 3;
+  optional bool enable_forward_speed_cost = 4;
+  optional bool enable_immediate_future_cost = 5;
+  optional bool enable_speed_limit_cost = 6;
+  optional bool enable_object_cost = 8;
+  optional bool enable_reference_path_cost = 9;
+  optional bool enable_static_boundary_cost = 10;
+  optional bool enable_captain_reference_trajectory_cost = 11;
+  optional bool enable_reference_end_state_cost = 12;
+  reserved 7;
+}
+
+message MotionConstraintParamsProto {
+  // Default speed limit.
+  optional double default_speed_limit = 1;          // mph.
+  optional double default_reverse_speed_limit = 2;  // mph.
+  optional double max_deceleration = 3;             // m/s^2, negative value.
+  optional double max_acceleration = 4;             // m/s^2, positive value.
+  optional double max_decel_jerk = 5;               // m/s^3, negative value.
+  optional double max_accel_jerk = 6;               // m/s^3, positive value.
+  optional double max_psi = 7;                      // m^-1/s, positive value.
+  optional double max_lateral_accel = 8;            // m/s^2
+  optional double max_lateral_jerk = 9;             // m/s^3
+  optional double max_chi = 10;                     // m^-1/s^2, positive value.
+}
+
+message DecisionConstraintConfigProto {
+  optional bool enable_traffic_light = 1;
+  optional bool enable_crosswalk = 2;
+  optional bool enable_leading_object = 3;
+  optional bool enable_no_block = 5;
+  optional bool enable_end_of_path_boundary = 6;
+  optional bool enable_speed_bump = 7;
+  optional bool enable_cautious_brake = 9;
+  optional bool enable_lc_end_of_current_lane = 10;
+  optional bool enable_parking_brake_release = 11;
+  optional bool enable_pedestrians = 12;
+  optional bool enable_toll = 13;
+  optional bool enable_standstill = 15;
+  optional bool enable_beyond_length_along_route = 16;
+  optional bool enable_prepare_lc = 17;
+  optional bool enable_solid_line_within_boundary = 18;
+  optional bool enable_inferred_object = 19;
+  optional bool enable_stop_polyline = 20;
+  optional bool enable_force_stop = 21;
+  optional bool enable_stop_sign = 22;
+
+  reserved 4, 8, 14;
+}
+
+message FallbackPlannerParamsProto {
+  optional SpeedFinderParamsProto speed_finder_params = 1;
+}
+
+message PlannerFunctionsParamsProto {
+  optional bool enable_three_point_turn = 1;
+  optional bool enable_front_vehicle_alert = 2;
+}
+
+message AccTaskParamsProto {
+  optional SpeedFinderParamsProto speed_finder_params = 1;
+  optional MotionConstraintParamsProto motion_constraint_params = 2;
+  // From customer requirements.
+  optional AccReqParamsProto acc_req_params = 3;
+}
+
+message AlccTaskParamsProto {
+  // Est planner params.
+  optional SpeedFinderParamsProto speed_finder_params = 1;
+  optional TrajectoryOptimizerParamsProto trajectory_optimizer_params = 2;
+  optional DecisionConstraintConfigProto decision_constraint_config = 3;
+  optional planner.InitializerConfig initializer_params = 4;
+  optional MotionConstraintParamsProto motion_constraint_params = 5;
+  optional PlannerVehicleModelParamsProto vehicle_models_params = 6;
+  optional PlannerFunctionsParamsProto planner_functions_params = 7;
+  optional SpacetimePlannerObjectTrajectoriesParamsProto
+      spacetime_planner_object_trajectories_params = 8;
+  optional AlccReqParamsProto alcc_req_params = 9;
+
+  // Lane change style params.
+  optional SpeedFinderParamsProto speed_finder_lc_radical_params = 100;
+  optional SpeedFinderParamsProto speed_finder_lc_conservative_params = 101;
+
+  optional TrajectoryOptimizerParamsProto
+      trajectory_optimizer_lc_radical_params = 110;
+  optional TrajectoryOptimizerParamsProto
+      trajectory_optimizer_lc_normal_params = 111;
+  optional TrajectoryOptimizerParamsProto
+      trajectory_optimizer_lc_conservative_params = 112;
+}
+
+message NoaTaskParamsProto {
+  // From customer requirements.
+  optional NoaReqParamsProto noa_req_params = 1;
+}
+
+message SpacetimePlannerObjectTrajectoriesConfigProto {
+  optional bool enable_all_finder = 1;
+  optional bool enable_stationary_finder = 2;
+  optional bool enable_front_side_moving_finder = 3;
+  optional bool enable_dangerous_side_moving_finder = 4;
+  optional bool enable_front_moving_finder = 5;
+  optional bool enable_cutin_vehicle_filter = 6;
+  optional bool enable_crossing_filter = 7;
+  optional bool enable_reverse_vehicle_filter = 8;
+  optional bool enable_beyond_stop_line_filter = 9;
+  optional bool enable_drive_in_filter = 10;
+  optional bool enable_occluded_filter = 11;
+  optional bool enable_behavior_conflict_filter = 12;
+}
+
+message SpacetimePlannerObjectTrajectoriesParamsProto {
+  message CrossingFilterParamsProto {
+    repeated double theta_diff_thresholds = 1;
+    repeated double ratio_limits = 2;
+  }
+  optional SpacetimePlannerObjectTrajectoriesConfigProto
+      spacetime_planner_object_trajectories_config = 1;
+  optional CrossingFilterParamsProto crossing_filter_params = 2;
+}
+
+message PlannerParamsProto {
+  optional LaneChangeDecisionParamsProto lc_decision_params = 5;
+
+  optional EmergencyStopParamsProto emergency_stop_params = 7;
+
+  optional ReferencePathParamsProto reference_path_params = 10;
+
+  optional SpeedFinderParamsProto speed_finder_params = 11;
+
+  optional planner.InitializerConfig initializer_params = 15;
+
+  optional TrajectoryOptimizerParamsProto trajectory_optimizer_params = 16;
+
+  optional MotionConstraintParamsProto motion_constraint_params = 19;
+
+  optional DecisionConstraintConfigProto decision_constraint_config = 20;
+
+  optional planner.SelectorParamsProto selector_params = 21;
+
+  optional FallbackPlannerParamsProto fallback_planner_params = 23;
+
+  optional FreespaceParamsProto freespace_params_for_parking = 22;
+
+  optional FreespaceParamsProto freespace_params_for_driving = 24;
+
+  optional PlannerVehicleModelParamsProto vehicle_models_params = 26;
+
+  optional PlannerFunctionsParamsProto planner_functions_params = 27;
+
+  optional AccTaskParamsProto acc_params = 28;
+
+  optional NoaTaskParamsProto noa_params = 29;
+
+  optional AlccTaskParamsProto alcc_params = 30;
+
+  optional SpacetimePlannerObjectTrajectoriesParamsProto
+      spacetime_planner_object_trajectories_params = 31;
+
+  // Next ID: 33
+
+  // Style Settings
+  optional SpeedFinderParamsProto speed_finder_lc_radical_params = 100;
+  optional SpeedFinderParamsProto speed_finder_lc_conservative_params = 101;
+
+  optional TrajectoryOptimizerParamsProto
+      trajectory_optimizer_lc_radical_params = 110;
+  optional TrajectoryOptimizerParamsProto
+      trajectory_optimizer_lc_normal_params = 111;
+  optional TrajectoryOptimizerParamsProto
+      trajectory_optimizer_lc_conservative_params = 112;
+  // Next ID: 113
+
+  reserved 1 to 4, 6, 8, 9, 12 to 14, 17, 18, 25, 32;
+}
+
+// A mockup param proto only to support param-operating unit tests.
+message TestingPlannerParamsProto {
+  message SubProto {
+    optional double param1 = 1;
+    optional int32 param2 = 2;
+    repeated int32 param3 = 3;
+  }
+  optional double param1 = 1;
+  optional int32 param2 = 2;
+  repeated int32 param3 = 3;
+  optional SubProto param4 = 4;
+  optional SubProto param5 = 5;
+}
+
+// ACC task customer requirement params.
+message AccReqParamsProto {
+  // Seres ACC-134.
+  optional PiecewiseLinearFunctionDoubleProto max_acc_vel_plf = 1;
+  optional PiecewiseLinearFunctionDoubleProto max_jerk_vel_plf = 2;
+  optional PiecewiseLinearFunctionDoubleProto min_decel_vel_plf = 3;
+
+  // next id: 4.
+}
+
+message AlccReqParamsProto {
+  // Seres
+  optional PiecewiseLinearFunctionDoubleProto max_acc_vel_plf = 1;
+  optional PiecewiseLinearFunctionDoubleProto max_jerk_vel_plf = 2;
+  optional PiecewiseLinearFunctionDoubleProto min_decel_vel_plf = 3;
+  optional double follow_standstill_distance = 4;
+
+  // next id: 5.
+}
+
+message NoaReqParamsProto {
+  // Seres
+  optional PiecewiseLinearFunctionDoubleProto max_acc_vel_plf = 1;
+  optional PiecewiseLinearFunctionDoubleProto max_jerk_vel_plf = 2;
+  optional PiecewiseLinearFunctionDoubleProto min_decel_vel_plf = 3;
+  optional double follow_standstill_distance = 4;
+
+  // next id: 5.
+}

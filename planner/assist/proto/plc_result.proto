@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package qcraft.planner;
+
+option go_package = "qcraft-proto.ai/onboard/planner/assist/proto/plc_result";
+
+enum PlcInternalStatus {
+  OK = 1;
+  BRANCH_NOT_FOUND = 2;
+  BRANCH_FAILED_INTERNAL = 3;
+  SOLID_BOUNDARY = 4;
+  UNSAFE_OBJECT = 5;
+}

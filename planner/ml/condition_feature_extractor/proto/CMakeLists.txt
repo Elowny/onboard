@@ -1,0 +1,24 @@
+find_package(Protobuf REQUIRED)
+protobuf_generate_cpp(ONBOARD_PLANNER_ML_CONDITION_FEATURE_EXTRACTOR_PROTO_SRCS ONBOARD_PLANNER_ML_CONDITION_FEATURE_EXTRACTOR_PROTO_HDRS
+  condition_feature.proto
+)
+protobuf_generate_python(ONBOARD_PLANNER_ML_CONDITION_FEATURE_EXTRACTOR_PROTO_PY
+  condition_feature.proto
+)
+add_custom_target(onboard_planner_ml_condition_feature_extractor_proto_py_code ALL DEPENDS ${ONBOARD_PLANNER_ML_CONDITION_FEATURE_EXTRACTOR_PROTO_PY})
+set_target_properties(onboard_planner_ml_condition_feature_extractor_proto_py_code PROPERTIES FOLDER "OnBoard/Planner/Ml/ConditionFeatureExtractor/Proto")
+
+add_library(onboard_planner_ml_condition_feature_extractor_proto STATIC
+  ${ONBOARD_PLANNER_ML_CONDITION_FEATURE_EXTRACTOR_PROTO_SRCS}
+  ${ONBOARD_PLANNER_ML_CONDITION_FEATURE_EXTRACTOR_PROTO_HDRS}
+)
+set_target_properties(onboard_planner_ml_condition_feature_extractor_proto PROPERTIES FOLDER "OnBoard/Planner/Ml/ConditionFeatureExtractor/Proto")
+target_include_directories(onboard_planner_ml_condition_feature_extractor_proto SYSTEM PUBLIC
+  ${Protobuf_INCLUDE_DIRS}
+)
+target_link_directories(onboard_planner_ml_condition_feature_extractor_proto PUBLIC
+  ${Protobuf_LIBRARY_DIRS}
+)
+target_link_libraries(onboard_planner_ml_condition_feature_extractor_proto PUBLIC
+  ${Protobuf_LIBS}
+)

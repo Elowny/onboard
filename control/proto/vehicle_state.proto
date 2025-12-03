@@ -1,0 +1,48 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/control/proto/vehicle_state";
+
+import "onboard/proto/chassis.proto";
+import "onboard/proto/positioning.proto";
+import "onboard/proto/autonomy_state.proto";
+
+// Next id: 30
+message VehicleStateProto {
+  optional double x = 1;
+  optional double y = 2;
+  optional double z = 3;
+  optional double timestamp = 4;
+  optional double roll = 5;
+  optional double pitch = 6;
+  optional double yaw = 7;
+  optional double moving_direction = 28;
+  optional double kappa = 9;
+  optional double linear_velocity = 10;
+  optional double angular_velocity = 11;
+  optional double lateral_velocity = 27;
+  optional double linear_acceleration = 12;
+  optional Chassis.GearPosition gear = 13;
+  optional Chassis.DrivingMode driving_mode = 14;
+  optional PoseProto pose = 15;
+  optional double chassis_steering_percentage = 17;
+  optional double front_wheel_steering_angle = 18;
+  optional double chassis_steering_speed = 20;       // in rad/s;
+  optional double chassis_steering_torque = 21;      // in Nm.
+  optional double yaw_diff_wrt_localize_drift = 29;  // rad.
+
+  // AUTO_DRIVE || EMERGENCY_TO_STOP || REMOTE_ASSIST_AUTO_DRIVE
+  optional bool is_auto_mode = 19;
+
+  // AUTO_DRIVE || AUTO_STEER_ONLY || EMERGENCY_TO_STOP ||
+  // REMOTE_ASSIST_AUTO_DRIVE
+  optional bool is_auto_steer = 25;
+
+  // AUTO_DRIVE || AUTO_SPEED_ONLY || EMERGENCY_TO_STOP ||
+  // REMOTE_ASSIST_AUTO_DRIVE
+  optional bool is_auto_speed = 26;
+
+  optional AutonomyStateProto.State autonomy_state = 24;
+
+  reserved 8, 16, 22, 23;
+}

@@ -1,0 +1,82 @@
+name: "dojo.planner.isolated_behavior.semantic_map_modifier_2"
+edit_attr {
+  description: "Isolated behavior: modify semantic map lane speed limit"
+  labels { key: "PlannerCoverageCategory" value: "IsolatedBehavior" }
+  labels { key: "PlannerCoverageClass" value: "SemanticMapModifier" }
+  test_sets: "dojo"
+  test_sets: "planner_virtual_coverage"
+}
+execution {
+  sim_duration: 100
+  playback_sources { run_or_stf_path: "" }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 0.1
+          initial_pose {
+            pos_smooth { x: -88.3 y: -220 }
+            vel_body { x: 10 }
+            yaw: 0
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {}
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    synthesized_traffic_flow_module {
+      module: SYNTHESIZED_TRAFFIC_FLOW_MODULE
+      enable: true
+    }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+commandline_flags: "--map=dojo"
+commandline_flags: "--route_str=north_road_west1"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"
+commandline_flags: "--allow_routed_lane_change=1"
+commandline_flags: "--route_send_canvas=1"
+commandline_flags: "--planner_semantic_map_modifier=speed_limit_modifier{max_speed_limit:8.3 lane_id_modifier{lane_id:2323 override_speed_limit:16.7} lane_id_modifier{lane_id:2333 override_speed_limit:16.7} lane_id_modifier{lane_id:2340 override_speed_limit:30} lane_id_modifier{lane_id:2347 override_speed_limit:30.0} lane_id_modifier{lane_id:2347 override_speed_limit:30.0} region_modifier{region{points{longitude:0.0000405922464491 latitude:-0.0000256682444096 altitude:0} points{longitude:0.0000085014720551 latitude:-0.0000256471298001 altitude:0} points{longitude:0.0000084568831896 latitude:-0.0000259660037774 altitude:0} points{longitude:0.0000411239934563 latitude:-0.0000259970829936 altitude:0}} override_speed_limit:30.0}}"

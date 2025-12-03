@@ -1,0 +1,14 @@
+execution {
+  sim_modules {
+    vehicle_control_module {
+      module: VEHICLE_CONTROL_MODULE
+      instance_name: "VehicleControlModule"
+      enable: true
+    }
+  }
+  playback_sources {
+    run_or_stf_path: "/media/log_data/20190711_204623_Q0001/"
+    duration: 100.0
+    start_offset: 10.0
+  }
+}

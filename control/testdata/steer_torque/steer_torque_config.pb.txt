@@ -1,0 +1,71 @@
+steer_torque_pid {
+  speed: 0
+  angle_pid { kp: 0.3 ki: 0 kd: 0 max_integral: 3 min: -3 max: 3 }
+  speed_pid { kp: 0.1 ki: 0.0 kd: 0 max_integral: 3 min: -3 max: 3 }
+}
+steer_torque_pid {
+  speed: 5
+  angle_pid { kp: 0.5 ki: 0 kd: 0 max_integral: 3 min: -3 max: 3 }
+  speed_pid { kp: 0.1 ki: 0.0 kd: 0 max_integral: 3 min: -3 max: 3 }
+}
+steer_torque_pid {
+  speed: 10
+  angle_pid { kp: 1 ki: 0 kd: 0 max_integral: 3 min: -3 max: 3 }
+  speed_pid { kp: 0.1 ki: 0.0 kd: 0 max_integral: 3 min: -3 max: 3 }
+}
+steer_torque_pid {
+  speed: 20
+  angle_pid { kp: 2 ki: 0 kd: 0 max_integral: 2.5 min: -2.5 max: 2.5 }
+  speed_pid { kp: 0.2 ki: 0.0 kd: 0 max_integral: 2.5 min: -2.5 max: 2.5 }
+}
+steer_torque_pid {
+  speed: 30
+  angle_pid { kp: 2 ki: 0 kd: 0 max_integral: 2 min: -2 max: 2 }
+  speed_pid { kp: 0.2 ki: 0.0 kd: 0 max_integral: 2 min: -2 max: 2 }
+}
+
+steer_torque_table {
+  speed: 0
+  steer_stiffness_offset { steer_angle: 0.0 torque: 0.0 }
+  steer_stiffness_offset { steer_angle: 0.1 torque: 0.1 }
+  steer_stiffness_offset { steer_angle: 0.5 torque: 0.3 }
+  steer_stiffness_offset { steer_angle: 1.0 torque: 0.3 }
+}
+steer_torque_table {
+  speed: 5
+  steer_stiffness_offset { steer_angle: 0.0 torque: 0.0 }
+  steer_stiffness_offset { steer_angle: 0.1 torque: 0.1 }
+  steer_stiffness_offset { steer_angle: 0.5 torque: 0.3 }
+  steer_stiffness_offset { steer_angle: 1.0 torque: 0.3 }
+}
+steer_torque_table {
+  speed: 10
+  steer_stiffness_offset { steer_angle: 0.0 torque: 0.0 }
+  steer_stiffness_offset { steer_angle: 0.1 torque: 0.1 }
+  steer_stiffness_offset { steer_angle: 0.5 torque: 0.3 }
+  steer_stiffness_offset { steer_angle: 1.0 torque: 0.3 }
+}
+steer_torque_table {
+  speed: 20
+  steer_stiffness_offset { steer_angle: 0.0 torque: 0.0 }
+  steer_stiffness_offset { steer_angle: 0.1 torque: 0.2 }
+  steer_stiffness_offset { steer_angle: 0.5 torque: 0.3 }
+  steer_stiffness_offset { steer_angle: 1.0 torque: 0.3 }
+}
+steer_torque_table {
+  speed: 30
+  steer_stiffness_offset { steer_angle: 0.0 torque: 0.0 }
+  steer_stiffness_offset { steer_angle: 0.1 torque: 0.3 }
+  steer_stiffness_offset { steer_angle: 0.5 torque: 0.3 }
+  steer_stiffness_offset { steer_angle: 1.0 torque: 0.3 }
+}
+
+steer_torque_max { speed: 0 max_torque: 3 }
+steer_torque_max { speed: 10 max_torque: 3 }
+steer_torque_max { speed: 15 max_torque: 2.5 }
+steer_torque_max { speed: 30 max_torque: 2 }
+
+steer_torque_speed_max { speed: 0 max_torque_speed: 10 }
+steer_torque_speed_max { speed: 10 max_torque_speed: 5 }
+steer_torque_speed_max { speed: 15 max_torque_speed: 5 }
+steer_torque_speed_max { speed: 30 max_torque_speed: 3 }

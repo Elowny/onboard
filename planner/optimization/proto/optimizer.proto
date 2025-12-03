@@ -1,0 +1,114 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/optimization/proto/optimizer";
+
+import "google/protobuf/timestamp.proto";
+import "onboard/proto/trajectory_point.proto";
+import "onboard/math/geometry/proto/affine_transformation.proto";
+
+message TrajectoryOptimizerCost {
+  optional string name = 1;
+  optional double cost = 2;
+}
+message TrajectoryOptimizerCostInfo {
+  optional double cost = 1;
+  repeated TrajectoryOptimizerCost costs = 2;
+}
+
+message DdpOptimizerDebugProto {
+  // Initialization.
+  repeated TrajectoryPointProto init_traj_deprecated = 1;
+  repeated TrajectoryPointProto smooth_init_traj_deprecated = 2;
+  repeated PoseTrajectoryPointProto init_traj = 12;
+  repeated PoseTrajectoryPointProto solver_initial_trajectory = 13;
+  optional TrajectoryOptimizerCostInfo init_costs = 7;
+
+  // Results.
+  repeated TrajectoryPointProto final_traj = 3;
+  optional int64 num_iters = 4;
+  optional TrajectoryOptimizerCostInfo final_costs = 8;
+
+  // Intermediate results.
+  message Iteration {
+    repeated double line_search_alphas = 3;
+    repeated double line_search_costs = 4;
+    repeated int64 step_size_adjustment_ks = 7;
+    repeated double step_size_adjustment_costs = 8;
+    optional double final_cost = 5;
+    optional double js0 = 9;
+    reserved 1, 2, 6;
+  }
+  repeated Iteration iterations = 6;
+
+  message RunTimeProfile {
+    optional double solve_time = 1;
+    optional double add_cost_time = 2;
+  }
+  optional RunTimeProfile run_time_profile = 11;
+
+  enum SolverInitialTrajectorySource {
+    SMOOTHED_INITIALIZER = 0;
+    PREV_OPTIMIZATION = 1;
+  }
+  optional SolverInitialTrajectorySource solver_initial_trajectory_source = 14;
+
+  reserved 5, 9, 10;
+  // Next id: 15.
+}
+
+message IpoptSolverDebugProto {
+  // Initialization.
+  repeated TrajectoryPointProto init_traj = 1;  // Initializer trajectory.
+  repeated TrajectoryPointProto smooth_init_traj =
+      2;  // Smoothed initializer trajectory.
+  optional TrajectoryOptimizerCostInfo init_costs = 4;
+
+  // Results.
+  repeated TrajectoryPointProto final_traj = 6;
+  optional int64 num_iters = 7;
+  optional TrajectoryOptimizerCostInfo final_costs = 8;
+
+  // Intermediate results.
+  message Iteration {
+    repeated double final_xs = 1;
+    repeated double final_us = 2;
+    optional double final_cost = 3;
+    repeated TrajectoryOptimizerCost costs = 4;
+  }
+  repeated Iteration iterations = 9;
+  reserved 3, 5;
+}
+
+message TrajectoryOptimizerCompareProto {
+  optional DdpOptimizerDebugProto ddp = 1;
+  optional IpoptSolverDebugProto ipopt = 2;
+}
+
+message TrajectoryOptimizerDebugProto {
+  optional DdpOptimizerDebugProto ddp = 1;
+  message ObjectResponseProto {
+    optional string object_id = 1;
+    optional double cost = 2;
+    optional int64 peak_step = 3;
+    optional Vec2dProto peak_object_position = 4;
+    optional Vec2dProto peak_force_direction = 5;
+    optional string cost_name = 6;
+  }
+  repeated ObjectResponseProto object_responses = 4;
+  message SpeedLimitInfo {
+    repeated double s = 1;
+    repeated double v = 2;
+  }
+  optional SpeedLimitInfo speed_limit = 3;
+
+  // The Optimizer's trajectories start timestamp in seconds.
+  optional double trajectory_start_timestamp = 9;
+
+  reserved 2, 7, 8;
+}
+
+message TrajectoryOptimizerStateProto {
+  optional google.protobuf.Timestamp last_plan_start_time = 1;
+  repeated TrajectoryPointProto last_optimized_trajectory = 2;
+}

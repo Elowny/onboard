@@ -1,0 +1,69 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/planner/router/proto/route_params";
+
+message RouteMatchFilter {
+  optional double radius_error = 1;
+  optional double heading_error = 2;
+  optional bool motoway_only = 3;  // default true
+}
+
+message RouteMatchSort {
+  optional double dist_weight = 1;
+  optional double heading_weight = 2;  // rad diff
+  optional double non_motor_lane_cost = 3;
+  optional double virtual_lane_cost = 4;
+}
+
+enum RouteMatchType {
+  STATIONARY = 1;  // POI
+  VIA_POINT = 2;
+  DRIVING = 3;
+}
+
+message RouteMapMatchParam {
+  optional RouteMatchFilter filter = 1;
+  optional RouteMatchSort sorter = 2;
+  optional RouteMatchType match_type = 3;
+}
+
+message RouteBlacklistCostParam {
+  optional double base_cost = 1;
+  optional double cost_per_meters = 2;
+}
+
+message TurnCostParam {
+  optional double u_turn = 1;
+  optional double left_turn = 2;
+  optional double right_turn = 3;
+  optional double infeasible_u_turn = 4;
+}
+
+message RouteCostParam {
+  optional TurnCostParam turn_cost = 1;
+  optional RouteBlacklistCostParam blacklist = 2;
+  optional double lc_cost = 3;
+  optional double invalid_lc_cost = 4;
+  optional double match_point_coefficient = 5;
+  optional double passenger_vehicle_avoid_lane_cost = 6;
+}
+
+message RouteParamProto {
+  optional RouteMapMatchParam poi_match_param = 1;   // stop point
+  optional RouteMapMatchParam on_driving_param = 3;  // driving
+  optional RouteCostParam cost_param = 4;            // route search cost
+
+  // basic map param
+  optional double default_lane_width = 5;
+  optional double look_ahead_start_secs = 6;
+
+  optional double ignore_avoid_lane_length = 7;
+
+  optional string tencent_coord_converter_url = 8;
+
+  optional double speed_limit_look_ahead_time = 9;
+
+  // Next ID: 10.
+  reserved 2;
+}

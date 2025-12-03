@@ -1,0 +1,47 @@
+decision_constraint_config {
+  enable_prepare_lc: true
+  enable_stop_polyline: true
+}
+
+trajectory_optimizer_params {
+  cost_weight_params {
+    target_path_boundary_cost_params {
+      rear_path_boundary_cost_weight: 0.25
+      front_path_boundary_cost_weight: 0.05
+      left_path_boundary_cost_weight: 3.0
+      right_path_boundary_cost_weight: 3.0
+      buffer_min: -1.0
+      rear_buffer_max: 1.2
+      front_buffer_max: 0.6
+      decay_gain_look_ahead_time: 0.0
+      decay_gain: 1.0
+    }
+  }
+}
+
+speed_finder_params {
+  close_object_params { enable_stationary_close_object_slowdown: false }
+  speed_optimizer_params {
+    time_gain_for_moving_object: 1.4
+    time_gain_for_moving_object: 0.7
+    time_gain_for_moving_object: 0.2
+  }
+  ignore_decider_params {
+    ignore_oncoming_objects_not_on_path: true
+    ignore_objects_out_of_lateral_bound: true
+  }
+
+  st_boundary_pre_modifier_params {
+    oncoming_nudge_max_lat_acc: 2.0
+    oncoming_nudge_max_lat_jerk: 2.0
+    oncoming_nudge_max_kappa: 0.1
+    oncoming_uncomfortable_decel: 0.5
+  }
+}
+
+alcc_req_params {
+  max_acc_vel_plf { x: 5.0 x: 20.0 y: 4.0 y: 2.0 }
+  max_jerk_vel_plf { x: 5.0 x: 20.0 y: 5.0 y: 2.5 }
+  min_decel_vel_plf { x: 5.0 x: 20.0 y: -5.0 y: -3.5 }
+  follow_standstill_distance: 3.5
+}

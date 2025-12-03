@@ -1,0 +1,208 @@
+name: "dojo.planner.acc.lead_brake_12"
+edit_attr {
+  description: "ACC: stably following a vehicle at 65km/h and the lead suddenly brakes at -8m/s^2 to a full stop (stopping distance: 20.25m)."
+  labels { key: "PlannerCoverageCategory" value: "ACC" }
+  labels { key: "PlannerCoverageClass" value: "LeadBrake" }
+  test_sets: "dojo"
+  test_sets: "planner_virtual_coverage"
+}
+execution {
+  sim_duration: 30
+  playback_sources { run_or_stf_path: "" }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 1
+          initial_pose {
+            pos_smooth { x: -82.5 y: 210 }
+            vel_body { x: 18 y: 0 }
+            accel_body { x: 0 y: 0 }
+            yaw: 0
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            virtual_perception_object {
+              id: "Agent0"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2
+              parked: false
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 0 y: 210 }
+                t: 0
+                v: 18
+                z: 0
+              }
+              waypoints {
+                pos { x: 180 y: 210 }
+                t: 10
+                v: 18
+                z: 0
+              }
+              waypoints {
+                pos { x: 184.25 y: 210 }
+                t: 10.25
+                v: 16
+                z: 0
+              }
+              waypoints {
+                pos { x: 188 y: 210 }
+                t: 10.5
+                v: 14
+                z: 0
+              }
+              waypoints {
+                pos { x: 191.25 y: 210 }
+                t: 10.75
+                v: 12
+                z: 0
+              }
+              waypoints {
+                pos { x: 194 y: 210 }
+                t: 11
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: 196.25 y: 210 }
+                t: 11.25
+                v: 8
+                z: 0
+              }
+              waypoints {
+                pos { x: 198 y: 210 }
+                t: 11.5
+                v: 6
+                z: 0
+              }
+              waypoints {
+                pos { x: 199.25 y: 210 }
+                t: 11.75
+                v: 4
+                z: 0
+              }
+              waypoints {
+                pos { x: 200 y: 210 }
+                t: 12
+                v: 2
+                z: 0
+              }
+              waypoints {
+                pos { x: 200.25 y: 210 }
+                t: 12.25
+                v: 0
+                z: 0
+              }
+              waypoints {
+                pos { x: 200.2501 y: 210 }
+                t: 30
+                v: 0
+                z: 0
+              }
+            }
+            start_sec: 0
+          }
+        }
+      }
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "trajectory_validation_metric"
+  trajectory_validation_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+metrics {
+  name: "speed_range_metric"
+  speed_range_metric { prohibited_speed_ranges { min_speed: 0.1 min_time: 25 } }
+}
+metrics {
+  name: "prohibited_destination_metric"
+  prohibited_destination_metric {
+    regions {
+      destination {
+        uuid: "{049d2a20-9c40-4ead-af00-729894a339dd}"
+        points { x: 630 y: 208.2 }
+        points { x: -420 y: 208.2 }
+        points { x: -420 y: 198.2 }
+        points { x: 630 y: 198.2 }
+      }
+      approach: CAR_CONTOUR
+    }
+    regions {
+      destination {
+        uuid: "{b470050a-3ab8-4755-a050-4fa89f807e81}"
+        points { x: -420 y: 211.8 }
+        points { x: 630 y: 211.8 }
+        points { x: 630 y: 221.8 }
+        points { x: -420 y: 221.8 }
+      }
+      approach: CAR_CONTOUR
+    }
+  }
+}
+metrics {
+  name: "lane_boundary_proximity_metric"
+  lane_boundary_proximity_metric {
+    buffer: 0.2
+    types: SOLID_DOUBLE_YELLOW
+    types: SOLID_YELLOW
+    types: BROKEN_YELLOW
+    types: SOLID_WHITE
+    types: BROKEN_WHITE
+    types: CURB
+  }
+}
+commandline_flags: "--map=dojo"
+commandline_flags: "--route_str=hw_e2_end"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"

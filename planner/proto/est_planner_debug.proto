@@ -1,0 +1,41 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/proto/est_planner_debug";
+
+import "onboard/planner/proto/trajectory_validation.proto";
+import "onboard/planner/initializer/proto/initializer.proto";
+import "onboard/planner/speed/proto/speed_finder.proto";
+import "onboard/planner/scheduler/proto/scheduler.proto";
+import "onboard/proto/turn_signal.proto";
+import "onboard/proto/trajectory_point.proto";
+import "onboard/planner/decision/proto/constraint.proto";
+import "onboard/planner/optimization/proto/optimizer.proto";
+import "onboard/planner/object/proto/planner_object.proto";
+import "onboard/planner/common/proto/planner_status.proto";
+import "onboard/planner/ml/captain_net/proto/captain_net_debug.proto";
+import "onboard/planner/common/proto/lane_change_safety.proto";
+
+// Next ID: 17
+message EstPlannerDebugProto {
+  optional TurnSignalReason turn_signal_reason_enum = 1;
+
+  optional FilteredTrajectories filtered = 3;
+  optional SpacetimePlannerObjectTrajectoriesProto
+      st_planner_object_trajectories = 4;
+
+  optional SchedulerOutputProto scheduler = 12;
+  optional ConstraintProto constraint = 6;
+  optional InitializerDebugProto initializer = 7;
+  optional TrajectoryOptimizerDebugProto trajectory_optimizer = 8;
+  repeated PathPoint st_path_points = 15;
+  optional ml.CapnetTrajectoryDebugProto capnet_traj = 16;
+  optional SpeedFinderDebugProto speed_finder = 9;
+  optional TrajectoryValidationResultProto traj_validation = 10;
+  optional LaneChangeSafetyDebugProto lane_change_safety_debug_proto = 17;
+
+  optional PlannerStatusProto planner_status = 11;
+
+  // Next ID: 18.
+  reserved 2, 5, 13, 14;
+}

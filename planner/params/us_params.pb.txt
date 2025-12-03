@@ -1,0 +1,47 @@
+# Params applicable to passenger cars in US Suburban environments.
+
+decision_constraint_config {
+  enable_traffic_light: true
+  enable_crosswalk: true
+  enable_leading_object: true
+  enable_no_block: true
+  enable_speed_bump: true
+  enable_stop_sign: true
+}
+
+speed_finder_params {
+  speed_optimizer_params {
+    s_kernel_weight: 0.0001
+    speed_kernel_weight: 1.0
+    accel_kernel_weight: 20.0
+    jerk_kernel_weight: 50.0
+  }
+}
+
+trajectory_optimizer_params {
+  cost_weight_params {
+    longitudinal_acceleration_cost_params {
+      accel_cascade { buffer: 0.0 gain: 20.0 }
+    }
+    lateral_acceleration_cost_weight: 0.5
+    under_speed_gain_compensation_plf {
+      x: 0.0
+      x: 10.0
+      x: 20.0
+      y: 12.0
+      y: 5.0
+      y: 1.0
+    }
+  }
+}
+
+fallback_planner_params {
+  speed_finder_params {
+    speed_optimizer_params {
+      s_kernel_weight: 0.0001
+      speed_kernel_weight: 1.0
+      accel_kernel_weight: 20.0
+      jerk_kernel_weight: 50.0
+    }
+  }
+}

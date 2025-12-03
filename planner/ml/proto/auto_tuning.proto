@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/ml/proto/auto_tuning";
+
+message FeatureAttributeProto {
+  optional string feature = 1;
+  optional string attribute = 2;
+}
+
+message FeatureWeightProto {
+  optional string feature = 1;
+  optional double weight = 2 [default = 0.0];
+}
+
+message AutoTuningParamsProto {
+  repeated FeatureAttributeProto selected_feature_attributes = 1;
+  repeated FeatureAttributeProto ignored_feature_attributes = 2;
+  // The feature in FeatureWeightProto of fixed_feature_weights need to be the
+  // actual attributes type string, just like the attribute in
+  // FeatureAttributeProto. Ex: control_regularization_coeffs.multiplier
+  repeated FeatureWeightProto fixed_feature_weights = 3;
+}

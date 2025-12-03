@@ -1,0 +1,129 @@
+name: "dojo.planner.acc.stable_following_6"
+edit_attr {
+  description: "ACC: following a vehicle through a curved lane."
+  labels { key: "PlannerCoverageCategory" value: "ACC" }
+  labels { key: "PlannerCoverageClass" value: "StableFollowing" }
+  test_sets: "dojo"
+  test_sets: "planner_virtual_coverage"
+}
+execution {
+  sim_duration: 30
+  playback_sources { run_or_stf_path: "" }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 1
+          initial_pose {
+            pos_smooth { x: -10.5 y: 21 }
+            vel_body { x: 5 y: 0 }
+            accel_body { x: 0 y: 0 }
+            yaw: 1.570797
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            virtual_perception_object {
+              id: "AccAgent0"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2
+            }
+            start_sec: 0
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  route_proto {
+                    lane_ids: 11
+                    lane_ids: 83
+                    lane_ids: 14
+                    lane_ids: 59
+                    start_fraction: 0.7
+                    end_fraction: 1
+                  }
+                  init_speed: 5
+                  speed_limit: 2
+                }
+              }
+            }
+          }
+          sim_world_conf {
+            tl_control {
+              tl_periods {
+                state {
+                  traffic_light_id: 905
+                  color: TL_GREEN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+            }
+            publish_tl_states: true
+          }
+        }
+      }
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "trajectory_validation_metric"
+  trajectory_validation_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+metrics {
+  name: "speed_range_metric"
+  speed_range_metric {
+    prohibited_speed_ranges { max_speed: 1.5 min_time: 25 }
+    prohibited_speed_ranges { min_speed: 2.5 min_time: 25 }
+  }
+}
+commandline_flags: "--map=dojo"
+commandline_flags: "--route_str=a9_e2_end"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"

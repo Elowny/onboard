@@ -1,0 +1,6 @@
+lane_ids: 227
+lane_ids: 229
+lane_ids: 339
+lane_ids: 340
+start_fraction: 0.6
+end_fraction: 0.5

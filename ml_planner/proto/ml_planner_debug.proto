@@ -1,0 +1,30 @@
+syntax = "proto2";
+package qcraft.mlplanner;
+option go_package = "qcraft-proto.ai/onboard/ml_planner/proto/ml_planner_debug";
+
+import "onboard/lite/proto/lite_common.proto";
+import "onboard/ml_planner/proto/captain_net_output.proto";
+import "onboard/proto/trajectory_point.proto";
+import "onboard/maps/proto/lane_path.proto";
+
+message CaptainNetTrajectoryDebugProto {
+  optional CaptainNetTrajectoryProto trajectory = 1;
+  repeated ApolloTrajectoryPointProto ml_planner_module_vis_trajectory = 2;
+}
+
+message MultimodeCaptainNetTrajectoryDebugProto {
+  repeated CaptainNetTrajectoryDebugProto multimode_trajectory_debug = 1;
+  optional mapping.LanePathProto lane_path = 2;
+}
+
+message CaptainNetDebugProto {
+  repeated MultimodeCaptainNetTrajectoryDebugProto
+      multi_condition_trajectory_debug = 1;
+  repeated mapping.LanePathProto all_feasible_lane_path = 2;
+}
+
+message MlPlannerDebugProto {
+  optional LiteHeader header = 1;
+
+  optional CaptainNetDebugProto captain_net_debug = 2;
+}

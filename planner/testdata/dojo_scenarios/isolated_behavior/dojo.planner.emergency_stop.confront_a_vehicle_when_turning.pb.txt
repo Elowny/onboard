@@ -1,0 +1,102 @@
+name: "dojo.planner.emergency_stop.confront_a_vehicle_when_turning"
+edit_attr {
+  description: "Emergency stop: confront a vehicle when turning."
+  labels { key: "PlannerCoverageCategory" value: "IsolatedBehavior" }
+  labels { key: "PlannerCoverageClass" value: "StartingFromStandstill" }
+  test_sets: "dojo"
+  test_sets: "planner_virtual_coverage"
+}
+execution {
+  playback_sources { run_or_stf_path: "" duration: 15 start_offset: 0 }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 1
+          initial_pose {
+            pos_smooth { x: 10 y: 79.5 }
+            vel_body { x: 0 y: 0 }
+            accel_body { x: 0 y: 0 }
+            yaw: 3.141593
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            virtual_perception_object {
+              id: "Phantom 1"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2
+              parked: false
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: -23 y: 66 }
+                t: 9
+                v: 0
+                z: 0
+              }
+              waypoints {
+                pos { x: -23.12 y: 65.78 }
+                t: 15
+                v: 0
+                z: 0
+              }
+            }
+            start_sec: 9
+          }
+        }
+      }
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+commandline_flags: "--map=dojo"
+commandline_flags: "--route_str=6b_s3"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"

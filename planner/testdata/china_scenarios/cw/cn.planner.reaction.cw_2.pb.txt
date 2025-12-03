@@ -1,0 +1,67 @@
+name: "test.pb.txt"
+commandline_flags: "--route=destinations{lane_point{lane_id:1564 fraction:1.0}}"
+commandline_flags: "--map=futian"
+
+edit_attr { description: "" }
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/s3/run_data/20200724_144610_Q2001"
+    duration: 50
+    start_offset: 428
+  }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    routing_module { module: ROUTING_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] { engage_start_time: 1 }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: false
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            start_sec: 1
+            fixed_route_virtual_object {
+              duration: 30
+              waypoints {
+                pos { x: 5029.46 y: 13713.67 }
+                t: 0.0
+                v: 0
+                z: 0
+              }
+
+            }
+            virtual_perception_object {
+              id: "virtual_object_001"
+              type: OT_UNKNOWN_STATIC
+              length: 1.0
+              width: 1.0
+            }
+          }
+        }
+      }
+    }
+  }
+  modifiers {
+    name: "remove_objects_modifier"
+    remove_objects_modifier {}
+  }
+}

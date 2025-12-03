@@ -1,0 +1,317 @@
+
+syntax = "proto2";
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/initializer/proto/initializer";
+
+import "onboard/math/geometry/proto/affine_transformation.proto";
+import "onboard/planner/decision/proto/constraint.proto";
+import "onboard/proto/trajectory_point.proto";
+
+message MotionStateProto {
+  optional double x = 1;
+  optional double y = 2;
+  optional double h = 3;              // heading.
+  optional double k = 4;              // curvature.
+  optional double t = 5;              // time.
+  optional double v = 6;              // velocity.
+  optional double a = 7;              // acceleration.
+  optional double accumulated_s = 8;  // accumulated s.
+  optional double s = 9;
+  optional double l = 10;
+  optional double dl =
+      11;  // dl/dt, can be considered as lateral speed in frenet frame.
+  optional double ddl =
+      12;  // ddl/dt^2, can be considered as lateral acc in frenet frame.
+  optional double dddl =
+      13;  // dddl/dt^3, can be considered as lateral jerk in frenet frame.
+}
+
+message MotionGraphProto {
+  message MotionNode {
+    optional int32 index = 1;
+    optional MotionStateProto state = 2;
+  }
+  message MotionEdge {
+    optional int32 start_node_index = 1;
+    optional int32 end_node_index = 2;
+    optional int32 prev_edge_index = 3;
+  }
+
+  repeated MotionNode nodes = 1;
+  repeated MotionEdge edges = 2;
+}
+
+message AstarGraphProto {
+  message AstarNode {
+    optional MotionStateProto state = 1;
+    optional bool visited = 2;
+    optional double cum_cost_g = 3;
+    optional double cost_h = 4;
+    repeated string feature_costs = 5;
+    optional int32 node_index = 6;
+    optional int32 parent_index = 7;
+  }
+  message AstarEdge {
+    repeated MotionStateProto states = 1;
+    optional bool visited = 2;
+  }
+  message AstarTrajectory {
+    repeated AstarNode nodes = 1;
+    repeated AstarEdge edges = 2;
+  }
+  repeated AstarNode nodes = 1;
+  repeated AstarEdge edges = 2;
+  optional AstarTrajectory trajectory = 3;
+  optional int32 end_node_index = 4;
+}
+
+message MotionSearchDebugProto {
+  repeated string cost_names = 1;
+
+  optional MotionGraphProto motion_graph = 2;
+
+  optional AstarGraphProto astar_graph = 6;
+
+  message MotionEdgeCost {
+    repeated double costs = 1;  // Same size with cost_names
+    optional double cum_cost = 2;
+  }
+  // Same size with motion_graph's edges
+  repeated MotionEdgeCost edge_costs = 3;
+
+  optional int32 best_last_edge_index = 4;
+
+  message TrajectoryInfo {
+    repeated double costs = 1;  // Same size with cost_names
+    optional double total_cost = 2;
+    optional int32 last_edge_idx = 3;
+    repeated PoseTrajectoryPointProto traj_points = 4;
+  }
+  repeated TrajectoryInfo top_k_trajs = 5;
+}
+
+message MultiTrajDebugProto {
+  message IgnoredObjectTrajectoryProto {
+    optional string traj_id = 1;
+    optional int32 time_idx = 2;
+    optional int32 collision_config = 3;
+  }
+  message TrajectoryCandidate {
+    repeated PoseTrajectoryPointProto traj_points = 1;
+    repeated string leading_traj_ids = 2;
+    optional double total_cost = 3;
+    repeated IgnoredObjectTrajectoryProto ignored_trajs = 4;
+  }
+  repeated TrajectoryCandidate multi_traj_candidates = 1;
+}
+
+message ExpertEvaluationProto {
+  repeated string cost_names = 1;  // feature costs' name
+  repeated double costs = 2;       // unweighted, same size with cost_names
+  optional double total_cost =
+      3;  // with weighted defined by onboard initializer's config
+  optional InitializerResultTrajectoryProto trajectory = 4;
+  repeated double weights = 5;
+  message IsFilteredReasons {
+    optional bool is_out_of_bound = 1 [default = false];
+    optional bool is_violating_stop_constraint = 2 [default = false];
+    optional bool is_dynamic_collision = 3 [default = false];
+    optional bool is_violating_leading_objects = 4 [default = false];
+  }
+  optional IsFilteredReasons is_filtered_reasons = 100;
+}
+
+message SampledDpMotionEvaluationProto {
+  repeated string cost_names = 1;  // feature costs' name
+
+  message TrajectoryCost {
+    repeated double costs = 1;  // unweighted, same size with cost_names
+    optional double total_cost =
+        2;  // with weighted defined by onboard initializer's config
+  }
+
+  repeated InitializerResultTrajectoryProto trajectory = 2;
+  repeated TrajectoryCost traj_costs =
+      3;  // Same size with considered_trajectories with weighted defined by
+          // onboard initializer's config
+
+  optional double min_cost = 4;
+  repeated double weights = 5;
+}
+
+message GeometryGraphDebugProto {
+  message ConnectionProcess {
+    message GraphNode {
+      optional int32 layer_index = 1;
+      optional int32 node_on_layer_index = 2;
+      optional int32 station_index = 3;
+    }
+
+    enum ConnectionResult {
+      SUCCESS = 1;
+      OMIT_TOO_SHORT = 2;
+      OMIT_LATERAL_OFFSET = 3;
+      OMIT_NOT_CONVERGE_TO_CENTER = 4;
+      FAIL_NO_POLY = 5;
+      COLLIDE_TRUNCATE = 6;
+      COLLIDE_NO_EDGE = 7;
+      FAIL_CURB_COLLISION = 8;
+      FAIL_INVALID_CURVATURE = 9;
+      NOT_SET = 10;
+    }
+
+    message CollisionInfo {
+      // Size of collision_accum_s and collide_obj_id should be the same.
+      repeated double collision_accum_s = 1;
+      repeated string collide_obj_id = 2;
+    }
+
+    // Show the whole process of geometry graph connection
+    optional GraphNode start = 1;
+    optional GraphNode end = 2;
+    optional ConnectionResult connection_result = 3;
+    optional CollisionInfo collision_info = 4;
+  }
+
+  message ResampleResult {
+    enum ResampleReason {
+      RESAMPLED = 1;
+      NR_ZERO_REACHABLE = 2;
+      NR_ALL_REACHABLE = 3;
+      NR_INVALID_RANGE = 4;
+      NR_LATERAL_RESOLUTION = 5;
+      NOT_INITIALIZED = 6;
+    }
+    optional int32 layer_idx = 1;
+    optional ResampleReason resample_reason = 2;
+  }
+
+  repeated ConnectionProcess connection_process = 1;
+  repeated ResampleResult resample_result = 2;
+
+  // Give collisiont traj id and how many edges have collided with this object
+  // (static).
+  message StaticCollision {
+    optional string collision_traj_id = 1;
+    optional int32 number = 2;
+  }
+  repeated StaticCollision static_collision = 3;
+}
+
+message GeometryGraphProto {
+  message GeometryState {
+    optional double x = 1;
+    optional double y = 2;
+    optional double h = 3;
+    optional double k = 4;
+  }
+  message GeometryNode {
+    optional double x = 1;
+    optional double y = 2;
+    optional uint32 station_index = 3;
+    optional uint32 node_index = 4;
+    optional bool active = 5;
+    optional bool resampled = 6;
+    optional bool reachable = 7;
+  }
+  message GeometryEdge {
+    optional uint32 start_node_index = 1;
+    optional uint32 end_node_index = 2;
+    repeated GeometryState states = 3;
+    optional bool active = 4;
+    optional bool truncated = 5;
+  }
+  message OutgoingEdges {
+    repeated int32 outgoing_edge_index = 1;
+  }
+  enum EndReason {
+    END_NONE = 0;
+    END_REACH_MAX_SAMPLING_DIS = 1;
+    END_STOP_LINE = 2;
+    END_STATIC_LEADING_OBJ = 3;
+    END_STATIC_OBJ = 4;
+  }
+  message EndInfo {
+    optional EndReason end_reason = 1;
+    optional string object_id = 2;
+    optional double end_route_s = 3;
+    optional double end_accumulated_s = 4;
+  }
+
+  message ReferenceLine {
+    message EdgeCost {
+      optional int32 edge_idx = 1;
+      repeated double feature_costs = 2;
+      optional double total_cost = 3;
+    }
+    repeated int32 node_idxes = 1;
+    repeated int32 edge_idxes = 2;
+    repeated Vec2dProto ref_line_points = 8;
+    repeated string cost_names = 4;
+    optional double total_cost = 5;
+    repeated double feature_costs = 6;
+    repeated EdgeCost edge_costs = 7;
+
+    reserved 3;
+  }
+
+  repeated GeometryNode nodes = 1;
+  repeated GeometryEdge edges = 2;
+  repeated OutgoingEdges outgoing_edges =
+      3;  // Should be the same size with edges.
+  optional EndInfo end_info = 4;
+  repeated Vec2dProto smoothed_drive_passage = 6;
+  optional ReferenceLine reference_line = 5;
+
+  // Next id: 7.
+}
+
+message InitializerResultTrajectoryProto {
+  repeated ApolloTrajectoryPointProto trajectory_points = 1;
+}
+
+message InitializerDebugProto {
+  optional GeometryGraphProto geom_graph = 1;
+  optional GeometryGraphDebugProto geometry_graph_debug = 6;
+
+  // Debug info on the best trajectory of multiple trajectories.
+  optional MotionSearchDebugProto motion_search_debug = 13;
+  // Debug info on every trajectory of multiple trajectories.
+  optional MultiTrajDebugProto multi_traj_debug = 14;
+
+  // The initializer's trajectories start timestamp in seconds.
+  optional double trajectory_start_timestamp = 9;
+
+  optional InitializerResultTrajectoryProto resampled_trajectory = 3;
+  repeated ConstraintProto.LeadingObjectProto leading_objects = 10;
+  repeated string follower_objects = 15;
+  optional bool lc_pause = 12 [default = false];
+  enum SearchAlgorithm {
+    DP = 1;
+    ASTAR = 2;
+  }
+  optional SearchAlgorithm search_algorithm = 16;
+
+  // Next ID: 17.
+  reserved 2, 4, 5, 7, 8, 11;
+
+  // For data dumping
+  optional ExpertEvaluationProto expert_evaluation = 100;
+  optional SampledDpMotionEvaluationProto candidates_evaluation = 101;
+}
+
+enum InitializerSamplePatternConfig {
+  ISC_NONE = 0;
+  ISC_HIGH_SPEED = 1;    // > 14.0 m/s.
+  ISC_MEDIUM_SPEED = 2;  // 8.0 ~ 14.0 m/s.
+  ISC_LOW_SPEED = 3;     // 2.0 ~ 8.0 m/s.
+  ISC_CREEP_SPEED = 4;   // < 2.0 m/s.
+}
+
+message InitializerStateProto {
+  optional InitializerSamplePatternConfig sample_pattern_config = 1;
+  optional double s_from_start = 4;
+  optional ApolloTrajectoryPointProto prev_start_point = 5;
+
+  reserved 2, 3;
+}

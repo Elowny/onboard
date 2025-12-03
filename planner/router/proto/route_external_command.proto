@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/router/proto/route_external_command";
+
+enum ExternalRouterCommand {
+  NONE = 0;
+  INPLACE_REROUTE = 1;
+  ANOTHER_ROUTE = 2;
+  SWITCH_ROUTE = 3;
+}

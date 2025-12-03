@@ -1,0 +1,144 @@
+cost_weight_params {
+  state_regularization_coeffs {
+    multiplier: 1e-05
+    w: 1.0
+    w: 1.0
+    w: 1.0
+    w: 1.0
+    w: 1.0
+    w: 1.0
+    w: 1.0
+    w: 1.0
+  }
+  control_regularization_coeffs { multiplier: 1e-05 w: 1.0 w: 1.0 }
+  longitudinal_acceleration_cost_weight: 43.2126200199127
+  longitudinal_acceleration_cost_params {
+    accel_cascade { buffer: 0.0 gain: 8.0 }
+    accel_cascade { buffer: 0.8 gain: 80.0 }
+    decel_cascade { buffer: 0.0 gain: 5.0 }
+    decel_cascade { buffer: -1.0 gain: 20.0 }
+    decel_cascade { buffer: -1.5 gain: 50.0 }
+    decel_cascade { buffer: -2.0 gain: 300.0 }
+  }
+  lateral_acceleration_cost_weight: 1.6766724875196815
+  intrinsic_jerk_cost_weight: 6.031153257936239
+  lateral_jerk_cost_weight: 1.3102212687954307
+  curvature_cost_weight: 153.69665622711182
+  curvature_cost_params { curvature_cascade { buffer: 0.0 gain: 1.0 } }
+  curvature_rate_cost_weight: 0.5152016528882086
+  curvature_rate_cost_params {
+    curvature_rate_cascade { buffer: 0.0 gain: 1.0 }
+  }
+  forward_speed_cost_weight: 2.967882202938199
+  immediate_future_cost_weight: 10.431256145238876
+  immediate_future_cost_params {
+    lon_weight_plf {
+      x: 0.0
+      x: 0.1
+      x: 0.3
+      x: 0.5
+      x: 0.7
+      x: 1.0
+      x: 1.5
+      x: 2.0
+      x: 5.0
+      x: 10.0
+      y: 1.0
+      y: 0.8
+      y: 0.6
+      y: 0.5
+      y: 0.4
+      y: 0.3
+      y: 0.2
+      y: 0.15
+      y: 0.1
+      y: 0.0
+    }
+    lat_weight_decay_time_distance: 4.0
+  }
+  object_cost_params {
+    nudge_front_buffer_object_speed_plf { x: 0.0 x: 20.0 y: 1.0 y: 1.4 }
+    nudge_buffer_gain_object_speed_diff_plf { x: 0.0 x: 15.0 y: 1.0 y: 0.3 }
+    object_a_cost_weight: 52.0
+    object_b_cost_weight: 102.3922935128
+  }
+  acc_static_object_standoff: 7.0
+  speed_limit_cost_weight: 43.2
+  static_boundary_soft_cost_weight: 5.1827171547338367
+  static_boundary_hard_cost_weight: 10.252609848976135
+  reference_path_cost_weight {
+    path_gain: 0.6565046962350607
+    end_state_gain: 5.0
+    reference_path_cost_weight: 1.0
+  }
+  reference_heading_cost_weight: 0.5361273651942611
+  curvature_rate_rate_cost_weight: 0.772748317103833
+  curvature_deviation_immediate_future_cost_weight: 0.7508405833505094
+  reference_state_deviation_end_attraction_cost_weight: 0.1
+  left_static_boundary_cost_weight: 1.0
+  right_static_boundary_cost_weight: 1.0
+  object_cost_weight: 1.0
+  path_boundary_cost_params {
+    rear_path_boundary_cost_weight: 1.0
+    front_path_boundary_cost_weight: 0.5
+    left_path_boundary_cost_weight: 25.634583085775375
+    right_path_boundary_cost_weight: 25.638019666075706
+    buffer_min: 0.15
+    rear_buffer_max: 0.15
+    front_buffer_max: 0.15
+  }
+  target_path_boundary_cost_params {
+    rear_path_boundary_cost_weight: 0.25
+    front_path_boundary_cost_weight: 0.05
+    left_path_boundary_cost_weight: 0.8460149401798844
+    right_path_boundary_cost_weight: 0.9624093654565513
+    buffer_min: -1.0
+    rear_buffer_max: 1.2
+    front_buffer_max: 0.6
+  }
+  intrinsic_lateral_snap_weight: 3.607874969020486
+  acc_standstill_standoff: 4.0
+  msd_static_boundary_cost_weight: 1.0
+}
+optimizer_params {
+  line_search_min_alpha: 0.001
+  convergence_tolerance_dx: 1e-04
+  convergence_tolerance_du: 1e-04
+  convergence_tolerance_dcost: 1e-04
+  enable_stepsize_after_line_search: true
+  max_iters: 50
+  enable_adaptive_alpha: true
+}
+cost_config {
+  enable_regularizers_cost: true
+  enable_acceleration_and_jerk_cost: true
+  enable_curvature_cost: true
+  enable_forward_speed_cost: true
+  enable_immediate_future_cost: true
+  enable_speed_limit_cost: true
+  enable_object_cost: true
+  enable_reference_path_cost: true
+  enable_static_boundary_cost: true
+}
+smoother_params {
+  scale: 1.0
+  state_deviation_gain: 1e-07
+  end_pose_deviation_gain: 20.0
+  end_heading_deviation_gain: 10.0
+  v_deviation_gain: 2.5
+  chi_penalty_gain: 10.0
+  jerk_penalty_gain: 1.0
+  forward_speed_cost_weight: 10.0
+  curvature_penalty: 1.0
+  curvature_rate_penalty: 1.0
+  ref_path_deviation_gain: 10.0
+  path_gain: 1.0
+  end_state_gain: 1.0
+  chi_penalty_gain_min_factor: 1.0
+  chi_penalty_speed_gain: 10.0
+  longitudinal_acceleration_cost_weight: 0.3
+  enable_check: true
+  lateral_dist_threshold: 5.0
+  longitudinal_dist_threshold: 15.0
+  theta_dist_threshold: 1.57
+}

@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package qcraft.planner;
+
+option go_package = "qcraft-proto.ai/onboard/planner/assist/proto/online_map_drift";
+
+import "google/protobuf/timestamp.proto";
+import "onboard/math/proto/piecewise_linear_function.proto";
+
+message OnlineMapDrift {
+  optional google.protobuf.Timestamp time = 1;
+  optional PiecewiseLinearFunctionDoubleProto plf = 2;
+}

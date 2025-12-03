@@ -1,0 +1,4 @@
+max_acc_vel_plf { x: 5.0 x: 20.0 y: 4.0 y: 2.0 }
+max_jerk_vel_plf { x: 5.0 x: 20.0 y: 5.0 y: 2.5 }
+min_decel_vel_plf { x: 5.0 x: 20.0 y: -5.0 y: -3.5 }
+follow_standstill_distance: 3.5

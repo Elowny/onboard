@@ -1,0 +1,115 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/prediction/proto/prediction_cutin_sl";
+
+message CutinSLDumpedFeatureProto {
+  message AgentDumpedFeature {
+    // SL position sequence.
+    repeated float sl_pos = 1 [packed = true];
+    // SL speed sequence.
+    repeated float sl_speed = 2 [packed = true];
+    // Yaw diff to drive passage
+    repeated float yaw_diff_dp = 3 [packed = true];
+    // length & width.
+    repeated float length_width = 4;
+    // SL shape sequence.
+    repeated float sl_shape = 5 [packed = true];
+    // Agent type.
+    optional float type = 6;
+    // Agent center distance to av left lane boundary.
+    repeated float agent_center_dist_to_av_left_lane_boundary = 7
+        [packed = true];
+    // Agent center distance to av right lane boundary.
+    repeated float agent_center_dist_to_av_right_lane_boundary = 8
+        [packed = true];
+    // Agent corner distance to av left lane boundary.
+    repeated float agent_corners_dist_to_av_left_lane_boundary = 9
+        [packed = true];
+    // Agent corner distance to av right lane boundary.
+    repeated float agent_corners_dist_to_av_right_lane_boundary = 10
+        [packed = true];
+
+    // Next id: 11
+  }
+
+  message ObjectsDumpedFeature {
+    // SL position sequence.
+    repeated float sl_pos = 1 [packed = true];
+    // SL speed sequence.
+    repeated float sl_speed = 2 [packed = true];
+    // Yaw diff to drive passage
+    repeated float yaw_diff_dp = 3 [packed = true];
+    // length & width.
+    repeated float length_width = 4;
+    // SL shape sequence.
+    repeated float sl_shape = 5 [packed = true];
+
+    // Additional info of agent to agent:
+    // Relative SL position sequence to agent.
+    repeated float rel_sl_pos_agent = 6 [packed = true];
+    // Relative SL speed sequence to agent.
+    repeated float rel_sl_speed_agent = 7 [packed = true];
+    // Yaw diff to agent
+    repeated float yaw_diff_agent = 8 [packed = true];
+    // Relative distance to agent.
+    repeated float rel_dist_agent = 9 [packed = true];
+
+    // Object type
+    repeated float type = 10 [packed = true];
+  }
+
+  message MapDumpedFeature {
+    // SL segment sequence [p0, p1] four dims.
+    repeated float sl_seg = 1 [packed = true];
+    // segement length
+    repeated float seg_len = 2 [packed = true];
+    // agent min distance to segment. Min dist point is r
+    repeated float dist = 3 [packed = true];
+    // distance from p1 to r.
+    repeated float nearest_to_end_dist = 4 [packed = true];
+    // Yaw diff of segment heading & agent-segment perpendicular vector.
+    repeated float yaw_diff = 5 [packed = true];
+    // Consider lane center, curb, solid lane, double solid lane, pedestrian
+    // crossing.
+    repeated float type = 6 [packed = true];
+    // Consider red, yellow, green, unknown, none.
+    repeated float light = 7 [packed = true];
+    // Validity mask.
+    repeated float mask = 8 [packed = true];
+  }
+
+  optional AgentDumpedFeature agent_sl_feature = 1;
+  optional ObjectsDumpedFeature objects_sl_feature = 2;
+  optional double timestamp = 3;
+  optional MapDumpedFeature lane_centers_sl_features = 4;
+  optional MapDumpedFeature lane_boundaries_sl_features = 5;
+  optional MapDumpedFeature crosswalks_sl_features = 6;
+
+  // Drive passage in xy coordinates.
+  repeated float dp_xy_seg = 7 [packed = true];
+
+  // Masks
+  repeated float lcs_masks = 8 [packed = true];
+  repeated float lbs_masks = 9 [packed = true];
+  repeated float cws_masks = 10 [packed = true];
+
+  optional string agent_id = 12;
+
+  // Ground truth in SL coordinates.
+  repeated float agent_sl_gt = 13 [packed = true];
+
+  // left lane boundary in sl coordinates
+  repeated float left_lane_boundary = 14 [packed = true];
+
+  // right lane boundary in sl coordinates
+  repeated float right_lane_boundary = 15 [packed = true];
+
+  // if cross boundary gt
+  optional float if_center_cross_left_boundary_gt = 16;
+  optional float if_center_cross_right_boundary_gt = 17;
+  optional float if_corner_cross_left_boundary_gt = 18;
+  optional float if_corner_cross_right_boundary_gt = 19;
+
+  // next id: 20
+}

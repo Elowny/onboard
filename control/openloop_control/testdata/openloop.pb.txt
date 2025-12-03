@@ -1,0 +1,23 @@
+testtype: STEERSIN  # STEER   STEERSIN   STEERFOLLOW
+
+throttle_brake_cmd { aperture: 0.0 duration_time: 5.0 }
+throttle_brake_cmd { aperture: 0.0 duration_time: 5.0 }
+throttle_brake_cmd { aperture: 0.0 duration_time: 5.0 }
+
+acceleration_cmd { acceleration: -2.0 duration_time: 50.0 }
+acceleration_cmd { acceleration: -0.5 duration_time: 5.0 }
+acceleration_cmd { acceleration: -1.0 duration_time: 5.0 }
+
+steer_sin {
+  start_time: 2.0
+  steer_angle: 8.2  # rad
+  sin_period: 10.0
+}
+
+steer_follow {
+  start_time: 0.0
+  steer_scale: 1.0
+  data_name: "/hosthome/LZX_Program/Qcraft/qcraft/onboard/control/openloop_control/testdata/steer_angle.txt"
+}
+
+gear_cmd: 1

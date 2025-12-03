@@ -1,0 +1,9 @@
+lane_ids: 41
+lane_ids: 189
+lane_ids: 182
+lane_ids: 42
+lane_ids: 45
+lane_ids: 46
+lane_ids: 47
+start_fraction: 0.0
+end_fraction: 1.0

@@ -1,0 +1,211 @@
+name: "dojo.planner.acc.cut_in_6"
+edit_attr {
+  description: "ACC: stably following a lead vehicle at 36km/h when another vehicle cuts in 5m ahead at 36km/h from the right."
+  labels { key: "PlannerCoverageCategory" value: "ACC" }
+  labels { key: "PlannerCoverageClass" value: "CutIn" }
+  labels { key: "PlannerCoverageSubclass" value: "CloseCutIn" }
+  test_sets: "dojo"
+  test_sets: "planner_virtual_coverage"
+}
+execution {
+  sim_duration: 20
+  playback_sources { run_or_stf_path: "" }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 3.5
+          initial_pose {
+            pos_smooth { x: -51.5 y: 210 }
+            vel_body { x: 10 y: 0 }
+            accel_body { x: 0 y: 0 }
+            yaw: 0
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            virtual_perception_object {
+              id: "Agent0"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2
+              parked: false
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: 0 y: 210 }
+                t: 0
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: 200 y: 210 }
+                t: 20
+                v: 10
+                z: 0
+              }
+            }
+            start_sec: 0
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent1"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2
+              parked: false
+            }
+            fixed_route_virtual_object {
+              waypoints {
+                pos { x: -38.5 y: 213.5 }
+                t: 0
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: -18.5 y: 213.5 }
+                t: 2
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: -8.5 y: 213.3 }
+                t: 3
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: 1.5 y: 212.8 }
+                t: 4
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: 11.5 y: 211.75 }
+                t: 5
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: 21.5 y: 210.7 }
+                t: 6
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: 31.5 y: 210.2 }
+                t: 7
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: 41.5 y: 210 }
+                t: 8
+                v: 10
+                z: 0
+              }
+              waypoints {
+                pos { x: 161.5 y: 210 }
+                t: 20
+                v: 10
+                z: 0
+              }
+            }
+            start_sec: 0
+          }
+        }
+      }
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "trajectory_validation_metric"
+  trajectory_validation_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+metrics {
+  name: "prohibited_destination_metric"
+  prohibited_destination_metric {
+    regions {
+      destination {
+        uuid: "{049d2a20-9c40-4ead-af00-729894a339dd}"
+        points { x: 630 y: 208.2 }
+        points { x: -420 y: 208.2 }
+        points { x: -420 y: 198.2 }
+        points { x: 630 y: 198.2 }
+      }
+      approach: CAR_CONTOUR
+    }
+    regions {
+      destination {
+        uuid: "{b470050a-3ab8-4755-a050-4fa89f807e81}"
+        points { x: -420 y: 211.8 }
+        points { x: 630 y: 211.8 }
+        points { x: 630 y: 221.8 }
+        points { x: -420 y: 221.8 }
+      }
+      approach: CAR_CONTOUR
+    }
+  }
+}
+metrics {
+  name: "lane_boundary_proximity_metric"
+  lane_boundary_proximity_metric {
+    buffer: 0.2
+    types: SOLID_DOUBLE_YELLOW
+    types: SOLID_YELLOW
+    types: BROKEN_YELLOW
+    types: SOLID_WHITE
+    types: BROKEN_WHITE
+    types: CURB
+  }
+}
+commandline_flags: "--map=dojo"
+commandline_flags: "--route_str=hw_e2_end"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"

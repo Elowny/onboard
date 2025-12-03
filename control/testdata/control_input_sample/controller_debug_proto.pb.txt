@@ -1,0 +1,160 @@
+# run: 20221228_180745_Q2404
+# relative_in_sec=700.014, channel=controller_debug_proto
+header {
+  timestamp: 1672222768856886
+  domain: ""
+  seq_number: 108567
+  module_id: 11
+  channel: "controller_debug_proto"
+  tag_number: 73
+  log_timestamp: 1672222768859783
+  full_node_name: "/omc/main_node_1"
+  channel_seq_number: 34479
+}
+mpc_debug_proto {
+  mpc_reference_traj_point { x: -5331.7237920203288 y: -746.494400656355 }
+  mpc_reference_traj_point { x: -5334.04029807945 y: -745.15579478005156 }
+  mpc_reference_traj_point { x: -5336.3751273313364 y: -743.8550667470123 }
+  mpc_reference_traj_point { x: -5338.72876913171 y: -742.59283607745544 }
+  mpc_reference_traj_point { x: -5341.10196188024 y: -741.37042800008874 }
+  mpc_reference_traj_point { x: -5343.4952292870912 y: -740.18910387262554 }
+  mpc_reference_traj_point { x: -5345.9086778285709 y: -739.04961804534764 }
+  mpc_reference_traj_point { x: -5348.3424695471895 y: -737.95306763946883 }
+  mpc_reference_traj_point { x: -5350.796520425557 y: -736.90024465701185 }
+  mpc_reference_traj_point { x: -5353.270653367993 y: -735.8918968827229 }
+  mpc_reference_traj_point { x: -5355.7636771607213 y: -734.92901485858067 }
+  mpc_predicted_traj_point { x: -5331.7530873286951 y: -746.544491539006 }
+  mpc_predicted_traj_point { x: -5334.0666402459274 y: -745.19810783001094 }
+  mpc_predicted_traj_point { x: -5336.3971617083389 y: -743.88915601785482 }
+  mpc_predicted_traj_point { x: -5338.7458064275588 y: -742.61942422760649 }
+  mpc_predicted_traj_point { x: -5341.1134531852631 y: -741.39044257767023 }
+  mpc_predicted_traj_point { x: -5343.5006249553926 y: -740.20343349200573 }
+  mpc_predicted_traj_point { x: -5345.907500789096 y: -739.05928644971016 }
+  mpc_predicted_traj_point { x: -5348.3339149508429 y: -737.95850351426861 }
+  mpc_predicted_traj_point { x: -5350.7793292217148 y: -736.90110276605355 }
+  mpc_predicted_traj_point { x: -5353.24281338234 y: -735.88654230943962 }
+  mpc_predicted_traj_point { x: -5355.7231282886232 y: -734.91381875806348 }
+  lateral_mpc_costs {
+    costs { name: "state_xy" cost: 0.0010007636727203599 }
+    costs { name: "state_heading" cost: 0.0014921245931393528 }
+    costs { name: "state_kappa" cost: 0 }
+    costs { name: "control_psi" cost: 6.7933325950551179e-05 }
+  }
+  t_control_mpc_result: -0.0794480875147998
+  t_control_mpc_result: -0.0585877519852479
+  t_control_mpc_result: -0.0389794652768915
+  t_control_mpc_result: -0.021907963851306358
+  t_control_mpc_result: -0.0070268497033588572
+  t_control_mpc_result: 0.006140994869352167
+  t_control_mpc_result: 0.017996464497449034
+  t_control_mpc_result: 0.028883803395356129
+  t_control_mpc_result: 0.039105969774052937
+  t_control_mpc_result: 0.048938772133782588
+  s_control_mpc_result: 0.0015723221000031626
+  s_control_mpc_result: 0.0012900501345625794
+  s_control_mpc_result: 0.00094974336435446692
+  s_control_mpc_result: 0.000600116904844227
+  s_control_mpc_result: 0.00021925887426535402
+  s_control_mpc_result: -0.00022757443625085779
+  s_control_mpc_result: -0.00072461964860631636
+  s_control_mpc_result: -0.0011295666848660159
+  s_control_mpc_result: -0.0010918918177529797
+  s_control_mpc_result: 0
+  step_length: 2.6755269785274662
+  step_length: 2.6727662617374652
+  step_length: 2.6708149173922227
+  step_length: 2.6695971688096591
+  step_length: 2.6690184725385642
+  step_length: 2.6690007554418855
+  step_length: 2.66948350462922
+  step_length: 2.6704211099870747
+  step_length: 2.6717809054504649
+  step_length: 2.672563024845946
+  s_control_kappa_ref: 0.00580541497070495
+  s_control_kappa_ref: 0.0058273285661763373
+  s_control_kappa_ref: 0.0060387220776949805
+  s_control_kappa_ref: 0.00622869832549394
+  s_control_kappa_ref: 0.006396353356355384
+  s_control_kappa_ref: 0.0065415095038584238
+  s_control_kappa_ref: 0.0066648133335634342
+  s_control_kappa_ref: 0.0067670986593115941
+  s_control_kappa_ref: 0.0068495852447184747
+  s_control_kappa_ref: 0.0069136140414384024
+  s_control_kappa_ref: 0.0069605742102494834
+}
+lat_ref_relative_time: 0.16881108932191585
+speed_mode_debug_proto {
+  curr_speed_mode: ACC_MODE
+  acc2dec_counter: 0
+  dec2acc_counter: 0
+  input_acc: -0.026721382541946566
+  output_acc: -0.026721382541946566
+  standstill: false
+  acc_bound: -0.23822686396510093
+  output_value: 0.98029636528496589
+  diff_acc: 0.0092866081312716758
+  diff_acc_last: 0.060144081331153593
+  throttle_last: 1.2587889563209549
+  throttle_integral: -50.8069144565162
+  diff_dec: 0.088936529269700859
+  diff_dec_last: 0.088936529269700859
+  brake_last: -0
+  brake_integral: 0
+  delta_value: -1.5980625557014347
+  delta_value_p: 0.027859824393815028
+  delta_value_i: -1.5242074336954861
+  delta_value_d: -0.10171494639976385
+  input_calib_value: 2.5380657770778523
+  standstill_counter: 0
+  calib_value_raw: 0.98029636528496589
+  acc_feedback: -0.0952823377490945
+  acc_cmd_past: -0.085995729617822828
+  dec_upperbound: -0.038226863965100916
+  acc_lowerbound: -0.43822686396510091
+  is_full_stop: false
+}
+in_emergency_stop_state: false
+calibration_debug_proto {
+  acceleration_idle: -0.23822686396510093
+  acceleration_pure: 0.21150548142315437
+}
+wire_control_check_proto {
+  kappa_error: 0.00011241737694138183
+  steer_error: -0.015310295083204611
+  brake_response_rate: 1
+  lon_abnormal: false
+  lat_abnormal: false
+}
+predicted_veh_pose_proto {
+  x: -5331.7530873286951
+  y: -746.544491539006
+  v: 13.359370137599225
+  heading: 2.614547209086818
+}
+validation_result_proto {}
+steer_calibration_debug_proto {
+  deadzone_gain: 1
+  speed_gain: 1
+  dynamic_gain: 1
+  post_process_gain: 1.0572569604898359
+  steer_gap_kappa_compensate: 0
+  input_steer_kappa: 0.0057431843489920862
+  output_steer_kappa: 0.00614671254480554
+  output_steer_percentage: 3.2529388936324879
+  sliding_gain: 1.0572569604898359
+  lat_acc_kappa_compensate: 7.4690916457369715e-05
+  input_steer_kappa_past: 0.0052799480153496794
+  roll_compensate_kappa: 0
+}
+predicted_error_proto {
+  lateral_error: 0.05513992247154724
+  heading_error: -0.0018253592494588133
+}
+active_lat_controller: "lat_tok_mpc"
+active_lon_controller: "lon_tok_mpc"
+predicted_veh_lon_pose_proto {
+  x: -5333.1404995785042
+  y: -745.74086434908429
+  v: 13.353365185470853
+  heading: 2.6228164984102293
+}

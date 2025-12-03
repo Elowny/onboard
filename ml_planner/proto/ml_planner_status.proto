@@ -1,0 +1,18 @@
+
+syntax = "proto2";
+
+package qcraft.mlplanner;
+option go_package = "qcraft-proto.ai/onboard/ml_planner/proto/ml_planner_status";
+
+message MLPlannerStatusProto {
+  enum MLPlannerStatusCode {
+    UNINITIALIZED = 0;
+    OK = 1;
+    OBJECT_MANAGER_FAILED = 2;
+    MODEL_INFERENCE_FAILED = 3;
+
+    // Next id: 4.
+  }
+  optional MLPlannerStatusCode status = 1 [default = UNINITIALIZED];
+  optional string message = 2;
+}

@@ -1,0 +1,44 @@
+name: "level_switch.pb.txt"
+commandline_flags: "--localizer_particle_cvs=true"
+commandline_flags: "--map=suzhou_cloverleaf"
+commandline_flags: "--start_map_level=2"
+commandline_flags: "--route=destinations{global_point{longitude:2.1059472938297725 latitude:0.5481052242809884 altitude:0}}"
+
+execution {
+  playback_sources {
+    run_or_stf_path: "20210621_144357_Q1001"
+    duration: 50
+    start_offset: 1675
+  }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE enable: true }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE enable: true }
+    localization_module { module: LOCALIZATION_MODULE enable: true }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    routing_module { module: ROUTING_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE enable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module {
+      module: IMAGE_PUBLISHER_MODULE
+      playback_source_id: 0
+    }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 1
+          no_publish_chassis: false
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+  }
+}

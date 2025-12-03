@@ -1,0 +1,34 @@
+commandline_flags: "--route_file=/qcraft/onboard/planner/testdata/route_starter_village_random_walk_1.pb.txt"
+commandline_flags: "--map=village"
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/s3/run_data/20190924_183452_Q0001"
+    duration: 100
+    start_offset: 50
+  }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE enable: true }
+    vision_module { module: VISION_MODULE enable: true }
+    positioning_module { module: POSITIONING_MODULE enable: true }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE enable: true }
+    gnss_imu_driver_module { module: GNSS_IMU_DRIVER_MODULE enable: true }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE enable: true }
+    routing_module { module: ROUTING_MODULE enable: true }
+    planner_module {
+      module: PLANNER_MODULE
+      enable: true
+      # playback_source_id: 0
+    }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] { engage_start_time: 10 }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+  }
+}

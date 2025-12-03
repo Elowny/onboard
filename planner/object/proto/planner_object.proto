@@ -1,0 +1,111 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/object/proto/planner_object";
+
+import "onboard/proto/trajectory_point.proto";
+import "onboard/proto/perception.proto";
+
+message FilterReason {
+  enum Type {
+    // No reason, equivalent to not filter.
+    NONE = 1;
+    // The stationary object is not on drive passage.
+    STATIONARY_OBJECT_NOT_ON_DRIVE_PASSAGE = 2;
+    // The trajectory is not on drive passage.
+    TRAJECTORY_NOT_ON_DRIVE_PASSAGE = 3;
+    // The trajectory's likelihood is too low.
+    TRAJECTORY_LOW_LIKELIHOOD = 4;
+    // The stationary object is totally behind AV.
+    STATIONARY_OBJECT_BEHIND_AV = 5;
+    // The object is moving away from AV.
+    OBJECT_BEHIND_MOVING_AWAY_FROM_AV = 6;
+    // The stationary object is not on sl boundary.
+    STATIONARY_OBJECT_NOT_ON_SL_BOUNDARY = 7;
+    // Reflected object in proximity. This is a hack to filter fake objects.
+    REFLECTED_OBJECT_IN_PROXIMITY = 8;
+    // The object trajectory is not on sl boundary.
+    TRAJECTORY_NOT_ON_SL_BOUNDARY = 9;
+    // The trajectory is not the most likely trajectory.
+    NOT_MOST_LIKELY_TRAJECTORY = 10;
+    // The stationary object is not within freespace region.
+    STATIONARY_OBJECT_NOT_IN_FREESPACE_REGION = 11;
+    // The trajectory is not within freespace region.
+    TRAJECTORY_NOT_IN_FREESPACE_REGION = 12;
+    // The trajectory has collision with a confident trajectory.
+    TRAJECTORY_COLLIDES_WITH_CONFIDENT_OTHERS = 13;
+    // Not acc target.
+    IGNORED_BY_ACC = 14;
+    // Object current position is not on or near path boundary.
+    OBJECT_NOT_ON_OR_NEAR_PATH_BOUNDARY = 15;
+    // Object current position is beyond non-virtual curb and parallel with
+    // drive passage.
+    OBJECT_PARALLEL_BEYOND_CURB = 16;
+    // Spacetime trajectory entering inner path boundary too late.
+    ST_TRAJ_ENTER_TARGET_BOUND_TOO_LATE = 17;
+    // Spacetime trajectory entering inner path boundary beyond map (in extended
+    // part of DrivePassage).
+    ST_TRAJ_ENTER_TARGET_BOUND_BEYOND_MAP = 18;
+    // RoadWayPositionType::RWPT_UNKNOWN object.
+    UNKNOWN_ROADWAY_POSITION_OBJECT = 19;
+    // Object with cut-in trajectories shouldn't have lane keeping trajectories
+    // at the same time.
+    TRAJECTORY_EXCEPT_CUT_IN = 20;
+  }
+}
+
+// Records the filtered objects or predictions.
+message FilteredTrajectories {
+  message Filtered {
+    optional FilterReason.Type reason = 1;
+    // The object id.
+    optional string id = 2;
+    // The trajectory index.
+    optional int32 index = 3;
+  }
+  repeated Filtered filtered = 1;
+}
+
+message SpacetimePlannerObjectTrajectoryReason {
+  enum Type {
+    // No reason, equivalent to not filter.
+    NONE = 1;
+    // Spacetime planner considers stationary trajectories.
+    STATIONARY = 2;
+    // Slow trajectories that moving with the same direction as the ego vehicle.
+    SIDE = 3;
+    // Trajectories that need emergency avoidance.
+    EMERGENCY_AVOIDANCE = 4;
+    // All front trajectories.
+    FRONT = 5;
+    // Added by planner, usually leading obj.
+    LEADING = 6;
+    // All trajectories.
+    ALL = 7;
+    // Trajectories drive in.
+    DRIVE_IN = 8;
+  }
+}
+
+// Records the trajectories considered in spacetime planner.
+message SpacetimePlannerObjectTrajectoriesProto {
+  message SpacetimePlannerObjectTrajectoryProto {
+    optional SpacetimePlannerObjectTrajectoryReason.Type reason = 1;
+    // The object id.
+    optional string id = 2;
+    // The trajectory index.
+    optional int32 index = 3;
+  }
+  repeated SpacetimePlannerObjectTrajectoryProto trajectory = 1;
+}
+
+message PlannerObjectProto {
+  optional ObjectProto object = 1;
+
+  message PredictionInfoProto {
+    optional double probability = 1;
+    repeated SecondOrderTrajectoryPointProto points = 2;
+  }
+  repeated PredictionInfoProto prediction = 2;
+  optional bool is_stationary = 3;
+}

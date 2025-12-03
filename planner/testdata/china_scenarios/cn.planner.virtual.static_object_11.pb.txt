@@ -1,0 +1,64 @@
+name: "test.pb.txt"
+commandline_flags: "--route=destinations{name:DEST_M6_A2_N1}"
+commandline_flags: "--map=futian"
+edit_attr { description: "" }
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/s3/run_data/20200101_151839_Q1001"
+    duration: 20
+    start_offset: 263.5
+  }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] { engage_start_time: 1 }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            start_sec: 0
+            fixed_route_virtual_object {
+              duration: 20
+              waypoints {
+                pos { x: 8941.8 y: -5288.0 }
+                t: 0
+                v: 0
+                z: 0
+              }
+            }
+            virtual_perception_object {
+              id: "virtual_object"
+              type: OT_UNKNOWN_STATIC
+              length: 0.2
+              width: 0.2
+            }
+          }
+        }
+      }
+    }
+  }
+  modifiers {
+    name: "remove_objects_modifier"
+    remove_objects_modifier { object_ids: "3872" }
+  }
+}

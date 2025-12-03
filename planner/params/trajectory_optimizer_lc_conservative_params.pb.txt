@@ -1,0 +1,17 @@
+cost_weight_params {
+  lateral_acceleration_cost_weight: 0.5
+  lateral_jerk_cost_weight: 0.5
+  lateral_snap_speed_gain_plf {
+    x: 0.0
+    x: 0.5
+    x: 8.5
+    x: 16.5
+    y: 1.0
+    y: 1.0
+    y: 1.0
+    y: 0.4
+  }
+  speed_limit_cost_params { curvature_numerator: 0.59 }
+  object_cost_params { object_a_cost_weight: 30.0 }
+  reference_path_cost_weight { path_gain: 0.01 }
+}

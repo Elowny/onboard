@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/decision/traffic_gap_v2/proto/traffic_gap";
+
+message TrafficGapProto {
+  optional string leader_id = 1;
+  optional string follower_id = 2;
+}
+
+message TrafficGapDebugProto {
+  message TrafficGapInfo {
+    optional string leader_id = 1;
+    optional string follower_id = 2;
+    optional double total_cost = 3;
+
+    message CostPair {
+      optional double val = 1;
+      optional double cost = 2;
+    }
+    optional CostPair gap_length = 10;
+    optional CostPair align_time = 11;
+    optional CostPair lon_offset = 12;
+    optional CostPair speed_to_ego = 13;
+    optional CostPair speed_to_limit = 14;
+    optional CostPair continuity = 15;
+  }
+  repeated TrafficGapInfo gap_candidates = 1;
+}

@@ -1,0 +1,45 @@
+name: "planner.unprotected_left.yield_to_oncoming_1"
+commandline_flags: "--route_file=onboard/planner/testdata/route_starter_village_random_walk_1.pb.txt"
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+edit_attr {
+  description: "No reaction for comming traffic"
+  labels { key: "issue-module" value: "planner" }
+  labels { key: "comfort-level" value: "unsafe" }
+}
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/s3/run_data/20190813_105206_Q0001/"
+    duration: 20
+    start_offset: 805
+  }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE enable: true }
+    vision_module { module: VISION_MODULE enable: true }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] { engage_start_time: 4 }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+  }
+}

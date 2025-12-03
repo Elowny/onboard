@@ -1,0 +1,11 @@
+destinations { local_point { x: 15752.688 y: -6318.327 } }
+destinations { local_point { x: 15690.206 y: -6211.446 } }
+destinations { local_point { x: 15860.662 y: -6055.610 } }
+destinations { local_point { x: 15969.630 y: -6034.188 } }
+destinations { local_point { x: 16225.991 y: -6262.054 } }
+destinations { local_point { x: 15765.923 y: -6124.672 } }
+destinations { local_point { x: 15676.124 y: -5973.732 } }
+destinations { local_point { x: 16320.450 y: -5403.003 } }
+destinations { local_point { x: 16446.038 y: -5570.126 } }
+destinations { local_point { x: 16813.355 y: -6023.513 } }
+destinations { local_point { x: 16428.901 y: -6386.990 } }

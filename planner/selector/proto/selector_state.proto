@@ -1,0 +1,74 @@
+syntax = "proto2";
+
+package qcraft.planner;
+
+option go_package = "qcraft-proto.ai/onboard/planner/selector/proto/selector_state";
+
+import "onboard/proto/turn_signal.proto";
+import "google/protobuf/timestamp.proto";
+import "onboard/proto/lane_change_type.proto";
+import "onboard/math/geometry/proto/affine_transformation.proto";
+
+message LastLcInfoProto {
+  optional bool lc_left = 1;
+  optional google.protobuf.Timestamp lane_change_time = 2;
+  optional LaneChangeType lane_change_type = 3;
+}
+
+message TargetLaneStateProto {
+  optional bool is_borrow = 1;
+  optional bool is_fallback = 2;
+  repeated sfixed64 lane_ids = 3;
+  repeated Vec2dProto center_points = 4;
+  optional uint64 successive_count = 5;
+}
+
+message SelectorLaneChangeRequestProto {
+  optional bool lc_left = 2;
+  optional LaneChangeType lane_change_type = 3;
+
+  reserved 1;
+}
+
+enum RouteTtcRequestState {
+  NO_REQUEST = 0;
+  WAITING_RESPONSE = 1;
+  RECEIVED_RESPONSE = 2;
+}
+
+enum RouteTtcConfig {
+  CONSERVATIVE = 0;
+  RADICAL = 1;
+}
+
+message PrefilterStateProto {
+  optional bool choose_left_branch = 1;
+}
+
+message RouteTtcSettingProto {
+  optional RouteTtcRequestState route_request_state = 1;
+  optional RouteTtcConfig request_config = 2;
+  optional RouteTtcConfig response_config = 3;
+  optional uint64 prepare_request_frame = 4;
+}
+
+message SelectorStateProto {
+  optional TargetLaneStateProto selected_target_lane_state = 2;
+  optional google.protobuf.Timestamp last_redlight_stop_time = 4;
+  optional LastLcInfoProto last_lc_info = 6;
+  optional SelectorLaneChangeRequestProto selector_lane_change_request = 7;
+  optional google.protobuf.Timestamp last_user_reject_alc_time = 8;
+  optional RouteTtcSettingProto route_ttc_setting = 10;
+  optional TurnSignal pre_turn_signal = 12;
+  optional google.protobuf.Timestamp activate_selector_time = 13;
+  optional google.protobuf.Timestamp start_lane_change_time = 14;
+  optional google.protobuf.Timestamp give_up_lane_change_time = 15;
+  optional LaneChangeType lane_change_type = 16;
+  optional LaneChangeType last_user_reject_alc_type = 17;
+  optional LaneChangeGeneralType lane_change_general_type = 18;
+  optional PrefilterStateProto prefilter_state = 19;
+  optional TurnSignal turn_signal = 20;
+  optional TargetLaneStateProto best_target_lane_state = 21;
+
+  reserved 1, 3, 5, 9, 11;
+}

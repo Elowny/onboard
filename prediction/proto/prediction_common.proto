@@ -1,0 +1,139 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/prediction/proto/prediction_common";
+
+import "onboard/math/geometry/proto/affine_transformation.proto";
+import "onboard/proto/trajectory_point.proto";
+
+// VOID means object relation not assigned or failed to be analyzed. Will be
+// masked in datasets.
+enum ObjectRelation {
+  OR_VOID = 0;
+  OR_YIELD = 1;
+  OR_PASS = 2;
+  OR_NO_RELATION = 3;
+}
+
+// Oracle relation analysis result proto.
+message ObjectRelationProto {
+  optional ObjectRelation av_relation = 1;
+  optional double av_s = 2 [deprecated = true];
+  optional double object_s = 3 [deprecated = true];
+  optional ApolloTrajectoryPointProto av_point = 4;
+  optional ApolloTrajectoryPointProto obj_point = 5;
+  repeated ApolloTrajectoryPointProto av_path = 6;
+  repeated ApolloTrajectoryPointProto obj_path = 7;
+}
+
+message PredictedTrajectoryPointProto {
+  // Spatial quantities.
+  optional Vec2dProto pos = 1;
+  optional double s = 2;      // Arc length (starting from first point).
+  optional double theta = 3;  // Facing orientation.
+  optional double kappa = 4;  // dtheta/ds.
+
+  // Temporal quantities.
+  optional double t = 5;  // Time (relative to first point).
+  optional double v = 6;  // Speed. Can not be negative.
+  optional double a = 7;  // dv/dt.
+
+  // Nll uncertainty.
+  optional Vec2dProto nll_cov = 12;
+  optional double nll_angle = 13;
+  reserved 8, 9, 10, 11;
+}
+
+enum ObjectRoadStatus {
+  ORS_NONE = 0;
+  ORS_OFF_ROAD = 1;
+  ORS_ON_ROAD = 2;
+}
+enum ObjectIntersectionStatus {
+  OIS_NONE = 0;
+  OIS_OUT_INTERSECTION = 1;
+  OIS_IN_INTERSECTION = 2;
+}
+
+enum ObjectMapStatus {
+  OMS_NO_MAP = 0;
+  OMS_PERCEPTION_MAP = 1;
+  OMS_NOA_MAP = 2;
+  OMS_HD_MAP = 3;
+}
+
+message ObjectPredictionScenario {
+  optional ObjectRoadStatus road_status = 1;  // Relation to road/lane.
+  optional ObjectIntersectionStatus intersection_status =
+      2;                               // Relation to intersection.
+  optional int64 nearest_lane_id = 3;  // Support information: nearest lane id.
+  optional double abs_dist_to_nearest_lane =
+      4;  // Distance to nearest lane if exists.
+  optional int64 nearest_intersection_id =
+      5;  // Support information: nearest intersection id.
+  optional double abs_dist_to_nearest_intersection =
+      6;  // Distance to nearest intersection if exists.
+}
+
+enum ObjectPredictionPriority {
+  OPP_P0 = 0;  // Interactive agents.
+  OPP_P1 = 1;  // Cautious agents.
+  OPP_P2 = 2;  // Normal agents.
+  OPP_P3 = 3;  // Low.
+  reserved 97, 93, 94, 95, 96, 98, 99, 100, 911, 999;
+}
+
+// NEXT ID: 14
+message TrajectoryGroundTruth {
+  optional string object_id = 1;
+  repeated PredictedTrajectoryPointProto gt_points = 2;
+  optional ObjectRelation av_relation = 3;
+  repeated float speeds = 4 [packed = true];
+  repeated float s = 5 [packed = true];
+  repeated float path_x = 7 [packed = true];
+  repeated float path_y = 8 [packed = true];
+  repeated float headings = 9 [packed = true];
+  // Unsmoothed and not cut-off at near static speed.
+  repeated PredictedTrajectoryPointProto gt_raw_points = 10;
+  repeated float gt_s = 11 [packed = true];
+  repeated float gt_raw_s = 12 [packed = true];
+  // Offset in s to interaction point.
+  repeated float s_offset = 13 [packed = true];
+
+  reserved 6;
+}
+
+// NEXT ID: 16
+enum PredictionObjectType {
+  POT_UNSPECIFIED = 0;
+  POT_UNKNOWN_STATIC = 1;
+  POT_VEHICLE = 2;
+  POT_MOTORCYCLIST = 3;
+  POT_PEDESTRIAN = 4;
+  POT_CYCLIST = 5;
+  POT_FOD = 6;
+  POT_UNKNOWN_MOVABLE = 7;
+  POT_VEGETATION = 8;
+  POT_BARRIER = 9;
+  POT_CONE = 11;
+  POT_WARNING_TRIANGLE = 14;
+  POT_TRICYCLIST = 15;
+  // Reserve OT_ROAD, OT_MIST, OT_BIRD respectively.
+  // Use old-fashioned reserved to avoid warning.
+  reserved 10, 12, 13;
+}
+
+// Read scaling config from params.
+message FeatureScaleConfigProto {
+  optional string feature_name = 1;
+  repeated float scale = 2;
+  repeated float zero = 3;
+  optional bool clamp = 4 [default = false];
+  repeated float min = 5;
+  repeated float max = 6;
+}
+
+message ModelScaleParam {
+  optional string model_name = 1;
+  repeated FeatureScaleConfigProto feature_scales = 2;
+}

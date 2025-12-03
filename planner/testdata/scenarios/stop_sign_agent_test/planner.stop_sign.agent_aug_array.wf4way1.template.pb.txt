@@ -1,0 +1,73 @@
+name: "planner.stop_sign.agent_aug_array.wf4way1.{{batch_name:batch_default}}.{{aug_name:aug_default}}.pb.txt"
+commandline_flags: "--route_file=onboard/planner/testdata/routes/stop_sign_agent_test/{{av_route:route_wf4way1_s_to_n.pb.txt}}"
+edit_attr { test_sets: "stop_sign_agent_test" }
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/log_data/20190918_112213_Q0001"
+    duration: 30
+    start_offset: 10
+  }
+  sim_modules {
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 0.5
+          initial_pose {
+            pos_smooth {
+              x: { { av_init_x: 8001.99 } }
+              y: { { av_init_y: -807.44 } }
+              z: { { av_init_z: 0.0 } }
+            }
+            yaw: { { av_init_yaw: 1.57 } }
+            vel_body {
+              x: { { av_init_speed: 7.0 } }
+              y: 0.0
+              z: 0.0
+            }
+            accel_body { x: 0.0 y: 0.0 z: 0.0 }
+          }
+        }
+      }
+    }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            virtual_perception_object {
+              id: "Agent0"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: { { agent0_start_time: 1.0 } }
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  route_file: "onboard/planner/testdata/routes/stop_sign_agent_test/{{agent0_route:route_wf4way1_w_to_e.pb.txt}}"
+                  init_route_s: { { agent0_init_route_s: 0.0 } }
+                  init_speed: { { agent0_init_speed: 7.0 } }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    perception_module { module: PERCEPTION_MODULE disable: true }
+    vision_module { module: VISION_MODULE disable: true }
+    positioning_module { module: POSITIONING_MODULE disable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module { module: GNSS_IMU_DRIVER_MODULE disable: true }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+  }
+}

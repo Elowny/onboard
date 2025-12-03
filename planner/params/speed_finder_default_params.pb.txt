@@ -1,0 +1,198 @@
+max_traj_steps: 140
+speed_optimizer_params {
+  knot_num: 51
+  output_time_resolution: 0.1
+  speed_buffer: 0.1
+  s_kernel_weight: 0.00001
+  speed_kernel_weight: 0.5
+  accel_kernel_weight: 8.0
+  jerk_kernel_weight: 15.0
+  regularization: 0.0
+  s_follow_weak_weight: 0.8
+  s_follow_strong_weight: 6.0
+  s_lead_weak_weight: 1.0
+  s_lead_strong_weight: 5.0
+  s_stop_weight: 4.0
+  accel_weight_gain_plf {
+    x: 3.0
+    x: 6.0
+    x: 10.0
+    x: 15.0
+    x: 20.0
+    y: 1.25
+    y: 2.0
+    y: 2.5
+    y: 3.0
+    y: 3.5
+  }
+  piecewise_time_range: 0.0
+  piecewise_time_range: 3.0
+  piecewise_time_range: 6.0
+  piecewise_time_range: 10.0
+  time_gain_for_moving_object: 1.2
+  time_gain_for_moving_object: 0.5
+  time_gain_for_moving_object: 0.1
+  time_gain_for_static_object: 1.0
+  time_gain_for_static_object: 1.0
+  time_gain_for_static_object: 1.1
+  accel_lower_slack_weight: 50.0
+  accel_lower_bound_plf {
+    x: 5.0
+    x: 10.0
+    x: 20.0
+    x: 30.0
+    y: -3.5
+    y: -3.0
+    y: -2.2
+    y: -1.2
+  }
+  ref_speed_bias: 5.0
+  ref_speed_time_gain {
+    x: 2.0
+    x: 4.0
+    x: 6.0
+    x: 8.0
+    y: 1.7
+    y: 1.1
+    y: 0.8
+    y: 0.3
+  }
+  ref_speed_static_limit_bias: 2.0
+  enable_comfort_brake_speed: true
+  enable_const_speed_ref_v: false
+  prediction_impact_factor: 0.8
+  enable_lead_decision: true
+  speed_limit_strong_weight: 15.0
+  speed_limit_medium_weight: 10.0
+  speed_limit_weak_weight: 5.0
+  enable_prediction_impact_factor_decay: true
+}
+
+speed_limit_params {
+  enable_lane_limit: true
+  enable_curvature_limit: true
+  max_curvature_consider_radius: 5.0
+  speed_limit_for_large_curvature: 3.0
+  curvature_bias: 3.7
+  curvature_gain: 0.078
+  vehicle_buffer: 0.2
+  enable_new_curvature_speed_limit: true
+  curvature_power: 0.74
+  curvature_numerator: 0.51
+  curvature_bias1: 0.017
+  curvature_bias2: 2.0
+  max_steer_rate: 5.06  # 290 deg/s
+  min_steer_rate_speed_limit: 0.4
+  min_steer_rate_forward_consider_radius: 5.0
+  min_steer_rate_backward_consider_radius: 2.0
+  hard_curb_clearance_rel_speed_plf {
+    x: 0.15
+    x: 0.3
+    x: 0.5
+    x: 0.7
+    y: 2.0
+    y: 5.0
+    y: 10.0
+    y: 30.0
+  }
+  moving_close_traj_max_time: 10.0
+}
+
+sampling_dp_speed_params {
+  unit_t: 1.0
+  unit_v: 1.5
+  s_dimension_size: 50
+  unit_acc: 0.5
+  speed_exceeding_cap: 2.0
+  speed_weight: 1.0
+  accel_weight: 1.0
+  object_weight: 2.0
+  reference_weight: 0.0
+  spatial_potential_weight: 0.5
+  exceed_speed_penalty: 7.0
+  low_speed_penalty: 0.1
+  reference_speed_penalty: 1.0
+  accel_penalty: 5.0
+  decel_penalty: 1.0
+  coarse_sampling_decel_thres: -3.0
+  coarse_sampling_num: 2
+  large_accel_thres: 1.0
+  speed_large_accel_penalty_factor_plf {
+    x: 15.0
+    x: 20.0
+    x: 25.0
+    y: 1.0
+    y: 2.0
+    y: 5.0
+  }
+}
+
+follow_standstill_distance: 4.0
+follow_standstill_distance_for_static_obj: 6.0
+follow_standstill_distance_for_curb: 1.0
+follow_safety_distance: 2.8
+extra_follow_standstill_distance_for_large_vehicle_plf {
+  x: 4.0
+  x: 6.0
+  y: 0.8
+  y: 0.0
+}
+lead_standstill_distance: 4.0
+follow_time_headway: 1.7
+large_vehicle_follow_time_headway: 2.0
+lead_time_headway: 1.0
+follow_distance_rel_speed_plf {
+  x: 0.0
+  x: 2.0
+  x: 3.0
+  x: 4.0
+  y: 1.0
+  y: 0.3
+  y: 0.1
+  y: 0.02
+}
+probability_gain_plf { x: 0.0 x: 0.3 x: 0.6 x: 1.0 y: 0.0 y: 0.1 y: 0.3 y: 1.0 }
+
+enable_rule_based_stop_decider: true
+
+close_object_params { enable_stationary_close_object_slowdown: true }
+
+st_overlap_analyzer_params { set_low_priority_for_all_objects: false }
+
+st_boundary_pre_decider_params {
+  enable_lane_change_lead_decision: true
+  enable_parallel_cut_in_pre_brake: true
+}
+enable_pre_decision: true
+
+ignore_decider_params {
+  ignore_late_parallel_cut_in_vehicle: false
+  ignore_reverse_driving: false
+  ignore_non_nearest_on_path_occluded_objects: false
+  ignore_late_cut_in_objects: false
+  ignore_oncoming_objects_not_on_path: false
+  ignore_objects_out_of_lateral_bound: false
+}
+
+st_boundary_pre_modifier_params {
+  oncoming_nudge_max_lat_acc: 2.0
+  oncoming_nudge_max_lat_jerk: 1.0
+  oncoming_nudge_max_kappa: 0.1
+  oncoming_uncomfortable_decel: 0.8
+}
+
+pre_brake_decider_params { ignore_late_cut_in_ped: false }
+enable_pre_brake: true
+
+enable_interactive_speed_decision: true
+
+enable_full_stop: true
+full_stop_traj_length_threshold: 1.5
+full_stop_traj_time_threshold: 1.5
+full_stop_speed_threshold: 0.1
+st_graph_params {
+  consider_mirrors_by_default: true
+  impassable_boundaries_search_radius_buffer: 0.8
+  consider_large_vehicle_blind_spot: true
+}
+speed_optimizer_config_dispatcher_params {}

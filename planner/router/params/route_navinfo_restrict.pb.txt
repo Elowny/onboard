@@ -1,0 +1,85 @@
+# TRIAG-148305
+restrict_lanes: {
+  section_id: 2388724715406491674
+  left_to_right: false
+  lane_seq: 5
+}
+
+restrict_lanes: {
+  section_id: 2388724715406491674
+  left_to_right: false
+  lane_seq: 4
+}
+restrict_lanes: {
+  section_id: 2388724715406491674
+  left_to_right: false
+  lane_seq: 3
+}
+
+restrict_lanes: {
+  section_id: 2388724715406491672
+  left_to_right: false
+  lane_seq: 5
+}
+restrict_lanes: {
+  section_id: 2388724715406491672
+  left_to_right: false
+  lane_seq: 4
+}
+restrict_lanes: {
+  section_id: 2388724715406491671
+  left_to_right: false
+  lane_seq: 5
+}
+restrict_lanes: {
+  section_id: 2388724715406491671
+  left_to_right: false
+  lane_seq: 4
+}
+restrict_lanes: {
+  section_id: 2388724715406491655
+  left_to_right: false
+  lane_seq: 5
+}
+restrict_lanes: {
+  section_id: 2388724715406491655
+  left_to_right: false
+  lane_seq: 4
+}
+
+restrict_lanes: {
+  section_id: 2388724715406491654
+  left_to_right: false
+  lane_seq: 3
+}
+
+restrict_lanes: {
+  section_id: 2388724715406491654
+  left_to_right: false
+  lane_seq: 2
+}
+
+restrict_lanes: {
+  section_id: 2388724715406491653
+  left_to_right: false
+  lane_seq: 3
+}
+
+restrict_lanes: {
+  section_id: 2388724715406491653
+  left_to_right: false
+  lane_seq: 4
+}
+
+# TRIAG-148403
+restrict_lanes: {
+  section_id: 2388725514270408725
+  left_to_right: false
+  lane_seq: 1
+}
+
+restrict_lanes: {
+  section_id: 2388725514270408726
+  left_to_right: false
+  lane_seq: 2
+}

@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+package qcraft.planner.ml;
+option go_package = "qcraft-proto.ai/onboard/planner/ml/condition_feature_extractor/proto/condition_feature";
+
+message TrajectoryFeatureProto {
+  // Positions ([horizon, 2]).
+  repeated float pos = 1 [packed = true];
+  // Position diff from last point to current point ([horizon, 2]).
+  repeated float pos_diff = 2 [packed = true];
+  // Speed along heading ([horizon, 1]).
+  repeated float speed = 3 [packed = true];
+  // Sin and cos of yaw ([horizon, 2]).
+  repeated float yaw = 4 [packed = true];
+  // Timestamps in seconds ([horizon, 1]).
+  repeated float ts = 6 [packed = true];
+}
+
+message LineSegmentsFeatureProto {
+  // Node([horizon, 2]).
+  repeated float node = 6 [packed = true];
+}
+
+message PathBoundaryFeatureProto {
+  optional LineSegmentsFeatureProto left_path_boundary = 1;
+  optional LineSegmentsFeatureProto right_path_boundary = 2;
+  optional LineSegmentsFeatureProto smooth_ref_center_line = 3;
+}

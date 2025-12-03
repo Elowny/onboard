@@ -1,0 +1,220 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/proto/planner_state";
+
+import "google/protobuf/timestamp.proto";
+import "onboard/lite/proto/lite_common.proto";
+import "onboard/maps/proto/lane_path.proto";
+import "common/proto/lane_point.proto";
+import "onboard/math/geometry/proto/affine_transformation.proto";
+import "onboard/planner/decision/proto/constraint.proto";
+import "onboard/planner/decision/proto/traffic_light_info.proto";
+import "onboard/planner/scheduler/proto/lane_change.proto";
+import "onboard/planner/selector/proto/selector_state.proto";
+import "onboard/proto/autonomy_state.proto";
+import "onboard/proto/planner.proto";
+import "onboard/proto/trajectory.proto";
+import "onboard/proto/route.proto";
+import "onboard/planner/proto/async_planner_state.proto";
+import "onboard/planner/initializer/proto/initializer.proto";
+import "onboard/planner/freespace/proto/freespace_planner.proto";
+import "onboard/planner/object/proto/planner_object.proto";
+import "onboard/planner/plan/proto/plan_task.proto";
+import "onboard/planner/scheduler/proto/smooth_reference_line.proto";
+import "onboard/planner/speed/proto/speed_finder.proto";
+import "onboard/planner/assist/proto/assist_plan_state.proto";
+import "onboard/planner/assist/proto/online_map_drift.proto";
+import "onboard/planner/optimization/proto/optimizer.proto";
+import "onboard/proto/trajectory_point.proto";
+import "onboard/planner/assist/proto/tja_state.proto";
+
+// The input messages' sequence numbers of next planner iteration.
+message InputSeqNum {
+  optional uint64 pose = 1;
+  optional uint64 autonomy_state = 4;
+  optional uint64 traffic_light_states = 5;
+  optional uint64 driver_action = 6;
+  optional uint64 rerouting_request = 7;
+  optional uint64 remote_assist_to_car = 8;
+  optional uint64 chassis = 10;
+  optional uint64 prediction = 11;
+  optional uint64 localization_transform = 12;
+
+  // objects with scope type
+  optional uint64 real_objects = 13;
+  optional uint64 virtual_objects = 14;
+  optional uint64 av_objects = 15;
+
+  optional uint64 routing_result = 16;
+
+  optional uint64 route_mgr_output = 18;
+  optional uint64 sensor_fovs = 19;
+  optional uint64 run_event_states = 20;
+  optional uint64 online_semantic_map = 21;
+
+  reserved 2, 3, 9, 17;
+}
+
+message TimeSeqNum {
+  optional uint64 ts_micros = 1;
+  optional uint64 seq_num = 2;
+}
+
+message TollHoldingState {
+  optional CompositeLanePathProto.LaneIndexPointProto lane_index_point = 1;
+  // False for stopping, true for cleared.
+  optional bool cleared = 2;
+}
+
+message ObjectsTransform {
+  optional TimeSeqNum objects = 1;
+  optional TimeSeqNum localization_transform = 2;
+}
+
+message PredictionSeq {
+  optional TimeSeqNum pose = 1;
+  optional TimeSeqNum localization_transform = 2;
+  optional TimeSeqNum traffic_light_states = 3;
+  optional TimeSeqNum real_objects = 4;
+  optional TimeSeqNum virtual_objects = 5;
+  optional TimeSeqNum objects_prediction = 6;  // Filled after publish
+}
+
+message PredictionStateProto {
+  repeated TimeSeqNum av = 4;
+  repeated ObjectsTransform objects_transforms = 8;
+  optional google.protobuf.Timestamp prediction_init_time = 6;
+  optional PredictionSeq prediction_seq = 7;
+
+  // Next id:9
+
+  reserved 1, 2, 3, 5;
+}
+
+message HistoryTransformProto {
+  repeated int64 av_seq = 1 [packed = true];
+  repeated int64 lt_seq = 2 [packed = true];
+}
+
+message ObjectMotionStateProto {
+  optional int64 time = 1;  // mirco secs
+  optional double heading = 2;
+  optional Vec2dProto accel = 3;
+  optional Vec2dProto vel = 4;
+  optional Vec2dProto pos = 5;
+}
+
+message ObjectMotionStatesProto {
+  repeated ObjectMotionStateProto states = 1;
+}
+message HDMapLoadStateProto {
+  optional double load_distance = 1;
+  optional bool has_destination = 2;
+}
+
+message PlannerStateProto {
+  optional LiteHeader header = 1;
+
+  // The sequential number of the current planner frame. It starts at 0 upon
+  // planner module initialization and increments at each planning iteration.
+  optional int32 planner_frame_seq_num = 2;
+
+  // Previous planned trajectory.
+  optional TrajectoryProto previous_trajectory = 3;
+
+  message ObjectIdList {
+    repeated string id = 1;
+  }
+
+  optional TrafficLightHistoryManagerProto tl_history_mgr = 15;
+
+  optional google.protobuf.Timestamp last_audio_alert_time = 16;
+
+  optional LaneChangeStateProto lane_change_state = 17;
+
+  // Record how many loops were skipped between this and previous trajectory.
+  optional int32 planner_skip_counter = 19;
+
+  // The input sequence number of next iteration.
+  optional InputSeqNum input_seq_num = 22;
+
+  optional AutonomyStateProto previous_autonomy_state = 23;
+
+  optional int32 previous_trajectory_plan_counter = 27;
+
+  optional int32 version = 28;
+
+  optional double last_door_override_time = 29;
+  optional InitializerStateProto initializer_state = 30;
+
+  optional google.protobuf.Timestamp parking_brake_release_time = 31;
+
+  optional mapping.LanePathProto prev_lane_path_before_lc = 48;
+  optional SpacetimePlannerObjectTrajectoriesProto
+      st_planner_object_trajectories = 37;
+  optional DeciderStateProto decider_state = 38;
+
+  optional FreespacePlannerStateProto freespace_planner_state = 39;
+
+  optional int64 current_time = 40;  // mirco secs
+
+  optional int64 route_update_id = 41;
+
+  optional MissionStageProto mission_stage = 43;
+
+  // For Parallel planner.
+  optional mapping.LanePathProto prev_target_lane_path = 44;
+  optional double prev_length_along_route = 45;
+  optional double prev_max_reach_length = 57;
+  optional RouteSectionSequenceProto prev_route_sections = 46;
+  optional mapping.LanePointProto station_anchor = 51;
+
+  // Reference line smooth.
+  optional bool prev_smooth_state = 47;
+  optional SmoothedReferenceLineResultProto smooth_result_map = 54;
+
+  optional mapping.LanePathProto preferred_lane_path = 49;
+
+  // Yellow light observations.
+  map<sfixed64, YellowLightObservationProto> yellow_light_observations = 50;
+
+  repeated PlanTaskProto plan_task_queue = 53;
+
+  optional SelectorStateProto selector_state = 59;
+
+  optional bool stopped_at_route_end = 55;
+
+  optional TrajectoryEndInfoProto previous_trajectory_end_info = 56;
+
+  // ---------------- L2 ------------------
+  optional AssistPlanStateProto assist_plan_state = 63;
+
+  // For Async Planner.
+  optional AsyncPlannerStateProto async_planner_state = 60;
+
+  // AEB
+  optional bool previously_triggered_aeb = 61;
+  repeated PathPoint previous_st_path_global_including_past = 62;
+
+  // Online Map
+  optional sfixed64 prev_online_map_id = 65 [default = -1];
+
+  optional TrajectoryOptimizerStateProto selected_trajectory_optimizer_state =
+      67;
+
+  optional TjaStateProto tja_state = 68;
+
+  // The av/objects history with localization_transform
+  optional HistoryTransformProto history_transform = 69;
+
+  repeated OnlineMapDrift online_map_drift_buffer = 70;
+  map<string, ObjectMotionStatesProto> objects_motion_state_buffer = 71;
+
+  optional HDMapLoadStateProto hd_map_state = 73;
+
+  optional bool prev_collision_warning_request = 74;
+
+  // Next ID: 75.
+  reserved 4 to 14, 18, 20, 21, 24 to 26, 32 to 36, 42, 52, 58, 64, 66;
+}

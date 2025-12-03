@@ -1,0 +1,78 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/selector/proto/selector_params";
+
+message SelectorParamsProto {
+  message TrajCostWeights {
+    // Weights for different cost features.
+    message ProgressCost {
+      optional double progress = 1;
+      optional double follow_slow = 2;
+      optional double front_non_block_car = 5;
+      reserved 3, 4;
+    }
+    message MaxJerkCost {
+      optional double max_lon_jerk = 1;
+      optional double max_lat_jerk = 2;
+      optional double max_lon_deacc = 3;
+    }
+    message LaneChangeCost {
+      optional double lane_path_diff = 1;
+      optional double pose_to_target = 2;
+      optional double prev_lat_diff = 3;
+      optional double lc_in_curvy_road = 5;
+      optional double lc_in_intersection = 6;
+      optional double lc_in_redlight = 8;
+      optional double lc_opposite_direction = 9;
+      optional double lc_safety_effect = 10;
+      optional double lk_after_turn_signal = 11;
+      optional double lc_with_opposite_diverge = 12;
+      reserved 4, 7;
+    }
+    message CrossSolidBoundaryCost {
+      optional double solid_white = 1;
+      optional double solid_yellow = 2;
+      optional double solid_double_yellow = 3;
+      optional double curb = 4;
+    }
+    message RouteLookAheadCost {
+      optional double length_along_route = 1;
+      optional double reach_destination = 2;
+      optional double preview_beyond_horizon = 3;
+      optional double discourage_right_most_lane = 4;
+      optional double behind_stalled_object = 5;
+      optional double merge_lane = 6;
+      optional double encourage_right_most_lane = 7;
+    }
+    message BoundaryExpansionCost {
+      optional double boundary_expansion = 1;
+    }
+
+    optional ProgressCost progress = 1;
+    optional MaxJerkCost max_jerk = 2;
+    optional LaneChangeCost lane_change = 3;
+    optional CrossSolidBoundaryCost cross_solid_boundary = 4;
+    optional RouteLookAheadCost route_look_ahead = 6;
+    optional BoundaryExpansionCost boundary_expansion = 7;
+    reserved 5, 9;
+  }
+  message TrajCostConfig {
+    optional bool enable_progress_cost = 1;
+    optional bool enable_max_jerk_cost = 2;
+    optional bool enable_lane_change_cost = 3;
+    optional bool enable_solid_boundary_cost = 4;
+    optional bool enable_route_look_ahead_cost = 6;
+    optional bool enable_boundary_expansion_cost = 7;
+    reserved 5, 9;
+  }
+  message SelectorModelUsageConfig {
+    optional bool enable_selector_model = 1;
+    optional double selector_score_cost = 2 [default = 0.0];
+    optional bool selector_score_only = 3;
+  }
+
+  optional TrajCostWeights cost_weights = 1;
+  optional TrajCostConfig cost_config = 2;
+  optional SelectorModelUsageConfig selector_model_config = 3;
+}

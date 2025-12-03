@@ -1,0 +1,48 @@
+# stops map match 
+poi_match_param {
+  filter { radius_error: 7.0 heading_error: 0.0 motoway_only: true }
+  sorter {
+    dist_weight: 1.0
+    heading_weight: 0
+    non_motor_lane_cost: 100.0
+    virtual_lane_cost: 3.5
+  }
+  match_type: STATIONARY
+}
+# when on driving.
+on_driving_param {
+  filter { radius_error: 5.5 heading_error: 0.8 motoway_only: true }
+  sorter {
+    dist_weight: 0.8
+    heading_weight: 0.2
+    non_motor_lane_cost: 100.0
+    virtual_lane_cost: 0.0
+  }
+  match_type: DRIVING
+}
+# route search cost param 
+cost_param {
+  # Unit: seconds
+  turn_cost {
+    u_turn: 20.0
+    left_turn: 7.5
+    right_turn: 3.0
+    infeasible_u_turn: 1000.0
+  }
+  blacklist { base_cost: 10000.0 cost_per_meters: 100.0 }
+  lc_cost: 2.0
+  invalid_lc_cost: 10000.0
+  passenger_vehicle_avoid_lane_cost: 100000.0
+  # Unit: meters
+  match_point_coefficient: 15.0
+}
+
+# basic map param
+default_lane_width: 3.5
+look_ahead_start_secs: 3.5
+ignore_avoid_lane_length: 15.0
+tencent_coord_converter_url: "https://qsuite.qcraftai.com/api/lbs/v1/transform-coordinate-from-gps-to-third-party"
+
+# other params
+# Unit: seconds.
+speed_limit_look_ahead_time: 0.5

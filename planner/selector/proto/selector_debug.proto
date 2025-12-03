@@ -1,0 +1,152 @@
+syntax = "proto2";
+
+package qcraft.planner;
+
+option go_package = "qcraft-proto.ai/onboard/planner/selector/proto/selector_debug";
+
+import "onboard/proto/trajectory_point.proto";
+import "onboard/planner/scheduler/proto/lane_change.proto";
+import "onboard/prediction/proto/prophnet.proto";
+import "onboard/proto/turn_signal.proto";
+import "onboard/planner/ml/condition_feature_extractor/proto/condition_feature.proto";
+
+// For selector cost function debug.
+message SelectorFeatureCost {
+  optional string name = 1;
+  optional double cost = 2;
+  repeated string extra_info = 3;
+  repeated string cost_value_info = 4;
+}
+
+message TrajectoryCost {
+  optional int64 start_lane_id = 1;
+  repeated SelectorFeatureCost features = 2;
+  optional double sum_common = 3;
+  optional double sum = 4;
+  optional SelectorStateDebugProto selector_state = 5;
+  optional LaneChangeStage lc_stage = 6;
+}
+
+message SelectorStateDebugProto {
+  optional int64 best_traj_time = 1;
+  optional int64 best_threshold = 2;
+  optional bool is_last_traj = 3;
+  optional bool is_final_traj = 4;
+}
+
+message PrefilterCostDebugProto {
+  optional bool lc_left = 1;
+  optional int64 start_lane_id = 2;
+  optional double sum_cost = 3;
+  repeated string extra_info = 4;
+}
+
+message SelectorPrefilterDebugProto {
+  optional string prefilter_reason = 1;
+  optional bool choose_left = 2;
+  repeated PrefilterCostDebugProto prefilter_costs = 3;
+}
+
+// For data dumping.
+message SelectorFeature {
+  optional string name = 1;
+  repeated string sub_names = 2;
+  repeated double values = 3;
+  optional bool is_common = 4;
+  repeated string extra_info = 5;
+}
+
+message TrajectoryFeature {
+  optional int64 start_lane_id = 1;
+  repeated SelectorFeature features = 2;
+}
+
+message SelectorTrajectory {
+  repeated ApolloTrajectoryPointProto trajectory_points = 1;
+}
+
+// For selector scoring net output debug.
+message TrajectoryScore {
+  optional int64 start_lane_id = 1;
+  optional double score = 2;
+  optional double score_to_cost = 3;
+  optional double weighted_score_to_cost = 4;
+}
+
+message SelectorOutputProto {
+  optional int64 selected_idx = 1;
+  optional int64 best_traj_idx = 2;
+  optional int64 last_selected_idx = 3;
+  optional TurnSignal turn_signal = 4;
+  optional bool all_trajectories_blocked = 5;
+  optional bool is_going_force_route_change_left = 7;
+  optional bool lane_change_for_obstacle_fail = 8;
+
+  reserved 6;
+}
+
+message SelectorMLData {
+  optional bool is_filtered = 1;
+
+  repeated TrajectoryFeature candidate_trajs_features = 100;
+  repeated SelectorTrajectory candidate_trajs = 101;
+  repeated ProphnetDumpedFeatureProto.LanesDumpedFeature
+      candidate_lanes_model_features = 102;
+  repeated ProphnetDumpedFeatureProto.ObjectsDumpedFeature
+      candidate_trajs_model_features = 103;
+  repeated ProphnetDumpedFeatureProto.LanesDumpedFeature
+      candidate_left_path_sl_boundary_model_features = 104;
+  repeated ProphnetDumpedFeatureProto.LanesDumpedFeature
+      candidate_right_path_sl_boundary_model_features = 105;
+  repeated ProphnetDumpedFeatureProto.LanesDumpedFeature
+      candidate_smooth_ref_center_line_model_features = 106;
+
+  repeated ml.LineSegmentsFeatureProto candidate_lanes_model_inputs = 108;
+  repeated ml.TrajectoryFeatureProto candidate_trajs_model_inputs = 109;
+  repeated ml.PathBoundaryFeatureProto candidate_path_boundaries_model_inputs =
+      110;
+
+  message CandidateLaneStats {
+    optional int32 lc_num_to_targets = 1;
+    optional double driving_dist = 2;
+    optional double length_along_route = 3;
+    optional bool is_right_most_lane = 4;
+    optional double len_before_intersection = 5;
+  }
+  repeated CandidateLaneStats candidate_lane_stats = 107;
+
+  optional TrajectoryFeature expert_traj_features = 200;
+  optional SelectorTrajectory expert_traj = 201;
+  optional ProphnetDumpedFeatureProto.LanesDumpedFeature
+      expert_lane_model_features = 202;
+  optional ProphnetDumpedFeatureProto.ObjectsDumpedFeature
+      expert_traj_model_features = 203;
+  optional ProphnetDumpedFeatureProto.LanesDumpedFeature
+      expert_left_path_sl_boundary_model_features = 204;
+  optional ProphnetDumpedFeatureProto.LanesDumpedFeature
+      expert_right_path_sl_boundary_model_features = 205;
+  optional ProphnetDumpedFeatureProto.LanesDumpedFeature
+      expert_smooth_ref_center_line_model_features = 206;
+
+  optional ml.LineSegmentsFeatureProto expert_lane_model_input = 207;
+  optional ml.TrajectoryFeatureProto expert_traj_model_input = 208;
+  optional ml.PathBoundaryFeatureProto expert_path_boundary_model_input = 209;
+}
+
+message SelectorDebugProto {
+  // For selector cost function debug.
+  repeated TrajectoryCost traj_costs = 1;
+
+  // Selector output debug info.
+  optional SelectorOutputProto selector_output = 5;
+
+  optional SelectorPrefilterDebugProto prefilter_debug = 6;
+
+  // For data dumping.
+  optional SelectorMLData ml_data = 50;
+
+  // For selector scoring net output debug.
+  repeated TrajectoryScore traj_scores_by_net = 200;
+
+  reserved 2 to 4, 100 to 113, 120;
+}

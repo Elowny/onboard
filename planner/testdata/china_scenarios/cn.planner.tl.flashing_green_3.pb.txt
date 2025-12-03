@@ -1,0 +1,63 @@
+name: "test.pb.txt"
+commandline_flags: "--route_str=end"
+commandline_flags: "--map=suzhou"
+edit_attr { description: "Test Issue #190" }
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/s3/run_data/20200729_153048_Q8001"
+    duration: 20
+    start_offset: 365
+  }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    routing_module { module: ROUTING_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] { engage_start_time: 1 }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "prohibited_destination_metric"
+  prohibited_destination_metric {
+    regions {
+      destination {
+        uuid: "{603effb1-4f32-4f71-9c5e-a40804987899}"
+        points { x: 4808.9 y: 13862.6 }
+        points { x: 4799.7 y: 13848.9 }
+        points { x: 4812.6 y: 13840.5 }
+        points { x: 4822.9 y: 13857.2 }
+      }
+      reach_within_secs: 30
+      approach: CAR_CONTOUR
+    }
+  }
+}

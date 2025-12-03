@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/decision/proto/stop_sign_state";
+
+// This is the stop sign state. It is created when AV first stopped for the stop
+// sign.
+message StopSignStateProto {
+  // The lane associated with the stop sign. We use the lane id as the
+  // identifier of the stop sign.
+  optional sfixed64 stop_sign_lane_id = 1;
+
+  // This is the UNIX time in seconds to indicate when AV has stopped for the
+  // stop sign. AV will yield to all objects that have stopped before this
+  // time on the stop sign controlled lanes.
+  optional double stop_time = 2;
+
+  enum StopState {
+    // AV is approaching the stop sign, not stopped for the stop sign yet.
+    APPROACHING = 1;
+    // AV is stopped waiting for the stop sign. AV has to wait for a at least a
+    // certain time, and until all the objects arrived before AV left.
+    STOPPED = 2;
+    // AV has finished waiting for the stop sign (waited for enough time and
+    // there is no object to yield because of stop sign). AV is ready to go. In
+    // this state, AV may or may not be moving. The `yield_objects` field should
+    // be empty.
+    PASSED = 3;
+  }
+  optional StopState stop_state = 3;
+
+  message YieldObject {
+    // The stop sign lane when the object is stopped at the stop sign. It may
+    // not be the lane the object is currently on.
+    optional sfixed64 stop_lane_id = 1;
+    // The front object on the lane that we are yielding for. We only consider
+    // vehicle typed objects.
+    optional string object_id = 2;
+    // The object's stopped time.
+    optional double stop_time = 3;
+  }
+  repeated YieldObject yield_objects = 4;
+}

@@ -1,0 +1,108 @@
+// TODO(zifeng): delete the proto.
+
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/prediction/proto/cutin";
+
+import "onboard/math/geometry/proto/affine_transformation.proto";
+import "onboard/prediction/proto/prediction_common.proto";
+
+message CutinDumpedFeatureProto {
+  message AgentDumpedFeature {
+    // Position sequence.
+    repeated float pos = 1 [packed = true];
+    // Speed sequence.
+    repeated float speed = 2 [packed = true];
+    // Yaw sequence.
+    repeated float yaw = 3 [packed = true];
+    // length & width.
+    repeated float length_width = 5;
+  }
+  // First one is always AV.
+  message ObjectsDumpedFeature {
+    // Length & width of objects.
+    repeated float length_width = 1 [packed = true];
+    // Relative position diff w.r.t Agent of each time step: [x_o - x_a, y_o -
+    // y_a].
+    repeated float rel_pos = 3 [packed = true];
+    // Relative distance, norm of above rel_pos.
+    repeated float rel_dist = 4 [packed = true];
+    // Yaw diff of object w.r.t agent at history point yaw - rel_yaw.
+    repeated float yaw_diff = 5 [packed = true];
+    // [v_xo - v_xa, v_yo - v_ya].
+    repeated float rel_speed = 6 [packed = true];
+
+    reserved 2;
+  }
+
+  // Each map element is represented by one or more poly lines of 10 meters
+  // length. Each poly line is represented as 5 equal-distance segments.
+  // If a polyline is less than 10 meters length, invalid seg will be
+  // indicated by a flag.
+  message MapDumpedFeature {
+    // unit vector of p1-p0.
+    repeated float unit_seg_vec = 1 [packed = true];
+    // segement length
+    repeated float seg_len = 2 [packed = true];
+    // unit tangent at p0
+    repeated float unit_tangent = 3 [packed = true];
+    // agent min distance to segment. Min dist point is r
+    repeated float dist = 4 [packed = true];
+    // unit vector of [0, r].
+    repeated float unit_dist_vec = 5 [packed = true];
+    // distance from p1 to r.
+    repeated float nearest_to_end_dist = 6 [packed = true];
+    // Yaw diff of segment heading & agent-segment perpendicular vector.
+    repeated float yaw_diff = 7 [packed = true];
+    // Consider lane center, curb, solid lane, double solid lane, pedestrian
+    // crossing.
+    repeated float type = 8 [packed = true];
+    // Consider red, yellow, green, unknown, none.
+    repeated float light = 9 [packed = true];
+    // segment sequence [p0, p1] four dims.
+    repeated float seg = 10 [packed = true];
+  }
+
+  message CutinSLPos {
+    optional Vec2dProto sl_pos_cur = 1;
+    optional Vec2dProto sl_pos_3s = 2;
+  }
+
+  // Ground truth of agent.
+  message CutinGroundTruth {
+    optional TrajectoryGroundTruth gt_traj = 1;
+    optional CutinSLPos cut_in_sl_pos = 2;
+  }
+
+  message CutinExclusiveFeatures {
+    repeated float agent_sl_coords = 1 [packed = true];
+    repeated float av_sl_coords = 2 [packed = true];
+    optional MapDumpedFeature drive_passage_polylines_features = 3;
+    repeated float dp_mask = 4;
+  }
+
+  // regular features
+  optional AgentDumpedFeature agent_feature = 1;
+  optional ObjectsDumpedFeature objects_feature = 2;
+  optional string agent_id = 3;
+  optional double timestamp = 4;
+  // We put map features into three categories: lane centers, boundaries & cross
+  // walk features.
+  optional MapDumpedFeature lane_centers_features = 5;
+  optional MapDumpedFeature lane_boundaries_features = 6;
+  optional MapDumpedFeature crosswalks_features = 7;
+
+  repeated float lcs_mask = 11 [packed = true];
+  repeated float lbs_mask = 12 [packed = true];
+  repeated float cws_mask = 13 [packed = true];
+
+  // Cut-in features
+  optional CutinExclusiveFeatures cut_in_features = 8;
+
+  // Ground truth
+  optional CutinGroundTruth gt = 9;
+
+  reserved 10;
+  // Next id: 14
+}

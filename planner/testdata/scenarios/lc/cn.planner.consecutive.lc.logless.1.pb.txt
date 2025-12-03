@@ -1,0 +1,63 @@
+name: "logless_test"
+edit_attr {}
+execution {
+  sim_duration: 100000
+  playback_sources { run_or_stf_path: "" duration: 100 start_offset: 0 }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE disable: true }
+    positioning_module { module: POSITIONING_MODULE disable: true }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module { module: GNSS_IMU_DRIVER_MODULE disable: true }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 1
+          initial_pose {
+            pos_smooth { x: 3657.9 y: 13224.5 }
+            vel_body { x: 15 }
+            yaw: -0.35
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {}
+    }
+    create_sim_messages_module { disable: true }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE disable: true }
+    synthesized_traffic_flow_module {
+      module: SYNTHESIZED_TRAFFIC_FLOW_MODULE
+      enable: true
+    }
+    vision_module { module: VISION_MODULE disable: true }
+    routing_module { module: ROUTING_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+commandline_flags: "--prediction_enable_vehicle_motion_predictor=true"
+commandline_flags: "--map=suzhou"
+commandline_flags: "--route_str=wuyueguangchang1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"
+commandline_flags: "--route_send_canvas=1"
+commandline_flags: "--allow_routed_lane_change=1"

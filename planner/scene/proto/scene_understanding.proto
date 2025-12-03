@@ -1,0 +1,91 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/scene/proto/scene_understanding";
+
+import "onboard/maps/proto/lane_path.proto";
+import "common/proto/lane_point.proto";
+import "onboard/proto/perception.proto";
+import "onboard/proto/prediction.proto";
+import "onboard/math/geometry/proto/affine_transformation.proto";
+
+message OccludedUnitProto {
+  // For unit_index (x, y) is the relative position of unit box
+  // in a specific zone that is discretely sampled.
+  optional Vec2iProto unit_index = 1;
+  // For unit_smooth_coord (x, y) is the coordinates of unit center in smooth
+  // coordinate system.
+  optional Vec2dProto unit_smooth_coord = 2;
+  // Record the timestamp when the unit first occluded.
+  optional double occluded_timestamp = 3;
+  optional double length = 4;
+  optional double width = 5;
+  optional double heading = 6;
+};
+
+message OccludedZoneProto {
+  // Occluded zone id.
+  optional int64 id = 1;
+  // Maybe useless.
+  enum ZoneType {
+    NONE = 0;
+    CROSSWALK = 1;
+    INTERSECTION = 2;
+    // ...
+  };
+  optional ZoneType type = 2;
+  repeated OccludedUnitProto occluded_units = 3;
+};
+
+message TrafficWaitingQueueProto {
+  optional mapping.LanePathProto lane_path = 1;
+  repeated string object_id = 2;  // sort by longitudinal position
+};
+
+message ObjectAnnotationProto {
+  optional double stalled_vehicle_likelyhood = 1;  // [0, 1]
+  optional double depart_soon_likelyhood = 2;      // [0, 1]
+  // NOTE: stalled_vehicle_likelyhood + depart_soon_likelyhood <= 1.0
+  // objects in traffic waiting queue are more likely to be departing soon.
+
+  // Do not overtake the vehicle which is starting.
+  optional double vehicle_starting_likelyhood = 3;
+  optional string object_id = 4;
+
+  // TODO: add false detected annotation due to occlusion.
+};
+
+message InferredObjectProto {
+  enum InferType {
+    OCCLUDED = 0;
+    CONSTRUCTION_ZONE = 1;
+  };
+
+  message InferSource {
+    message Crosswalk {
+      optional sfixed64 crosswalk_id = 1;
+    }
+    message InteractionLane {
+      optional mapping.LanePointProto interaction_point = 1;
+      optional double dist_to_interaction = 2;
+    }
+    oneof type {
+      Crosswalk crosswalk = 1;
+      InteractionLane interaction_lane = 2;
+    };
+  }
+
+  optional ObjectProto object_info = 1;
+  optional ObjectPredictionProto prediction = 2;
+  optional InferType infer_type = 3;
+  optional InferSource infer_source = 4;
+  optional double confidence = 5;
+};
+
+// On road scene understanding output.
+message SceneOutputProto {
+  repeated TrafficWaitingQueueProto traffic_waiting_queue = 1;
+  repeated ObjectAnnotationProto objects_annotation = 2;
+  repeated InferredObjectProto inferred_objects = 3;
+  repeated OccludedZoneProto occluded_zones = 4;
+}

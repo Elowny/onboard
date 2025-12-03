@@ -1,0 +1,77 @@
+syntax = "proto2";
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/router/proto/route_manager_output";
+
+import "onboard/lite/proto/lite_common.proto";
+import "onboard/proto/turn_signal.proto";
+import "onboard/proto/route.proto";
+import "onboard/proto/hmi_content.proto";
+import "common/proto/drive_mission.proto";
+import "onboard/proto/adasis.proto";
+
+message AlternativePathProto {
+  optional RouteSectionSequenceProto route_sections_from_current = 1;
+  optional RouteNaviInfoProto route_navi_info = 2;
+  optional double roundabout_distance = 3;
+}
+
+message NoaErrorInfo {
+  enum ErrorCode {
+    OK = 0;
+    NO_HD_MAP = 1;  // without hd map
+    INAVLID_LOCALIZATION = 2;
+    NO_SD_ROUTE = 3;  // without sd route
+    OFF_ROUTE = 4;    // Off route
+    INVALID_MPP = 5;  // MPP is invalid.
+    INTERNAL = 6;     // Routing internal error.
+  }
+  optional ErrorCode error_code = 1;
+  optional string message = 2;
+}
+message RouteManagerOutputProto {
+  optional LiteHeader header = 1;
+
+  // NOTE(zuowei): 'route' and 'route from current' are deprecated,
+  // reserve for compatibility.
+  optional RouteProto route = 2;
+  optional RouteProto route_from_current = 3;
+  optional RouteContentProto route_content = 4 [deprecated = true];
+
+  optional RouteSectionSequenceProto route_sections_from_current = 6;
+  repeated sfixed64 avoid_lanes = 13;
+  optional RouteNaviInfoProto route_navi_info = 15;
+
+  optional TurnSignal signal = 7;
+  optional bool rerouted = 8;
+  optional bool is_bus = 9 [deprecated = true];
+
+  optional MultipleStopsRequestProto.StopProto destination_stop = 10;
+  optional RoutingRequestProto routing_request = 14;
+
+  optional int64 update_id = 11;
+  optional bool reset = 12 [deprecated = true];
+
+  optional double recommend_lane_speed_limit = 16;  // m/s
+
+  optional AlternativePathProto alternative_path_proto = 17;
+
+  optional bool is_valid = 18 [deprecated = true];
+
+  enum RouteStatus {
+    NORMAL = 1;
+    RESET = 2;
+    INVALID = 10;
+  }
+
+  optional RouteStatus route_status = 19;
+
+  optional AvoidLaneSegmentMapProto avoid_lane_segments = 20;
+
+  repeated OverlappingSection overlap_sections = 21;
+  optional bool overlap_sections_precomputed = 23;
+
+  optional NoaErrorInfo noa_error_info = 22;  // Record the upgrade noa details.
+
+  // NEXT ID: 24.
+  reserved 5;
+}

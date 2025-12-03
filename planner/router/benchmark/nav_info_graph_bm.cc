@@ -1,0 +1,400 @@
+
+#include "benchmark/benchmark.h"
+
+#include "onboard/maps/lane_point.h"
+#include "onboard/maps/v2/semantic_map_loader.h"
+#include "onboard/planner/router/route_manager_util.h"
+#include "onboard/proto/route.pb.h"
+#include "onboard/utils/file_util.h"
+namespace qcraft::planner::route {
+namespace {
+void BM_CalcCurRouteNaviInfo(benchmark::State& state) {  // NOLINT
+  const auto str_route = R"(
+  start_fraction: 0.3659705661659039
+  end_fraction: 0.90572029858095449
+  section_id: 399052
+  section_id: 399051
+  section_id: 411265
+  section_id: 403370
+  section_id: 376092
+  section_id: 376091
+  section_id: 376090
+  section_id: 376089
+  section_id: 376522
+  section_id: 376087
+  section_id: 376082
+  section_id: 384803
+  section_id: 384802
+  section_id: 376081
+  section_id: 376079
+  section_id: 376028
+  section_id: 376027
+  section_id: 377217
+  section_id: 376026
+  section_id: 376018
+  section_id: 376019
+  section_id: 376020
+  section_id: 376021
+  section_id: 376076
+  section_id: 384804
+  section_id: 374175
+  section_id: 374176
+  section_id: 376546
+  section_id: 411264
+  section_id: 376551
+  section_id: 376552
+  section_id: 376553
+  section_id: 403176
+  section_id: 395316
+  section_id: 395317
+  section_id: 384805
+  section_id: 384806
+  section_id: 384809
+  section_id: 384808
+  section_id: 384807
+  section_id: 384810
+  section_id: 402100
+  section_id: 397481
+  section_id: 384811
+  section_id: 384812
+  section_id: 403545
+  section_id: 403536
+  section_id: 399618
+  section_id: 385028
+  section_id: 403544
+  section_id: 399619
+  section_id: 399620
+  section_id: 384814
+  section_id: 403543
+  section_id: 399622
+  section_id: 403380
+  section_id: 403560
+  section_id: 385031
+  section_id: 385032
+  section_id: 403540
+  section_id: 403542
+  section_id: 403539
+  section_id: 399623
+  section_id: 403561
+  section_id: 403562
+  section_id: 406222
+  section_id: 403533
+  section_id: 385840
+  section_id: 399624
+  section_id: 403563
+  section_id: 385027
+  section_id: 384815
+  section_id: 399625
+  section_id: 384816
+  section_id: 403564
+  section_id: 403541
+  section_id: 399627
+  section_id: 399626
+  section_id: 399628
+  section_id: 406228
+  section_id: 403538
+  section_id: 399629
+  section_id: 386214
+  section_id: 386238
+  section_id: 386239
+  section_id: 386217
+  section_id: 386218
+  section_id: 386219
+  section_id: 386220
+  section_id: 386221
+  section_id: 386222
+  section_id: 386223
+  section_id: 386224
+  section_id: 386225
+  section_id: 386226
+  section_id: 386227
+  section_id: 386228
+  section_id: 387812
+  section_id: 386230
+  section_id: 386236
+  section_id: 386237
+  section_id: 386231
+  section_id: 386232
+  section_id: 386233
+  section_id: 385845
+  section_id: 386234
+  section_id: 386235
+  section_id: 399114
+  section_id: 384823
+  section_id: 384824
+  section_id: 384818
+  section_id: 384817
+  section_id: 384819
+  section_id: 384821
+  section_id: 384822
+  section_id: 399115
+  section_id: 399116
+  section_id: 399108
+  section_id: 399971
+  section_id: 392575
+  section_id: 385846
+  section_id: 385847
+  section_id: 386211
+  section_id: 386202
+  section_id: 386203
+  section_id: 386204
+  section_id: 386205
+  section_id: 386206
+  section_id: 386207
+  section_id: 386876
+  section_id: 386209
+  section_id: 399972
+  section_id: 399117
+  section_id: 399118
+  section_id: 406223
+  section_id: 406224
+  section_id: 385849
+  section_id: 385197
+  section_id: 406211
+  section_id: 406212
+  section_id: 406213
+  section_id: 406214
+  section_id: 406227
+  section_id: 406221
+  section_id: 406215
+  section_id: 384825
+  section_id: 384826
+  section_id: 384827
+  section_id: 401322
+  section_id: 384828
+  section_id: 384637
+  section_id: 384830
+  section_id: 384642
+  section_id: 406219
+  section_id: 406220
+  section_id: 406218
+  section_id: 406217
+  section_id: 384831
+  section_id: 384832
+  section_id: 384833
+  section_id: 384834
+  section_id: 384835
+  section_id: 399119
+  section_id: 384836
+  section_id: 384838
+  section_id: 384839
+  section_id: 384840
+  section_id: 401323
+  section_id: 384841
+  section_id: 384842
+  section_id: 384843
+  section_id: 384844
+  section_id: 384845
+  section_id: 414481
+  section_id: 414482
+  section_id: 414483
+  section_id: 391520
+  section_id: 384846
+  section_id: 384847
+  section_id: 384848
+  section_id: 384849
+  section_id: 384850
+  section_id: 384851
+  section_id: 384852
+  section_id: 384853
+  section_id: 384854
+  section_id: 384855
+  section_id: 384856
+  section_id: 384857
+  section_id: 384858
+  section_id: 384859
+  section_id: 384650
+  section_id: 385820
+  section_id: 402802
+  section_id: 391521
+  section_id: 385821
+  section_id: 385822
+  section_id: 385823
+  section_id: 385824
+  section_id: 385836
+  section_id: 385837
+  section_id: 385838
+  section_id: 391516
+  section_id: 391517
+  section_id: 385830
+  section_id: 391518
+  section_id: 391519
+  section_id: 385831
+  section_id: 385829
+  section_id: 385828
+  section_id: 385832
+  section_id: 385833
+  section_id: 385834
+  section_id: 414441
+  section_id: 414440
+  section_id: 414442
+  section_id: 391522
+  section_id: 384652
+  section_id: 385835
+  section_id: 385827
+  section_id: 385826
+  section_id: 391525
+  section_id: 391526
+  section_id: 384645
+  section_id: 384644
+  section_id: 392850
+  section_id: 392849
+  section_id: 392851
+  section_id: 392847
+  section_id: 386076
+  section_id: 386077
+  section_id: 392874
+  section_id: 386091
+  section_id: 386092
+  section_id: 386082
+  section_id: 386080
+  section_id: 386081
+  section_id: 386083
+  section_id: 386084
+  section_id: 386085
+  section_id: 386086
+  section_id: 386087
+  section_id: 386088
+  section_id: 386089
+  section_id: 386090
+  section_id: 386777
+  section_id: 386443
+  section_id: 393312
+  section_id: 412357
+  section_id: 386102
+  section_id: 386059
+  section_id: 386058
+  section_id: 386057
+  section_id: 386056
+  section_id: 386054
+  section_id: 386053
+  section_id: 386052
+  section_id: 386101
+  section_id: 399960
+  section_id: 384726
+  section_id: 384727
+  section_id: 384731
+  section_id: 393252
+  section_id: 384732
+  section_id: 384733
+  section_id: 384734
+  section_id: 384791
+  section_id: 384794
+  section_id: 402971
+  section_id: 384735
+  section_id: 397480
+  section_id: 399412
+  section_id: 402851
+  section_id: 384736
+  section_id: 384738
+  section_id: 384739
+  section_id: 386952
+  section_id: 384740
+  section_id: 384741
+  section_id: 384742
+  section_id: 384743
+  section_id: 393280
+  section_id: 384746
+  section_id: 400132
+  section_id: 384747
+  section_id: 384748
+  section_id: 384749
+  section_id: 384750
+  section_id: 398260
+  section_id: 376661
+  section_id: 402097
+  section_id: 384651
+  section_id: 376658
+  section_id: 376657
+  section_id: 376653
+  section_id: 376652
+  section_id: 400939
+  section_id: 384795
+  section_id: 399092
+  section_id: 376648
+  section_id: 399095
+  section_id: 400712
+  section_id: 376645
+  section_id: 376644
+  section_id: 376642
+  section_id: 376643
+  section_id: 376640
+  section_id: 384048
+  section_id: 396658
+  section_id: 376406
+  section_id: 376149
+  section_id: 396656
+  section_id: 376314
+  section_id: 402098
+  section_id: 376317
+  section_id: 376319
+  section_id: 376321
+  section_id: 384399
+  section_id: 376215
+  section_id: 376214
+  section_id: 384999
+  section_id: 385000
+  section_id: 376213
+  section_id: 376208
+  section_id: 376203
+  section_id: 376202
+  section_id: 376201
+  section_id: 398593
+  section_id: 376200
+  section_id: 376196
+  section_id: 376193
+  section_id: 376190
+  section_id: 376191
+  section_id: 376187
+  section_id: 404098
+  section_id: 376185
+  section_id: 376183
+  section_id: 376182
+  section_id: 376181
+  section_id: 414458
+  section_id: 376178
+  section_id: 376176
+  section_id: 376173
+  section_id: 376172
+  section_id: 376171
+  section_id: 376169
+  section_id: 376167
+  section_id: 376164
+  section_id: 376162
+  section_id: 376401
+  section_id: 376160
+  section_id: 398257
+  destination {
+    lane_id: 4358538
+    fraction: 0.90572029858095449
+  }
+  )";
+  RouteSectionSequenceProto route_sections_proto;
+  auto ok = file_util::StringToProto(str_route, &route_sections_proto);
+  FLAGS_use_map_repo = true;
+  FLAGS_map_sha = "8a95f3c1aac2e68b0cf227830a8666cec48a794e";
+  SetMap("jiangsu_suzhou");
+  CHECK(ok);
+  auto loader = mapping::v2::SemanticMapLoader::MakeShared(
+      {.map_name = "jiangsu_suzhou"});
+  auto map_fut = loader->PreloadWholeMap();
+  std::shared_ptr<mapping::v2::SemanticMapManager> v2smm = map_fut.Get();
+  mapping::LanePoint start_lp(mapping::ElementId(4358538), 0.90572);
+  auto route_nav_info = CalcCurRouteNaviInfo(
+      *v2smm, route_sections_proto, route_sections_proto,
+      /* avoid_lanes=*/{}, start_lp, /*extend_length=*/10.0,
+      /*preview_dist=*/3000.0);
+  for (auto _ : state) {
+    benchmark::DoNotOptimize(CalcCurRouteNaviInfo(
+        *v2smm, route_sections_proto, route_sections_proto,
+        /* avoid_lanes=*/{}, start_lp, /*extend_length=*/10.0,
+        /*preview_dist=*/3000.0));
+  }
+}
+
+BENCHMARK(BM_CalcCurRouteNaviInfo)->Unit(benchmark::kMillisecond);
+
+}  // namespace
+}  // namespace qcraft::planner::route
+
+BENCHMARK_MAIN();

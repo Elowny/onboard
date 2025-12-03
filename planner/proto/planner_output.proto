@@ -1,0 +1,24 @@
+syntax = "proto2";
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/proto/planner_output";
+
+import "onboard/proto/charts.proto";
+import "onboard/proto/planner.proto";
+import "onboard/proto/trajectory.proto";
+import "onboard/planner/proto/planner_state.proto";
+import "onboard/planner/assist/proto/external_command_status.proto";
+import "onboard/proto/hmi_content.proto";
+
+message PlannerOutput {
+  optional TrajectoryProto trajectory = 2;
+
+  optional PlannerDebugProto planner_debug = 5;
+
+  optional HmiContentProto hmi_content = 6;
+
+  optional vis.vantage.ChartsDataProto charts_data = 7;
+
+  optional PlannerExternalCommandStatusProto external_command_status = 8;
+
+  optional PlannerStateProto planner_state_proto = 9;  // To delete here
+}

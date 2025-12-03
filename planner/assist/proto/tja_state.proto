@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/assist/proto/tja_state";
+
+import "onboard/math/geometry/proto/affine_transformation.proto";
+
+message TjaStateProto {
+  repeated Vec2dProto center_line = 1;
+  repeated string target_obs_ids = 2;
+  optional bool planner_use_tja_map = 3;
+  optional int32 exit_counter = 4;
+  optional int32 update_id = 6;
+  repeated Vec2dProto planner_center_line = 7;
+  repeated string potential_obs_ids = 8;
+  repeated sfixed64 exit_lane_ids = 9;
+  reserved 5;
+}

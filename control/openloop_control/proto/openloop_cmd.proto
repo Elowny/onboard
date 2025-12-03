@@ -1,0 +1,41 @@
+syntax = "proto2";
+
+package qcraft.control;
+option go_package = "qcraft-proto.ai/onboard/control/openloop_control/proto/openloop_cmd";
+
+message OpenloopCmd {
+  enum Type {
+    STEERZERO = 1;
+    STEERSIN = 2;
+    STEERFOLLOW = 3;
+  }
+
+  message ThrottleBrake {
+    optional double aperture = 1 [default = 0.0];
+    optional double duration_time = 2 [default = 5.0];
+  }
+
+  message Acceleration {
+    optional double acceleration = 1 [default = 0.0];
+    optional double duration_time = 2 [default = 5.0];
+  }
+
+  message SteerSin {
+    optional double start_time = 1 [default = 5.0];
+    optional double steer_angle = 2 [default = 0.0];
+    optional double sin_period = 3 [default = 5.0];
+  }
+
+  message SteerFollow {
+    optional double start_time = 1 [default = 5.0];
+    optional string data_name = 2;
+    optional double steer_scale = 3 [default = 1.0];
+  }
+
+  optional Type testtype = 1 [default = STEERZERO];
+  repeated ThrottleBrake throttle_brake_cmd = 2;
+  repeated Acceleration acceleration_cmd = 3;
+  optional SteerSin steer_sin = 4;
+  optional SteerFollow steer_follow = 5;
+  optional int32 gear_cmd = 6 [default = 1];  // -1:R, other:D
+}

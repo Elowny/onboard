@@ -1,0 +1,22 @@
+syntax = "proto2";
+package qcraft.mlplanner;
+option go_package = "qcraft-proto.ai/onboard/ml_planner/proto/captain_net_output";
+
+import "onboard/proto/trajectory_point.proto";
+
+message CaptainNetTrajectoryProto {
+  repeated ApolloTrajectoryPointProto original_trajectory = 1;
+
+  repeated double sdxs = 2;
+  repeated double sdys = 3;
+  repeated double covariances = 4;
+  optional double mode_prob = 5;
+}
+
+message MultimodeCaptainNetTrajectoryProto {
+  repeated CaptainNetTrajectoryProto multimode_trajectory = 1;
+}
+
+message CaptainNetOutputProto {
+  repeated MultimodeCaptainNetTrajectoryProto multi_condition_trajectory = 1;
+}

@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package qcraft.planner.ml;
+option go_package = "qcraft-proto.ai/onboard/planner/ml/context_groundtruth_extractor/proto/context_groundtruth";
+
+import "onboard/math/geometry/proto/affine_transformation.proto";
+
+message GroundTruthPointProto {
+  // Spatial quantities.
+  optional Vec2dProto pos = 1;
+  optional double s = 2;      // Arc length (starting from first point).
+  optional double theta = 3;  // Facing orientation.
+  optional double kappa = 4;  // dtheta/ds.
+
+  // Temporal quantities.
+  optional double t = 100;  // Time (relative to first point).
+  optional double v = 101;  // Speed. Can not be negative.
+  optional double a = 102;  // dv/dt.
+}
+
+message TrajectoryGroundTruth {
+  optional string object_id = 1;
+  repeated GroundTruthPointProto gt_points = 100;
+}
+
+message ContextGroundTruth {
+  optional TrajectoryGroundTruth av_gt_traj = 1;
+  repeated TrajectoryGroundTruth objs_gt_traj = 2;
+}

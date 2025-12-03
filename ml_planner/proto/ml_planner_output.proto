@@ -1,0 +1,14 @@
+syntax = "proto2";
+package qcraft.mlplanner;
+option go_package = "qcraft-proto.ai/onboard/ml_planner/proto/ml_planner_output";
+
+import "onboard/lite/proto/lite_common.proto";
+import "onboard/ml_planner/proto/captain_net_output.proto";
+
+message MlPlannerOutputProto {
+  optional LiteHeader header = 1;
+
+  optional CaptainNetOutputProto captain_net_output = 2;
+
+  // optional TrajectoryProto trajectory = 3;
+}

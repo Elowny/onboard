@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package qcraft.planner;
+
+option go_package = "qcraft-proto.ai/onboard/planner/assist/proto/assist_plan_state";
+
+import "onboard/maps/proto/lane_path.proto";
+import "onboard/math/geometry/proto/affine_transformation.proto";
+
+import "common/proto/qalc.proto";
+import "common/proto/qacc.proto";
+
+message AssistPlanStateProto {
+  optional mapping.LanePathProto origin_lane_path = 1;
+  optional mapping.LanePathProto target_lane_path = 2;
+  optional QALCState alc_state = 3;
+  optional LaneChangeDirection lc_direction = 4;
+  optional QACCTaskProto acc_task = 5;
+  optional Vec2dProto lane_change_target_point = 6;
+}

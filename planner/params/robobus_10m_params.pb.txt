@@ -1,0 +1,81 @@
+# Params applicable to intelligent buses in China urban environments.
+motion_constraint_params {
+  default_speed_limit: 30  # 30mph, 48kph
+  max_psi: 0.045
+}
+
+lc_decision_params { min_lane_change_length: 14.0 }
+
+decision_constraint_config {
+  enable_traffic_light: true
+  enable_crosswalk: true
+  enable_leading_object: true
+  enable_no_block: true
+  enable_speed_bump: true
+}
+
+speed_finder_params {
+  speed_optimizer_params {
+    s_kernel_weight: 0.0001
+    speed_kernel_weight: 0.45
+    accel_kernel_weight: 12.0
+    jerk_kernel_weight: 20.0
+  }
+  speed_limit_params {
+    curvature_bias: 2.0
+    curvature_gain: 0.08
+    enable_new_curvature_speed_limit: false
+  }
+  follow_standstill_distance_for_static_obj: 7.0
+  full_stop_speed_threshold: 0.2
+  st_graph_params {
+    consider_mirrors_by_default: false
+    consider_large_vehicle_blind_spot: false
+  }
+  st_boundary_pre_decider_params { enable_lane_change_lead_decision: false }
+}
+
+trajectory_optimizer_params {
+  cost_weight_params {
+    longitudinal_acceleration_cost_params {
+      accel_cascade { buffer: 0.0 gain: 20.0 }
+      accel_cascade { buffer: 2.0 gain: 100.0 }
+    }
+    lateral_acceleration_cost_weight: 1.0
+  }
+}
+
+fallback_planner_params {
+  speed_finder_params {
+    speed_optimizer_params {
+      s_kernel_weight: 0.0001
+      speed_kernel_weight: 0.45
+      accel_kernel_weight: 12.0
+      jerk_kernel_weight: 20.0
+    }
+    speed_limit_params {
+      curvature_bias: 2.0
+      curvature_gain: 0.08
+      enable_new_curvature_speed_limit: false
+    }
+    follow_standstill_distance_for_static_obj: 7.0
+    full_stop_speed_threshold: 0.2
+    st_graph_params {
+      consider_mirrors_by_default: false
+      consider_large_vehicle_blind_spot: false
+    }
+  }
+}
+
+freespace_params_for_parking {
+  path_finder_params {
+    geometry_method_params {
+      kappa_slack_ratio: 0.8
+      min_drive_distance: 1.0
+      parallel_parking_max_adjustments: 1
+      perpendicular_parking_max_adjustments: 1
+      parallel_parking_out_max_adjustments: 3
+      perpendicular_parking_out_max_adjustments: 3
+    }
+  }
+}

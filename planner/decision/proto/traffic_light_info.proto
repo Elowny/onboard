@@ -1,0 +1,93 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/decision/proto/traffic_light_info";
+
+import "google/protobuf/timestamp.proto";
+import "onboard/proto/perception.proto";
+import "onboard/maps/proto/semantic_map.proto";
+// Generate protos for vantege show,will be writed to PlannerDebugProto
+enum TlColor {
+  TL_COLOR_UNKNOWN = 0;
+  TL_COLOR_RED = 1;
+  TL_COLOR_YELLOW = 2;
+  TL_COLOR_GREEN = 3;
+}
+
+message SingleTrafficLightInfoProto {
+  optional int64 traffic_light_id = 1;
+  optional TlColor color = 2;
+  optional bool flashing = 3;
+  optional double turn_red_time_left = 4;
+  optional double control_point_relative_s = 5;
+  optional double countdown = 6;
+}
+
+message TrafficLightInfoProto {
+  optional int64 lane_id = 1;
+  optional SingleTrafficLightInfoProto isolated_tl_info = 2;
+  optional SingleTrafficLightInfoProto straight_tl_info = 3;
+  optional SingleTrafficLightInfoProto left_tl_info = 4;
+  optional SingleTrafficLightInfoProto right_tl_info = 5;
+  optional SingleTrafficLightInfoProto uturn_tl_info = 6;
+  optional mapping.LaneProto.Direction direction = 7;
+}
+
+// Generate protos for caching, will be writed to PlannerStateProto
+message TrafficLightStateHistoryProto {
+  repeated google.protobuf.Timestamp time = 1;
+  repeated TrafficLightStateProto value = 2;
+}
+
+enum TrafficLightState {
+  TL_STATE_UNKNOWN = 0;
+  TL_STATE_RED = 1;
+  TL_STATE_YELLOW = 2;
+  TL_STATE_GREEN_FLASHING = 3;
+  TL_STATE_GREEN = 4;
+  TL_STATE_YELLOW_FLASHING = 5;
+}
+
+enum TrafficLightDirection {
+  UNMARKED = 0;
+  STRAIGHT = 1;
+  LEFT = 2;
+  RIGHT = 3;
+  UTURN = 4;
+}
+
+enum TrafficLightControlType {
+  SINGLE_DIRECTION = 0;
+  LEFT_WAITING_AREA = 1;
+}
+
+message TrafficLightVoteHistoryProto {
+  message VoteResult {
+    optional TrafficLightState state = 1;
+  }
+
+  optional TrafficLightDirection direction = 1;
+  repeated google.protobuf.Timestamp time = 2;
+  repeated VoteResult value = 3;
+}
+
+message MultiTrafficLightVoteHistoryProto {
+  // Each direction has its own history cache
+  repeated TrafficLightVoteHistoryProto vote_history = 1;
+}
+
+message YellowLightObservationProto {
+  optional google.protobuf.Timestamp first_flashing_green_observation = 1;
+  optional google.protobuf.Timestamp latest_flashing_green_observation = 2;
+  optional google.protobuf.Timestamp first_yellow_observation = 3;
+  optional google.protobuf.Timestamp latest_yellow_observation = 4;
+}
+
+message TrafficLightHistoryManagerProto {
+  // key: traffic light id
+  map<sfixed64, TrafficLightStateHistoryProto> tl_perception_history = 1;
+  // key: lane id
+  map<sfixed64, MultiTrafficLightVoteHistoryProto> tl_vote_history = 2;
+  // key: traffic light id
+  map<sfixed64, YellowLightObservationProto> yellow_light_observations = 3;
+}

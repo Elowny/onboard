@@ -1,0 +1,1 @@
+lane_ids: 338 lane_ids: 371 lane_ids: 342 start_fraction: 0.4 end_fraction: 1.0

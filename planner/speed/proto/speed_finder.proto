@@ -1,0 +1,329 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/planner/speed/proto/speed_finder";
+
+import "onboard/proto/trajectory_point.proto";
+import "onboard/proto/prediction.proto";
+import "onboard/maps/proto/semantic_map.proto";
+
+message StBoundaryProto {
+  enum ObjectType {
+    UNKNOWN_OBJECT = 0;
+    VEHICLE = 1;
+    CYCLIST = 2;
+    PEDESTRIAN = 3;
+    STATIC = 4;
+    IGNORABLE = 5;
+    VIRTUAL = 6;
+    IMPASSABLE_BOUNDARY = 7;
+    PATH_BOUNDARY = 8;
+  }
+  enum DecisionType {
+    UNKNOWN = 0;
+    FOLLOW = 1;
+    LEAD = 2;
+    IGNORE = 3;
+  }
+  enum DecisionReason {
+    UNKNOWN_REASON = 0;
+    IGNORE_TRACKER_DECIDER = 1;  // To be deprecated.
+    PRE_DECIDER = 2;
+    INTERACTION_DECIDER = 3;
+    FREESPACE = 4;  // To be depracated.
+    IGNORE_DECIDER = 5;
+    ST_BOUNDARY_MODIFIER = 6;
+    SAMPLING_DP = 11;
+    INTERACTIVE_DECIDER = 12;
+    PRE_BRAKE_DECIDER = 13;
+    CONSTRAINT_GENERATOR = 14;
+    FOLLOW_PROTECTED = 15;
+    ACT_NET_SPEED_DECIDER = 16;
+
+    reserved 10;
+  }
+  enum IgnoreReason {
+    NONE = 0;
+    HIT_EMERGENCY_TRAJ = 1;
+    HIT_CURRENT_POS = 2;
+    BACK_CUT_IN = 3;
+    PARALLEL_CUT_IN = 4;
+    ONCOMING_OBJECT = 5;
+    PEDESTRIAN_PRE_BRAKE = 6;
+    VEHICLE_PRE_BRAKE = 7;
+    ST_BOUNDARY_MODIFIED = 8;
+    NON_NEAREST_STATIONARY = 9;
+    REVERSE_DRIVING = 10;
+    OUT_OF_REAL_RANGE = 11;
+    NON_NEAREST_OCCLUDED = 12;
+    LATE_CUT_IN = 13;
+    ONCOMING_OBJECT_NOT_ON_PATH = 14;
+    CONFLICT = 15;
+    OBJECT_OUT_OF_LAT_BOUND = 16;
+  }
+
+  enum ProtectionType {
+    NON_PROTECTIVE = 0;
+    SMALL_ANGLE_CUT_IN = 1;
+    LARGE_VEHICLE_BLIND_SPOT = 2;
+    LANE_CHANGE_GAP = 3;
+  }
+
+  message DecisionProb {
+    optional double yield = 1;
+    optional double pass = 2;
+  }
+
+  optional ObjectType object_type = 1;
+  optional DecisionType decision_type = 2;
+  optional double probability = 3;
+  optional double follow_standstill_distance = 11;
+  optional double lead_standstill_distance = 12;
+  optional double min_s = 5;
+  optional double max_s = 6;
+  optional double min_t = 7;
+  optional double max_t = 8;
+  optional DecisionReason decision_reason = 9;
+  optional string decision_info = 10;
+  optional bool is_stationary = 14;
+  optional double safety_bound = 15;
+  optional double following_bound = 16;
+  optional IgnoreReason ignore_reason = 17;
+  optional DecisionProb decision_prob = 18;
+  optional ProtectionType protection_type = 19;
+
+  // Next ID: 20
+
+  reserved 4, 13;
+}
+
+message StOverlapMetaProto {
+  enum OverlapPattern {
+    UNKNOWN_PATTERN = 0;
+    // Object enters and stays on the path.
+    ENTER = 1;
+    // Object enters the path from one side and leaves from opposite side.
+    CROSS = 2;
+    // Object enters the path from one side and leaves from same side.
+    INTERFERE = 3;
+    // Object leaves the path.
+    LEAVE = 4;
+    // Object stays on the path.
+    STAY = 5;
+  }
+  enum OverlapSource {
+    UNKNOWN_SOURCE = 0;
+    // AV and object vehicle follow two different lanes, and the lanes are
+    // merging.
+    LANE_MERGE = 1;
+    // AV and object vehicle follow two different lanes, and the lanes are
+    // crossing.
+    LANE_CROSS = 2;
+    // AV follows a lane, object vehicle cuts-in the lane.
+    OBJECT_CUTIN = 3;
+    // Object vehicle follows a lane, AV cuts-in the lane.
+    AV_CUTIN = 4;
+    // For other types of vehicle interactions, and for all pedestrian and
+    // cyclists.
+    OTHER = 5;
+  }
+  // AV's priority over object.
+  enum OverlapPriority {
+    UNKNOWN_PRIORITY = 0;
+    HIGH = 1;
+    LOW = 2;
+    EQUAL = 3;
+  }
+  enum ModificationType {
+    NON_MODIFIABLE = 0;
+    LON_MODIFIABLE = 1;
+    LON_LAT_MODIFIABLE = 2;
+  }
+  optional OverlapPattern pattern = 1;
+  optional OverlapSource source = 2;
+  optional OverlapPriority priority = 3;
+  optional string priority_reason = 4;
+  optional ModificationType modification_type = 5;
+  // Only has value for source AV_CUTIN.
+  optional double time_to_lc_complete = 6;
+  // Only has value for source LANE_MERGE or LANE_CROSS or OBJECT_CUTIN.
+  optional bool is_making_u_turn = 7;
+  // Only has value for source LANE_MERGE.
+  optional bool is_merging_straight_lane = 8;
+  // Only has value for source LANE_CROSS or OBJECT_CUTIN.
+  optional bool is_crossing_straight_lane = 9;
+  // Only has value for source LANE_MERGE or OBJECT_CUTIN.
+  // Difference between object's heading and drive passage center line.
+  optional double theta_diff = 10;
+  // Only has value for source LANE_MERGE or LANE_CROSS or OBJECT_CUTIN.
+  // Projection origin is based on the center of rear axle of AV.
+  optional double front_most_projection_distance = 11;
+  optional double rear_most_projection_distance = 12;
+  // Only has value for source LANE_MERGE or LANE_CROSS.
+  optional mapping.LaneProto.Direction obj_lane_direction = 13;
+}
+
+message SpeedPointProto {
+  optional double t = 1;
+  optional double s = 2;
+  optional double v = 3;
+  optional double a = 4;
+  optional double j = 5;
+}
+
+message SpeedPointsProto {
+  repeated SpeedPointProto speed_points = 1;
+}
+
+message SvtGraphPointDebugProto {
+  optional SpeedPointProto speed_point = 1;
+
+  optional double speed_limit_cost = 10;
+  optional double reference_speed_cost = 11;
+  optional double accel_cost = 12;
+  optional double object_cost = 13;
+  optional double spatial_potential_cost = 14;
+
+  optional double total_cost = 30;
+}
+
+message SpeedProfileDebugProto {
+  repeated SvtGraphPointDebugProto svt_graph_points = 1;
+}
+
+message SamplingDpDebugProto {
+  repeated SpeedProfileDebugProto speed_profiles = 1;
+}
+
+message InteractiveSpeedDebugProto {
+  optional SamplingDpDebugProto non_interactive_sampling_dp = 1;
+  optional SpeedPointsProto non_interactive_speed_profile = 2;
+  optional SamplingDpDebugProto interactive_sampling_dp = 3;
+  message CandidateSet {
+    repeated SpeedPointsProto speed_profile = 1;
+  }
+  optional CandidateSet candidate_set = 4;
+
+  reserved 5;
+}
+
+message ConstraintDataDebugProto {
+  enum BoundTypeDebug {
+    LOWER_BOUND = 0;
+    UPPER_BOUND = 1;
+  }
+  optional BoundTypeDebug bound_type = 1;
+  optional double bound = 2;
+  optional int32 slack_term_idx = 3;
+  optional double slack_term_weight = 4;
+}
+
+message SoftConstraintDebugProto {
+  optional double t = 1;
+  map<string, ConstraintDataDebugProto> soft_constraint_map = 2;
+}
+
+message SpeedOptimizerDebugProto {
+  optional double init_v = 1;
+  optional double init_a = 2;
+  optional double path_end_s = 3;
+  optional double delta_t = 13;
+
+  optional int32 lower_s_slack_term_num = 4;
+  optional int32 upper_s_slack_term_num = 5;
+  optional int32 lower_v_slack_term_num = 14;
+  optional int32 upper_v_slack_term_num = 6;
+  optional int32 lower_a_slack_term_num = 15;
+  optional int32 upper_a_slack_term_num = 16;
+
+  repeated SoftConstraintDebugProto soft_s_constraint = 7;  // Arrange by time.
+  repeated SoftConstraintDebugProto soft_v_constraint = 8;  // Arrange by time.
+
+  // For plot.
+  message PlotData {
+    repeated double time = 1;
+    repeated double value = 2;
+    repeated double soft_bound_distance = 3;
+    repeated string info = 4;
+  }
+  map<string, PlotData> soft_s_upper_bound = 9;
+  map<string, PlotData> soft_s_lower_bound = 12;
+  map<string, PlotData> speed_limit = 10;
+  repeated SpeedPointProto optimized_speed = 11;
+  repeated SpeedPointProto comfortable_brake_speed = 17;
+  repeated SpeedPointProto max_brake_speed = 18;
+  repeated SpeedPointProto ref_speed = 19;
+
+  // Next ID: 20
+}
+
+message SpeedFinderDebugProto {
+  optional SpeedOptimizerDebugProto speed_optimizer = 2;
+  map<string, StBoundaryProto> st_boundaries = 3;
+  repeated PathPoint path = 4;
+  repeated ApolloTrajectoryPointProto trajectory = 5;
+
+  optional ObjectsPredictionProto modified_prediction = 6;
+
+  optional double trajectory_start_timestamp = 7;
+
+  optional string slow_front_vehicle = 8;
+
+  reserved 1;
+}
+
+message StBoundaryModifierProto {
+  enum ModifierType {
+    UNKNOWN = 0;
+    ONCOMING = 2;
+    LEADING = 3;
+    LON_INTERACTIVE = 4;
+    LAT_INTERACTIVE = 5;
+    PRE_DECISION = 6;
+
+    reserved 1;
+  }
+  optional ModifierType modifier_type = 1;
+}
+
+message StBoundarySourceTypeProto {
+  enum Type {
+    UNKNOWN = 0;
+    ST_OBJECT = 1;
+    VIRTUAL = 2;
+    IMPASSABLE_BOUNDARY = 3;
+    PATH_BOUNDARY = 4;
+  }
+}
+
+message TrajectoryEndInfoProto {
+  optional string st_boundary_id = 1;
+  optional double end_s = 2;
+  optional double intrusion_value = 3;
+  optional StBoundarySourceTypeProto.Type type = 4;
+}
+
+message SpeedLimitLevelProto {
+  enum Level {
+    STRONG = 0;
+    MEDIUM = 1;
+    WEAK = 2;
+  }
+}
+
+message SpeedLimitTypeProto {
+  enum Type {
+    LANE = 0;
+    CURVATURE = 1;
+    COMBINATION = 2;
+    EXTERNAL = 3;
+    MOVING_CLOSE_TRAJ = 4;
+    UNCERTAIN_PEDESTRAIN = 5;
+    STEER_RATE = 6;
+    NEAR_PARALLEL_VEHICLE = 7;
+    UNCERTAIN_VEHICLE = 8;
+    IGNORE_OBJECT = 9;
+    CLOSE_CURB = 10;
+    DEFAULT = 11;
+  }
+}

@@ -1,0 +1,56 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/prediction/proto/prophnet";
+
+import "onboard/prediction/proto/prediction_common.proto";
+
+// First object is AV
+message ProphnetDumpedFeatureProto {
+  message ObjectsDumpedFeature {
+    repeated float ego_pos = 1 [packed = true];
+    repeated float rot_mat = 2 [packed = true];
+    repeated float trajs = 3 [packed = true];
+    repeated float speeds = 4 [packed = true];
+    repeated float headings = 5 [packed = true];
+    repeated float types = 6 [packed = true];
+    repeated float cur_poses = 7 [packed = true];
+    repeated float shapes = 8 [packed = true];          // length & width
+    repeated float max_curvatures = 9 [packed = true];  // max curvature.
+    repeated float max_lateral_accel = 10
+        [packed = true];  // max allowed lateral acceleration.
+    repeated float dist_to_racs = 11
+        [packed = true];                             // center to rac distance.
+    repeated float is_statics = 12 [packed = true];  // if object is static.
+    repeated string object_id = 13;
+    repeated float history_masks = 14 [packed = true];
+  }
+
+  message LanesDumpedFeature {
+    repeated float lane_centers = 1 [packed = true];
+    repeated float lane_segments = 2 [packed = true];
+    repeated float lane_controls = 3 [packed = true];
+    repeated float lane_lights = 4
+        [packed = true];  // four float number: 0: num green, 1:num
+                          // yellow, 2:num red, 3: num unknown.
+  }
+  message LabelsProto {
+    optional int32 num_objects = 1;
+    optional int32 num_vehicles = 2;
+    optional int32 num_cyclists = 3;
+    optional int32 num_pedestrians = 4;
+    optional int32 num_stationary = 5;
+    optional int32 num_braking = 6;
+    optional int32 num_accelerating = 7;
+    optional int32 num_high_speed = 8;
+    optional int32 num_medium_speed = 9;
+    optional int32 num_low_speed = 10;
+  }
+  optional ObjectsDumpedFeature objects_feature = 1;
+  optional LanesDumpedFeature lanes_feature = 2;
+  repeated TrajectoryGroundTruth gt_trajs = 3;
+  repeated ObjectPredictionScenario scenarios = 4;
+  repeated ObjectPredictionPriority priorities = 5;
+  optional LabelsProto labels = 6;
+  optional double timestamp = 7;
+}

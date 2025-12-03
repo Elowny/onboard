@@ -1,0 +1,95 @@
+hybrid_a_star_params {
+  max_iters: 10000
+  use_sampling_rs: true
+  sampling_rs_max_iters: 100
+  enable_reverse_driving: true
+  goal_xy_tolerance: 0.15
+  goal_theta_tolerance: 0.05
+  kappa_slack_ratio: 0.7
+  xy_resolution: 0.4
+  theta_resolution: 0.0436332313  # M_PI/72
+  search_step: 0.5
+  forward_gear_weight: 1.0
+  backward_gear_weight: 1.05
+  gear_switch_weight: 10.0
+  steer_change_weight: 0.5
+  a_star_heuristic_weight: 0.5
+  rs_heuristic_weight: 0.5
+  a_star_vehicle_radius: 0.5
+  a_star_resolution: 0.3
+  spot_line_weight: 15.0
+  steer_weight: 0.0
+  possible_steer_ratios: -1.0
+  possible_steer_ratios: -0.5
+  possible_steer_ratios: 0.0
+  possible_steer_ratios: 0.5
+  possible_steer_ratios: 1.0
+  a_star_distance_to_obstacle_weight: 1.0
+  a_star_distance_to_obstacle_scale: 1.0
+}
+
+geometry_method_params {
+  kappa_slack_ratio: 0.85
+  min_drive_distance: 0.25
+  parallel_parking_max_adjustments: 1
+  perpendicular_parking_max_adjustments: 3
+  transition_pose_x_candidates: 0.3
+  transition_pose_x_candidates: 0.6
+  transition_pose_x_candidates: 0.9
+  transition_pose_x_candidates: 1.2
+  transition_pose_x_candidates: 1.5
+  transition_pose_x_candidates: 2.0
+  transition_pose_x_candidates: 2.5
+  transition_pose_x_candidates: 3.0
+
+  transition_pose_y_candidates: 0.15
+  transition_pose_y_candidates: 0.4
+  transition_pose_y_candidates: 0.75
+  transition_pose_y_candidates: 1.0
+  transition_pose_y_candidates: 1.5
+  transition_pose_y_candidates: 2.0
+
+  transition_pose_theta_rate_candidates: 0.4
+  transition_pose_theta_rate_candidates: 0.5
+  transition_pose_theta_rate_candidates: 0.6
+  transition_pose_theta_rate_candidates: 0.7
+  transition_pose_theta_rate_candidates: 0.8
+
+  forward_line_path_max_distance: 10.0
+  forward_line_path_distance_step: 1.0
+
+  forward_circle_path_theta_candidates_pi: 0.5
+  forward_circle_path_theta_candidates_pi: 0.4
+  forward_circle_path_theta_candidates_pi: 0.3
+  forward_circle_path_theta_candidates_pi: 0.2
+
+  forward_circle_path_kappa_rate_candidates: 1.0
+  forward_circle_path_kappa_rate_candidates: 0.6
+
+  forward_perpendicular_drive_out_max_dist_buffer: 3.0
+  forward_perpendicular_drive_out_dist_step: 0.25
+  forward_perpendicular_adjust_max_dist: 2.5
+  forward_perpendicular_adjust_dist_step: 0.25
+
+  parallel_parking_out_max_adjustments: 7
+  perpendicular_parking_out_max_adjustments: 7
+}
+
+region_half_width: 20.0
+mirror_height_buffer: 0.3
+object_lateral_buffer: 0.3
+object_longitudinal_buffer: 0.4
+curb_lateral_buffer: 0.25
+curb_longitudinal_buffer: 0.25
+barrier_lateral_buffer: 0.3
+barrier_longitudinal_buffer: 0.2
+solid_lane_lateral_buffer: -0.1
+solid_lane_longitudinal_buffer: -0.1
+spot_line_lateral_buffer: -0.2
+spot_line_longitudinal_buffer: -0.2
+parking_stopper_lateral_buffer: 0.0
+parking_stopper_longitudinal_buffer: 0.0
+near_spot_curb_lateral_buffer: 0.2
+near_spot_curb_longitudinal_buffer: 0.2
+virtual_boundary_lateral_buffer: -0.1
+virtual_boundary_longitudinal_buffer: 0.0

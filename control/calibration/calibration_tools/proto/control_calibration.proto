@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package qcraft.control.calibration;
+option go_package = "qcraft-proto.ai/onboard/control/calibration/calibration_tools/proto/control_calibration";
+
+import "onboard/math/proto/piecewise_linear_function.proto";
+
+enum Method {
+  IDLE = 0;   // speed from 0 to idle speed
+  SLIDE = 1;  // speed from max to idle speed
+  FORCE = 2;  // Throttle or brake
+}
+
+message CalibrationProto {
+  optional PiecewiseLinearFunctionDoubleProto idle_v_a_plf = 1;
+  optional PiecewiseLinearFunctionDoubleProto a_throttle_plf = 2;
+  optional PiecewiseLinearFunctionDoubleProto a_brake_plf = 3;
+}

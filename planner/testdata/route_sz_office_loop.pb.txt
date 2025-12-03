@@ -1,0 +1,1 @@
+lane_ids: 10 start_fraction: 0.1 end_fraction: 1.0

@@ -1,0 +1,13 @@
+lane_ids: 62
+lane_ids: 46
+lane_ids: 66
+lane_ids: 56
+lane_ids: 57
+lane_ids: 67
+lane_ids: 64
+lane_ids: 65
+lane_ids: 60
+lane_ids: 61
+lane_ids: 45
+start_fraction: 0.1
+end_fraction: 1.0

@@ -1,0 +1,37 @@
+syntax = "proto2";
+
+package qcraft.planner.ml;
+option go_package = "qcraft-proto.ai/onboard/planner/ml/context_feature_extractor/proto/context_feature";
+
+import "onboard/prediction/proto/act_net.proto";
+import "onboard/math/geometry/proto/affine_transformation.proto";
+
+message ObjectInferredFeatureProto {
+  optional string object_id = 1;
+  // Whether static by judgement of perception.
+  optional bool is_static = 2;
+  // It relates to field 4, 5.
+  optional bool has_longterm_observation = 3;
+  // average speed of an object during the observed duration.
+  optional float average_speed = 4;
+  // duration of observation for this object.
+  optional float observation_duration = 5;
+}
+
+// The features that are inferred, like is_static, FOV, drivable area...
+message InferredFeatureProto {
+  repeated ObjectInferredFeatureProto inferred_object_feature = 1;
+}
+
+message ContextFeatureProto {
+  // Ref coordinates and its timestamp.
+  optional double current_ts = 1;  // in seconds.
+  optional Vec2dProto ref_position = 2;
+  optional float rot_rad = 3;
+
+  // Context Feature by different construction methods.
+  optional ActNetDumpedFeatureProto act_net_context_feature = 100;
+
+  // Inferred Feature.
+  optional InferredFeatureProto inferred_feature = 1000;
+}

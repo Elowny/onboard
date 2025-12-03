@@ -1,0 +1,320 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/control/proto/controller_msg";
+
+import "onboard/math/proto/piecewise_linear_function.proto";
+
+enum LatControllerType {
+  // Lateral second order bicycle, pure kinematic mpc.
+  LAT_SOB_PK_MPC = 1;
+  // Lateral third order bicycle, pure kinematic mpc.
+  LAT_TOB_PK_MPC = 2;
+}
+
+enum LonControllerType {
+  // Longitudianl second order bicycle, pure kinematic mpc.
+  LON_SOB_PK_MPC = 1;
+  // Longitudianl third order bicycle, pure kinematic mpc.
+  LON_TOB_PK_MPC = 2;
+}
+
+enum WheelDriveMode {
+  FRONT_WHEEL_DRIVE = 0;
+  REAR_WHEEL_DRIVE = 1;
+  FOUR_WHEEL_DRIVE = 2;
+}
+
+enum AccelerationInterface {
+  CLOSEDLOOP = 0;  // acc_from_controller
+  OPENEDLOOP = 1;  // acc_from_controller + acc_offset or acc_standstill
+  CLOSEDLOOP_WITH_PARKING_COMPENSATION =
+      2;  // acc_from_controller or acc_standstill
+}
+
+enum ThrottleInterface {
+  THROTTLE_PERCENTAGE = 0;  // Throttle percentage 1~100
+  CLOSEDLOOP_ACC = 1;       // acc_from_controller
+  OPENEDLOOP_ACC = 2;       // acc_from_controller + acc_offset
+}
+
+enum BrakeInterface {
+  BRAKE_PERCENTAGE = 0;  // Brake percentage 1~100
+  CLOSEDLOOP_DEC_WITH_PARKING_COMPENSATION =
+      1;               // acc_from_controller or acc_standstill
+  CLOSEDLOOP_DEC = 2;  // acc_from_controller
+  OPENEDLOOP_DEC = 3;  // acc_from_controller + acc_offset or acc_standstill
+}
+
+enum SteerInterface {
+  STEER_ANGLE = 0;
+  STEER_TORQUE = 1;
+}
+
+message ControllerSteerTorqueProto {
+  message SteerTorquePID {
+    message PIDProto {
+      optional double kp = 1 [default = 0.0];
+      optional double ki = 2 [default = 0.0];
+      optional double kd = 3 [default = 0.0];
+      optional double max_integral = 4 [default = 0.0];
+      optional double min = 5 [default = 0.0];
+      optional double max = 6 [default = 0.0];
+    }
+    optional double speed = 1;  // rad
+    optional PIDProto angle_pid = 2;
+    optional PIDProto speed_pid = 3;
+  }
+  message SteerTorqueTable {
+    message SteerStiffnessOffset {
+      optional double steer_angle = 1;  // rad
+      optional double torque = 2;       // Nm
+    }
+    message SteerDampingOffset {
+      optional double steer_speed = 1;  // rad/s
+      optional double torque = 2;       // Nm
+    }
+    optional double speed = 1;  // m/s
+    repeated SteerStiffnessOffset steer_stiffness_offset = 2;
+    repeated SteerDampingOffset steer_damping_offset = 4;
+    reserved 3;
+  }
+  message SteerTorqueMax {
+    optional double speed = 1;       // m/s
+    optional double max_torque = 2;  // Nm
+  }
+  message SteerTorqueSpeedMax {
+    optional double speed = 1;             // m/s
+    optional double max_torque_speed = 2;  // Nm/s
+  }
+  message SteerAngleErrorMax {
+    optional double speed = 1;                  // m/s
+    optional double max_steer_angle_error = 2;  // rad
+  }
+  message SteerSpeedErrorMax {
+    optional double speed = 1;                  // m/s
+    optional double max_steer_speed_error = 2;  // rad/s
+  }
+  repeated SteerTorquePID steer_torque_pid = 1;
+  repeated SteerTorqueTable steer_torque_table = 2;
+  repeated SteerTorqueMax steer_torque_max = 3;
+  repeated SteerTorqueSpeedMax steer_torque_speed_max = 9;
+  repeated SteerAngleErrorMax steer_angle_error_max = 10;
+  repeated SteerSpeedErrorMax steer_speed_error_max = 11;
+
+  reserved 4 to 8;
+}
+
+message ControlCalibrationTable {
+  message ControlCalibrationInfo {
+    optional double speed = 1;
+    optional double acceleration = 2;
+    optional double command = 3;
+  }
+  repeated ControlCalibrationInfo calibration = 1;
+}
+
+message ControlCalibrationTableV2 {
+  optional PiecewiseLinearFunctionDoubleProto idle_v_a_plf =
+      1;  // idle or slide: speed - acceleration
+  optional PiecewiseLinearFunctionDoubleProto a_throttle_plf =
+      2;  // acceleration - throttle
+  optional PiecewiseLinearFunctionDoubleProto a_brake_plf =
+      3;  // acceleration - brake
+  optional PiecewiseLinearFunctionDoubleProto a_gain_wrt_speed_plf =
+      4;  // speed - acceleration gain
+}
+
+message GainSchedulerInfo {
+  optional double speed = 1;  // m/s
+  optional double ratio = 2;
+}
+
+message GainScheduler {
+  repeated GainSchedulerInfo scheduler = 1;
+}
+
+// Next ID: 24
+message TsPkmpcControllerConf {
+  optional double ts = 1;  // sample time (dt) 0.2 now, configurable
+
+  optional GainScheduler t_control_gain_scheduler = 2;
+  optional GainScheduler s_control_gain_scheduler = 3;
+
+  repeated double t_matrix_q = 5;
+  repeated double t_matrix_r = 6;
+  repeated double t_matrix_n = 7;
+
+  repeated double s_matrix_q = 8 [packed = true];
+  repeated double s_matrix_r = 9 [packed = true];
+  repeated double s_matrix_n = 10 [packed = true];
+
+  optional double s_matrix_xy = 11;
+  optional double s_matrix_yaw = 12;
+  optional double s_matrix_kappa = 13;
+  optional double s_matrix_psi = 14;
+
+  optional double s_matrix_n_xy = 15;
+  optional double s_matrix_n_yaw = 16;
+  optional double s_matrix_n_kappa = 17;
+
+  optional double t_matrix_q_jerk = 22;
+  optional double t_matrix_n_jerk = 23;
+
+  reserved 4, 18 to 21;
+}
+
+message LonTsPkmpcControllerConf {
+  optional double ts = 1;  // sample time (dt) 0.2 now, configurable
+
+  optional GainScheduler control_gain_scheduler = 2;
+
+  repeated double matrix_q = 3;
+  repeated double matrix_r = 4;
+  repeated double matrix_n = 5;
+
+  optional double matrix_q_jerk = 8;
+  optional double matrix_n_jerk = 9;
+
+  reserved 6, 7, 10;
+}
+
+message LatTsPkmpcControllerConf {
+  optional double ts = 1;  // sample time (dt) 0.2 now, configurable
+
+  optional GainScheduler control_gain_scheduler = 2;
+
+  repeated double matrix_q = 3 [packed = true];
+  repeated double matrix_r = 4 [packed = true];
+  repeated double matrix_n = 5 [packed = true];
+
+  optional double matrix_xy = 6;
+  optional double matrix_yaw = 7;
+  optional double matrix_kappa = 8;
+  optional double matrix_psi = 9;
+
+  optional double matrix_n_xy = 10;
+  optional double matrix_n_yaw = 11;
+  optional double matrix_n_kappa = 12;
+
+  reserved 13;
+}
+
+// TODO(shijun): remove it after related params cleaned up.
+message StateEstimatorSetting {
+  optional bool v_enable = 1 [default = true];
+  optional double v_threshold = 2 [default = 2.0];  // m/s.
+}
+
+message FullStopProto {
+  optional double standstill_acceleration = 1
+      [default = -2.0, deprecated = true];
+  optional double abs_planner_speed_upperlimit = 2
+      [default = 0.5, deprecated = true];
+  optional double abs_linear_speed_upperlimit = 3
+      [default = 0.5, deprecated = true];
+  optional double brake_integral_ratio = 4 [default = 1.05, deprecated = true];
+  optional double lockdown_acceleration = 5 [default = -1.5];
+}
+
+// TODO(yangyu): delete it.
+message StandStillProto {
+  optional double vel_move_th = 1 [default = 0.1];
+  optional double vel_standstill_th = 2 [default = 0.03];
+  optional double standstill_time_th = 3 [default = 0.2];
+}
+
+message ClosedLoopAccConfProto {
+  // Closed loop PID config
+  optional bool enable_closed_loop_acc = 1 [default = false];
+  optional double acc_deque_time = 2 [default = 1.0];
+  optional double throttle_delay_time = 3 [default = 0.44];
+  optional double brake_delay_time = 4 [default = 0.3];
+  optional double throttle_windup = 5 [default = 100.0];
+  optional double kp_acc = 6 [default = 10.0];
+  optional double ki_acc = 7 [default = 10.0];
+  optional double kd_acc = 8 [default = 0.02];
+  optional double max_throttle = 9 [default = 99.9];
+  optional double min_delta_throttle = 10 [default = -10.0];
+  optional double max_delta_throttle = 11 [default = 10.0];
+  optional double steer2throttle_ratio = 12 [default = 1.0];
+  optional double brake_windup = 13 [default = 100.0];
+  optional double kp_dec = 14 [default = 5.0];
+  optional double ki_dec = 15 [default = 5.0];
+  optional double kd_dec = 16 [default = 0.01];
+  optional double max_brake = 17 [default = -60.0];
+  optional double min_delta_brake = 18 [default = -10.0];
+  optional double max_delta_brake = 19 [default = 5.0];
+  optional double keep_brake_decrease_threshold = 20 [default = 2.0];
+}
+
+message SteerDeadZoneAdaptorConf {
+  optional bool enable_adapt_deadzone = 1 [default = false];
+  optional double steer_straight_th = 2 [default = 0.025];  // rad
+  optional double steer_turn_th = 3 [default = 0.075];      // rad
+  optional double steer_straight_gain = 4 [deprecated = true];
+  optional double steer_turn_gain = 5 [deprecated = true];
+  optional double steer_straight_delay_time = 6 [default = 0.4];
+  optional double steer_gap_kappa = 7 [default = 0.0];  // kappa
+}
+
+message BiasEstimationConf {
+  optional bool enable_online_bias_estimation = 1 [default = true];
+  optional double weight_on_steering = 2 [default = 0.07];
+  optional double weight_on_heading = 3 [default = 0.07];
+  // rad, 0.0035 rad is 0.2 deg
+  optional double heading_err_ub = 4 [default = 0.0035];
+  optional double lateral_err_ub = 5 [default = 0.2];
+  optional double steering_ub = 6 [default = 0.01];
+  optional double vel_lb = 7 [default = 3.0];
+  optional double calib_steering0_ub = 8 [default = 0.02];
+  optional double calib_heading0_ub = 9 [default = 0.01];
+  optional double steer_status_delay_time = 10 [default = 0.1];
+  optional bool use_low_pass_filter_estimation = 11 [default = false];
+  optional bool enable_compensate_yaw_bias = 12 [default = false];
+  optional double lat_acc_threshold = 13 [default = 0.4];
+}
+
+message MracConfProto {
+  // Default: 2 order reference model
+  optional bool enable_mrac = 1 [default = false];
+  optional double state_weight = 3 [default = 0.0];
+  optional double input_weight = 4 [default = 0.0];
+  optional double speed_limit = 15 [default = 0.5];
+  optional double kappa_threshold = 20 [default = 0.01];
+  optional double ke_weight = 21 [default = 0.0];
+  optional double latacc_threshold = 22 [default = 0.4];
+
+  reserved 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19;
+}
+
+message VehDynamicModelConf {
+  optional bool enable_dynamic_model_compensation = 1 [default = false];
+  optional double mass_fl = 2;
+  optional double mass_fr = 3;
+  optional double mass_rl = 4;
+  optional double mass_rr = 5;
+  optional double c_fl = 6;  // N/rad
+  optional double c_fr = 7;  // N/rad
+  optional double c_rl = 8;  // N/rad
+  optional double c_rr = 9;  // N/rad
+  optional double wheelbase_f = 10;
+  optional double wheelbase_r = 11;
+  optional bool enable_roll_compensation = 12 [default = false];
+  optional PiecewiseLinearFunctionDoubleProto kappa_decay_ratio = 13;
+  optional PiecewiseLinearFunctionDoubleProto roll_steer_plf =
+      14;  // roll(rad) to steering wheel(deg)
+}
+
+message LatAccGainConf {
+  optional bool enable_lat_acc_gain = 1 [default = false];
+  optional double velocity_threshold = 2 [default = 10.0];
+  optional double lat_acc_threshold = 3 [default = 0.4];
+  optional double kappa_compensate_ratio = 4 [default = 1.0];
+  optional PiecewiseLinearFunctionDoubleProto lat_acc_steer_plf = 5;
+}
+
+message JerkCalculationConf {
+  optional PiecewiseLinearFunctionDoubleProto jerk_upper_limit_plf = 1;
+  optional PiecewiseLinearFunctionDoubleProto jerk_lower_limit_plf = 2;
+}

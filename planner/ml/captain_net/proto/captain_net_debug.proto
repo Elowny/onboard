@@ -1,0 +1,31 @@
+syntax = "proto2";
+package qcraft.planner.ml;
+option go_package = "qcraft-proto.ai/onboard/planner/ml/captain_net/proto/captain_net_debug";
+
+import "onboard/proto/trajectory_point.proto";
+
+message SingleModeTrajProto {
+  repeated ApolloTrajectoryPointProto capnet_traj_before_postprocess = 1;
+  repeated ApolloTrajectoryPointProto capnet_traj_after_postprocess = 2;
+  optional bool traj_post_processed = 3 [default = false];
+  optional bool is_kinematic_infeasible = 4 [default = true];
+  optional bool is_curb_collsion = 5 [default = true];
+  optional bool is_object_collision = 6 [default = true];
+  optional bool is_path_boundary_collision = 7 [default = true];
+  optional bool is_reverse_driving = 8 [default = true];
+  optional bool is_speed_limit_violation = 9 [default = true];
+  optional bool traj_valid = 10 [default = false];
+  optional double mode_prob = 11;
+}
+
+message CapnetTrajectoryDebugProto {
+  repeated SingleModeTrajProto multimode_trajs = 5;
+
+  // compatible with old version data
+  repeated ApolloTrajectoryPointProto capnet_traj_before_postprocess = 1
+      [deprecated = true];
+  repeated ApolloTrajectoryPointProto capnet_traj_after_postprocess = 2
+      [deprecated = true];
+  optional bool traj_post_processed = 3 [default = false, deprecated = true];
+  optional bool traj_valid = 4 [default = false, deprecated = true];
+}

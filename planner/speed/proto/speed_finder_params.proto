@@ -1,0 +1,185 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/planner/speed/proto/speed_finder_params";
+
+import "onboard/math/proto/piecewise_linear_function.proto";
+
+// Next ID: 35
+message SpeedFinderParamsProto {
+  message SpeedOptimizerParamsProto {
+    optional int32 knot_num = 1;
+    optional double output_time_resolution = 3;
+    optional double speed_buffer = 5;
+    optional double s_kernel_weight = 6;
+    optional double speed_kernel_weight = 7;
+    optional double accel_kernel_weight = 8;
+    optional double jerk_kernel_weight = 9;
+    optional double regularization = 10;
+    optional double s_follow_weak_weight = 13;
+    optional double s_follow_strong_weight = 14;
+    optional double s_lead_weak_weight = 15;
+    optional double s_lead_strong_weight = 16;
+    optional double s_stop_weight = 17;
+    optional PiecewiseLinearFunctionDoubleProto accel_weight_gain_plf = 24;
+    repeated double piecewise_time_range = 25;
+    repeated double time_gain_for_moving_object = 26;
+    optional double accel_lower_slack_weight = 30;
+    optional PiecewiseLinearFunctionDoubleProto accel_lower_bound_plf = 31;
+    optional double ref_speed_bias = 32;
+    optional PiecewiseLinearFunctionDoubleProto ref_speed_time_gain = 33;
+    optional double ref_speed_static_limit_bias = 34;
+    optional bool enable_comfort_brake_speed = 35;
+    optional bool enable_const_speed_ref_v = 36;
+    optional double prediction_impact_factor = 39;
+    optional bool enable_lead_decision = 40;
+    optional double speed_limit_strong_weight = 41;
+    optional double speed_limit_medium_weight = 42;
+    optional double speed_limit_weak_weight = 43;
+    repeated double time_gain_for_static_object = 44;
+    optional bool enable_prediction_impact_factor_decay = 47;
+
+    // NEXT ID: 48
+    reserved 2, 4, 12, 18 to 23, 27 to 29, 37, 38, 45 to 46;
+  }
+  optional SpeedOptimizerParamsProto speed_optimizer_params = 1;
+
+  message SpeedLimitParamsProto {
+    optional bool enable_lane_limit = 1;
+    optional bool enable_curvature_limit = 2;
+    optional double max_curvature_consider_radius = 4;
+    optional double speed_limit_for_large_curvature = 5;
+    optional double curvature_bias = 6;
+    optional double curvature_gain = 7;
+    optional double vehicle_buffer = 8;
+    optional bool enable_new_curvature_speed_limit = 16;
+    optional double curvature_power = 17;
+    optional double curvature_numerator = 18;
+    optional double curvature_bias1 = 19;
+    optional double curvature_bias2 = 20;
+    optional double max_steer_rate = 21;
+    optional double min_steer_rate_speed_limit = 22;
+    optional double min_steer_rate_forward_consider_radius = 23;
+    optional double min_steer_rate_backward_consider_radius = 24;
+    optional PiecewiseLinearFunctionDoubleProto
+        hard_curb_clearance_rel_speed_plf = 25;
+    optional double moving_close_traj_max_time = 26;
+
+    // NEXT ID: 27
+    reserved 3, 9 to 15;
+  }
+  optional SpeedLimitParamsProto speed_limit_params = 2;
+
+  message SamplingDpSpeedParamsProto {
+    // Basic configs.
+    optional double unit_t = 1;
+    optional double unit_v = 2;
+    optional int32 s_dimension_size = 17;
+    optional double unit_acc = 4;
+    optional double speed_exceeding_cap = 18;
+
+    // Cost weights.
+    optional double speed_weight = 5;
+    optional double accel_weight = 6;
+    optional double object_weight = 7;
+    optional double reference_weight = 8;
+    optional double spatial_potential_weight = 9;
+
+    // Cost configs.
+    optional double exceed_speed_penalty = 10;
+    optional double low_speed_penalty = 11;
+    optional double reference_speed_penalty = 12;
+    optional double accel_penalty = 13;
+    optional double decel_penalty = 14;
+
+    // Motion constraints.
+    optional double coarse_sampling_decel_thres = 19;
+    optional int32 coarse_sampling_num = 20;
+
+    optional double large_accel_thres = 21;
+    optional PiecewiseLinearFunctionDoubleProto
+        speed_large_accel_penalty_factor_plf = 22;
+
+    reserved 3, 15, 16;
+  }
+  optional SamplingDpSpeedParamsProto sampling_dp_speed_params = 12;
+  optional double follow_standstill_distance = 5;
+  optional double follow_standstill_distance_for_static_obj = 13;
+  optional double follow_standstill_distance_for_curb = 14;
+  optional PiecewiseLinearFunctionDoubleProto
+      extra_follow_standstill_distance_for_large_vehicle_plf = 27;
+  optional double follow_safety_distance = 10;
+  optional double lead_standstill_distance = 6;
+  optional double follow_time_headway = 7;
+  optional double large_vehicle_follow_time_headway = 26;
+  optional double lead_time_headway = 8;
+  optional PiecewiseLinearFunctionDoubleProto follow_distance_rel_speed_plf =
+      11;
+  optional PiecewiseLinearFunctionDoubleProto probability_gain_plf = 15;
+
+  optional bool enable_rule_based_stop_decider = 36;
+
+  message CloseOjectParamsProto {
+    optional bool enable_stationary_close_object_slowdown = 1;
+  }
+  optional CloseOjectParamsProto close_object_params = 28;
+
+  message StOverlapAnalyzerParamsProto {
+    optional bool set_low_priority_for_all_objects = 1;
+  }
+  optional StOverlapAnalyzerParamsProto st_overlap_analyzer_params = 35;
+
+  message StBoundaryPreDeciderParamsProto {
+    optional bool enable_lane_change_lead_decision = 1;
+    optional bool enable_parallel_cut_in_pre_brake = 2;
+  }
+  optional StBoundaryPreDeciderParamsProto st_boundary_pre_decider_params = 29;
+  optional bool enable_pre_decision = 37;
+
+  message IgnoreDeciderParamsProto {
+    optional bool ignore_late_parallel_cut_in_vehicle = 1;
+    optional bool ignore_reverse_driving = 2;
+    optional bool ignore_non_nearest_on_path_occluded_objects = 3;
+    optional bool ignore_late_cut_in_objects = 4;
+    optional bool ignore_oncoming_objects_not_on_path = 5;
+    optional bool ignore_objects_out_of_lateral_bound = 6;
+  }
+  optional IgnoreDeciderParamsProto ignore_decider_params = 30;
+
+  message StBoundaryPreModifierParamsProto {
+    optional double oncoming_nudge_max_lat_acc = 1;
+    optional double oncoming_nudge_max_lat_jerk = 2;
+    optional double oncoming_nudge_max_kappa = 3;
+    optional double oncoming_uncomfortable_decel = 4;
+  }
+  optional StBoundaryPreModifierParamsProto st_boundary_pre_modifier_params =
+      39;
+
+  message PreBrakeDeciderParamsProto {
+    optional bool ignore_late_cut_in_ped = 1;
+  }
+  optional PreBrakeDeciderParamsProto pre_brake_decider_params = 31;
+  optional bool enable_pre_brake = 38;
+
+  optional bool enable_interactive_speed_decision = 18;
+
+  optional bool enable_full_stop = 19;
+  optional double full_stop_traj_length_threshold = 20;
+  optional double full_stop_traj_time_threshold = 21;
+  optional double full_stop_speed_threshold = 22;
+  message StGraphParamsProto {
+    optional bool consider_mirrors_by_default = 1;
+    optional double impassable_boundaries_search_radius_buffer = 2;
+    optional bool consider_large_vehicle_blind_spot = 3;
+
+    reserved 4;
+  }
+  optional StGraphParamsProto st_graph_params = 24;
+  message SpeedOptimizerConfigDispatcherParams {}
+  optional SpeedOptimizerConfigDispatcherParams
+      speed_optimizer_config_dispatcher_params = 33;
+  optional int32 max_traj_steps = 34;
+
+  // NEXT ID: 40
+  reserved 3, 4, 9, 16, 17, 23, 25;
+}

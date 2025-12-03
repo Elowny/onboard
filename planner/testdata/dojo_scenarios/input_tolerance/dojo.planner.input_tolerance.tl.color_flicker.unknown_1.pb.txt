@@ -1,0 +1,207 @@
+name: "dojo.planner.input_tolerance.tl.color_flicker.unknown_1"
+edit_attr {
+  description: "InputTolerance: Proceeding straight through a traffic light of green color that flickers to UKNOWN occasionally (TL shape: round)."
+  labels { key: "PlannerCoverageCategory" value: "InputTolerance" }
+  labels { key: "PlannerCoverageClass" value: "TL" }
+  labels { key: "PlannerCoverageSubclass" value: "ColorFlicker" }
+  test_sets: "dojo"
+  test_sets: "planner_virtual_coverage"
+}
+execution {
+  sim_duration: 10
+  playback_sources { run_or_stf_path: "" }
+  sim_modules {
+    perception_module { module: PERCEPTION_MODULE playback_source_id: 0 }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 1
+          initial_pose {
+            pos_smooth { x: -80 y: -66.5 }
+            vel_body { x: 5 y: 0 }
+            accel_body { x: 0 y: 0 }
+            yaw: 0
+          }
+        }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          sim_world_conf {
+            tl_control {
+              tl_periods {
+                start_time: 0
+                end_time: 1.9
+                state {
+                  traffic_light_id: 986
+                  color: TL_GREEN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+              tl_periods {
+                start_time: 1.9
+                end_time: 2
+                state {
+                  traffic_light_id: 986
+                  color: TL_UNKNOWN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+              tl_periods {
+                start_time: 2
+                end_time: 3.9
+                state {
+                  traffic_light_id: 986
+                  color: TL_GREEN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+              tl_periods {
+                start_time: 3.9
+                end_time: 4
+                state {
+                  traffic_light_id: 986
+                  color: TL_UNKNOWN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+              tl_periods {
+                start_time: 4
+                end_time: 5.9
+                state {
+                  traffic_light_id: 986
+                  color: TL_GREEN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+              tl_periods {
+                start_time: 5.9
+                end_time: 6
+                state {
+                  traffic_light_id: 986
+                  color: TL_UNKNOWN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+              tl_periods {
+                start_time: 6
+                end_time: 7.9
+                state {
+                  traffic_light_id: 986
+                  color: TL_GREEN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+              tl_periods {
+                start_time: 7.9
+                end_time: 8
+                state {
+                  traffic_light_id: 986
+                  color: TL_UNKNOWN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+              tl_periods {
+                start_time: 8
+                end_time: 10
+                state {
+                  traffic_light_id: 986
+                  color: TL_GREEN
+                  shape: TLS_ROUND
+                  score: 1
+                }
+              }
+            }
+            publish_tl_states: true
+          }
+        }
+      }
+    }
+    online_simulation_module { module: ONLINE_SIMULATION_MODULE disable: true }
+    create_sim_messages_module {
+      module: CREATE_SIM_MESSAGES_MODULE
+      disable: true
+    }
+    remote_assist_module { module: REMOTE_ASSIST_MODULE enable: true }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    routing_module { module: ROUTING_MODULE enable: true }
+    mock_localization_module { module: MOCK_LOCALIZATION_MODULE enable: true }
+  }
+}
+metrics {
+  name: "enter_cruise_metric"
+  enter_cruise_metric {}
+}
+metrics {
+  name: "execution_issue_metric"
+  execution_issue_metric {}
+}
+metrics {
+  name: "collision_metric"
+  collision_metric {}
+}
+metrics {
+  name: "trajectory_validation_metric"
+  trajectory_validation_metric {}
+}
+metrics {
+  name: "stats_metric"
+  stats_metric {}
+}
+metrics {
+  name: "lane_boundary_proximity_metric"
+  lane_boundary_proximity_metric {
+    buffer: 0.2
+    types: SOLID_DOUBLE_YELLOW
+    types: SOLID_YELLOW
+    types: BROKEN_YELLOW
+    types: SOLID_WHITE
+    types: BROKEN_WHITE
+    types: CURB
+  }
+}
+metrics {
+  name: "reach_destination_metric"
+  reach_destination_metric {
+    regions {
+      destination {
+        uuid: "{f7e49aea-2127-4607-abf4-1b451764beda}"
+        points { x: -28 y: -76.5 }
+        points { x: -25 y: -76.5 }
+        points { x: -25 y: -56.5 }
+        points { x: -28 y: -56.5 }
+      }
+      reach_within_secs: 10
+      approach: CAR_CONTOUR
+    }
+  }
+}
+commandline_flags: "--map=dojo"
+commandline_flags: "--route_str=c6_e1"
+commandline_flags: "--remote_control_server_address=127.0.0.1"
+commandline_flags: "--simulation_vehicle_engine_publish_imu=true"

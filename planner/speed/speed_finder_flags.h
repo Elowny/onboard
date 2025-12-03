@@ -1,0 +1,14 @@
+#ifndef ONBOARD_PLANNER_SPEED_SPEED_FINDER_FLAGS_H_
+#define ONBOARD_PLANNER_SPEED_SPEED_FINDER_FLAGS_H_
+
+#include "gflags/gflags.h"
+
+DECLARE_bool(planner_send_speed_path_chart_data);
+DECLARE_bool(planner_send_interactive_speed_to_chart);
+DECLARE_bool(planner_draw_st_boundary_canvas);
+DECLARE_bool(planner_print_speed_finder_time_stats);
+DECLARE_bool(planner_send_path_data_to_debug);
+DECLARE_bool(planner_send_speed_optimizer_debug);
+DECLARE_bool(planner_enable_moving_close_traj_speed_limit);
+
+#endif  // ONBOARD_PLANNER_SPEED_SPEED_FINDER_FLAGS_H_

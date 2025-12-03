@@ -1,0 +1,17 @@
+# lon_ts_pkmpc_controller_conf 
+ts: 0.2
+control_gain_scheduler {
+  scheduler { speed: 4 ratio: 1 }
+  scheduler { speed: 8 ratio: 0.9 }
+  scheduler { speed: 12 ratio: 0.8 }
+  scheduler { speed: 20 ratio: 0.7 }
+  scheduler { speed: 25 ratio: 0.6 }
+  scheduler { speed: 35 ratio: 0.5 }
+}
+matrix_q: 0.5
+matrix_q: 0.5
+matrix_q: 1
+matrix_r: 0.4
+matrix_n: 4
+matrix_n: 4
+matrix_n: 1

@@ -1,0 +1,186 @@
+#ifndef ONBOARD_PLANNER_PLANNER_FLAGS_H_
+#define ONBOARD_PLANNER_PLANNER_FLAGS_H_
+
+#include "gflags/gflags.h"
+
+DECLARE_int32(planner_debug);
+
+DECLARE_double(planner_main_loop_interval);
+
+DECLARE_int32(planner_thread_pool_size);
+
+DECLARE_double(planner_lateral_reset_error);
+
+DECLARE_double(planner_max_allowed_iteration_time);
+
+DECLARE_double(planner_max_localization_transform_delay);
+DECLARE_double(planner_max_perception_delay);
+DECLARE_double(planner_max_pose_delay);
+
+DECLARE_bool(planner_allow_async_in_main_thread);
+DECLARE_bool(planner_allow_multi_threads_in_est);
+DECLARE_bool(planner_multi_est_in_parallel);
+DECLARE_bool(planner_run_prev_traj_async);
+
+DECLARE_int32(planner_async_low_freq_cycle_iterations);
+DECLARE_int32(planner_alcc_async_low_freq_cycle_iterations);
+DECLARE_int32(planner_mapless_async_low_freq_cycle_iterations);
+DECLARE_int32(planner_max_cruise_async_iterations);
+DECLARE_int32(planner_max_alcc_async_iterations);
+DECLARE_int32(planner_max_mapless_async_iterations);
+
+DECLARE_double(planner_check_trajectory_engage_condition_duration);
+
+DECLARE_bool(planner_consider_objects);
+DECLARE_double(planner_filter_reflected_object_distance);
+DECLARE_bool(planner_filter_unknown_roadway_position_object);
+DECLARE_bool(planner_filter_static_object);
+DECLARE_int32(planner_lookforward_time_ms);
+DECLARE_double(planner_prediction_probability_threshold);
+DECLARE_bool(planner_only_use_most_likely_trajectory);
+DECLARE_int32(planner_task_init_type);
+DECLARE_bool(planner_export_all_prediction_to_speed_considered);
+DECLARE_bool(planner_check_aeb);
+DECLARE_int32(planner_check_aeb_curb_traj_horizon);
+DECLARE_bool(planner_publish_chart_data);
+DECLARE_bool(planner_simplify_debug_proto);
+DECLARE_bool(planner_enable_collision_risk);
+
+DECLARE_bool(planner_enable_tja_in_alcc_task);
+
+DECLARE_int32(planner_running_platform);
+
+// Offline DataDumping
+DECLARE_bool(dumping_initializer_features);
+DECLARE_bool(dumping_selector_features);
+DECLARE_bool(filter_selector_intention);
+DECLARE_bool(planner_dumping_ml_data_in_simulation);
+
+DECLARE_bool(planner_open_door_at_route_end);
+DECLARE_double(planner_door_state_override_waiting_time);
+
+// Scene reasoning
+DECLARE_bool(planner_enable_occluded_objects_inference);
+DECLARE_bool(planner_enable_crosswalk_occluded_objects_inference);
+DECLARE_bool(planner_ignore_stalled_objects_on_tl_controlled_leftmost_lane);
+DECLARE_bool(planner_enable_un_tl_controlled_intersection_reasoning);
+DECLARE_bool(planner_enable_bus_station_stalled_object_filter);
+
+// Scheduler
+DECLARE_int32(planner_est_parallel_branch_num);
+DECLARE_bool(planner_est_scheduler_seperate_lc_pause);
+DECLARE_bool(planner_est_scheduler_allow_borrow);
+DECLARE_bool(planner_send_lane_graph_to_canvas);
+DECLARE_bool(planner_consider_all_lanes_virtual);
+DECLARE_int32(planner_local_lane_map_debug_level);
+DECLARE_int32(planner_drive_passage_debug_level);
+DECLARE_bool(planner_enable_path_boundary_debug);
+
+DECLARE_bool(planner_lc_prepare_when_branch_invalid);
+
+// Decision
+DECLARE_bool(planner_decision_enable_stop_sign);
+
+// Initializer
+DECLARE_int32(planner_initializer_debug_level);
+DECLARE_bool(planner_initializer_only_activate_nodes_near_capnet_traj);
+DECLARE_bool(planner_initializer_only_activate_nodes_near_refline);
+DECLARE_int32(planner_initializer_max_multi_traj_num);
+DECLARE_bool(planner_initializer_enable_post_evaluation);
+DECLARE_bool(planner_initializer_enable_clip);
+DECLARE_bool(planner_initializer_astar_inspired_by_reference_line);
+
+// Spacetime.
+DECLARE_bool(planner_alcc_use_st_traj_cutin_filter);
+
+// Dopt auto tuning.
+DECLARE_bool(auto_tuning_mode);
+DECLARE_bool(optimizer_data_cleaning);
+DECLARE_bool(update_learned_alphas);
+DECLARE_bool(update_learned_alphas_except_lane_change);
+DECLARE_string(traj_opt_params_file_address);
+DECLARE_bool(compare_different_weight);
+DECLARE_bool(compare_based_on_original_weight);
+
+// Selector auto tuning.
+DECLARE_bool(use_tuned_selector_params);
+DECLARE_string(selector_params_file_address);
+
+DECLARE_double(planner_path_start_point_time_diff_limit);
+DECLARE_bool(enable_path_start_point_look_ahead);
+
+DECLARE_int32(planner_runtime_uturn_level);
+
+DECLARE_bool(planner_enable_dynamic_lane_speed_limit);
+
+DECLARE_double(planner_override_lane_speed_limit_proportion);
+
+// Planner ml inference.
+DECLARE_bool(planner_enable_selector_scoring_net);
+DECLARE_bool(planner_enable_captain_net);
+DECLARE_bool(planner_enable_captain_net_onnx_trt);
+DECLARE_bool(planner_enable_captain_net_j5);
+DECLARE_bool(planner_use_ml_trajectory_end_to_end);
+DECLARE_bool(planner_use_ml_trajectory_as_initializer_ref_traj);
+DECLARE_bool(planner_use_ml_trajectory_to_derive_leading_objects);
+DECLARE_bool(planner_use_ml_trajectory_as_optimizer_ref_traj);
+DECLARE_bool(planner_captain_net_align_traj_based_on_time_for_all_points);
+DECLARE_bool(planner_captain_net_align_traj_based_on_time_for_first_point);
+DECLARE_bool(planner_captain_net_post_process_movability_issue);
+DECLARE_bool(planner_capnet_ref_traj_use_mahalanobis_distance);
+DECLARE_bool(planner_captain_net_use_dkm);
+DECLARE_bool(planner_enable_act_net_speed);
+
+DECLARE_bool(planner_rebuild_route_navi_info);
+
+// Planner selector
+DECLARE_bool(planner_enable_lane_change_in_intersection);
+DECLARE_bool(planner_enable_cross_solid_boundary);
+DECLARE_bool(planner_enable_obstacle_lane_change);
+DECLARE_int32(planner_begin_lane_change_frame);
+DECLARE_int32(planner_begin_radical_lane_change_frame);
+DECLARE_int32(planner_begin_signal_frame);
+DECLARE_bool(planner_enable_lc_request_in_tricky_scenario);
+DECLARE_double(planner_allow_lc_time_after_activate_selector);
+DECLARE_double(planner_max_allow_lc_time_before_give_up);
+DECLARE_double(planner_allow_lc_time_after_give_up_lc);
+DECLARE_int32(planner_lc_begin_request_frame_in_tricky_scenario);
+DECLARE_bool(planner_enable_prefilter_for_selector);
+DECLARE_double(planner_allow_opposite_lc_time_after_paddle_lc);
+
+DECLARE_bool(planner_enable_cross_iteration_tf);
+
+// L2 related flag to simulate different situation
+DECLARE_bool(planner_force_no_map);
+
+// Lane change style setting.
+DECLARE_bool(planner_enable_lc_style_params);
+
+DECLARE_double(planner_paddle_lane_change_max_prepare_time);
+
+DECLARE_bool(planner_use_traffic_gap_finder_v2);
+
+// Use previous optimization result as init solution.
+DECLARE_bool(
+    st_path_planner_lookahead_for_trajectory_optimizer_synchronization);
+
+DECLARE_bool(traj_opt_init_traj_uses_last_optimized_trajectory);
+
+// Map preprocessing.
+DECLARE_bool(planner_force_route_filtered_smm);
+
+DECLARE_bool(planner_use_lane_change_style_from_hmi);
+
+DECLARE_double(planner_alcc_prev_traj_planner_max_time);
+
+DECLARE_bool(planner_enable_online_map_auto_correction);
+
+DECLARE_bool(planner_enable_route_lane_change_fail);
+
+// Freespace planner.
+DECLARE_bool(planner_freespace_path_stop_mode);
+
+// Debug NOT_READY/OFF LCC/ACC odc
+DECLARE_bool(planner_debug_force_acc_in_lcc);
+
+#endif  // ONBOARD_PLANNER_PLANNER_FLAGS_H_

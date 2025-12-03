@@ -1,0 +1,41 @@
+# ./scripts/run_simulation.sh
+# --scenario_path=/qcraft/onboard/control/calibration/testdata/test_force_scenario.pb.txt
+# --sim_mode=csim
+# --throttle_deadzone=0.0 --brake_deadzone=0.0 --method="FORCE"
+# --savedir="/hosthome/calibration" --savename="Q2203"
+
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/s3/run_data_2/20220505_193757_Q2203"
+    duration: 210
+    start_offset: 75
+    start_delta: 0
+  }
+  sim_modules {
+    control_calibration_module {
+      module: CONTROL_CALIBRATION_MODULE
+      enable: true
+    }
+    positioning_module { module: POSITIONING_MODULE playback_source_id: 0 }
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    gnss_imu_driver_module {
+      module: GNSS_IMU_DRIVER_MODULE
+      playback_source_id: 0
+    }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] { engage_start_time: 999999 }
+      }
+    }
+    can_bus_module { module: CAN_BUS_MODULE playback_source_id: 0 }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE playback_source_id: 0 }
+    vision_module { module: VISION_MODULE playback_source_id: 0 }
+    localization_module { module: LOCALIZATION_MODULE playback_source_id: 0 }
+  }
+}
+# commandline_flags: "--map=suzhou"
+commandline_flags: "--launch_file=launch_control_calibration.pb.txt"

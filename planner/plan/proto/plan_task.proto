@@ -1,0 +1,53 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/plan/proto/plan_task";
+
+import "common/proto/lane_point.proto";
+import "common/proto/global_pose.proto";
+import "onboard/maps/proto/lane_path.proto";
+
+enum PlanTaskType {
+  ON_ROAD_CRUISE_PLAN = 0;
+  OFF_ROAD_PLAN = 1;
+  UTURN_PLAN = 2;
+  BLOCKED_PLAN = 3;  // Blocked on road.
+  ALCC_PLAN = 4;
+  ACC_PLAN = 5;  // L2 ACC plan.
+  MAPLESS_NOA = 6;
+  APA_PLAN = 7;  // L2 parking and parking out.
+  // More task types
+};
+
+message ReachDestinationCondition {
+  optional double speed_error = 1;
+
+  message PoseWithinRadius {
+    optional double radius = 1;
+    optional double heading_error = 2;
+  }
+
+  oneof condition {
+    PoseWithinRadius pose_within_radius = 2;
+  }
+}
+
+message PlanTaskDestinationProto {
+  repeated sfixed64 parking_spots_id = 1;
+  repeated mapping.LanePointProto lane_points = 2;
+  optional GlobalPoseProto global_pose = 3;
+}
+
+message PlanTaskDestinationInfoProto {
+  optional PlanTaskDestinationProto destination = 1;
+  optional double end_speed = 2;
+  optional ReachDestinationCondition condition = 3;
+
+  optional mapping.LanePathProto uturn_ref_lane_path = 4;
+}
+
+message PlanTaskProto {
+  optional int64 index = 1;  // For virtualization
+  optional PlanTaskType type = 2;
+  optional PlanTaskDestinationInfoProto destination_info = 3;
+}

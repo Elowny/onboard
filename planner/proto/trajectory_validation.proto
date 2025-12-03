@@ -1,0 +1,51 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/proto/trajectory_validation";
+
+message TrajectoryValidationOptionsProto {
+  optional bool check_control_limits = 3 [default = true];
+  optional bool check_internal_consistency = 4 [default = true];
+  optional bool check_curb_collision = 5 [default = true];
+  optional bool check_intrinsic_jerk = 6 [default = true];
+  optional bool check_curvature_rate = 7 [default = true];
+
+  reserved 1, 2;
+}
+
+message TrajectoryValidationResultProto {
+  enum ErrorCode {
+    UNKNOWN_ERROR = 0;
+    SPEED_OVER_LIMIT = 4;
+    ACCELERATION_OVER_LIMIT = 5;
+    DECELERATION_OVER_LIMIT = 6;
+    CURVATURE_OVER_LIMIT = 7;
+    INTRINSIC_JERK_OVER_LIMIT = 8 [deprecated = true];
+    PSI_OVER_LIMIT = 9 [deprecated = true];
+    SPEED_INCONSISTENCY = 10;
+    HEADING_INCONSISTENCY = 11;
+    ACCELERATION_INCONSISTENCY = 12;
+    CURVATURE_INCONSISTENCY = 13;
+    CURB_COLLISION = 14;
+    TRAJECTORY_TOO_SHORT = 15;
+    OBJECT_COLLISION = 16;
+    PATH_DEVIATION_OVER_LIMIT = 17;
+    PATH_TANGENT_DOT_BELOW_LIMIT = 18;
+    LATERAL_ACCELERATION_OVER_LIMIT = 19 [deprecated = true];
+    LATERAL_JERK_OVER_LIMIT = 20 [deprecated = true];
+    OUT_OF_PATH_BOUNDARY = 22;
+    OUT_OF_DRIVE_PASSAGE_QUERY_AREA = 23;
+    TRAJECTORY_AND_PAST_POINTS_HAS_OVERLAP = 24;
+
+    reserved 1 to 3, 21;
+  }
+
+  message TrajectoryValidationErrorProto {
+    optional ErrorCode error_code = 1;
+    optional string error_message = 2;
+  }
+
+  repeated string validation_errors = 1 [deprecated = true];
+  repeated string collision_object_id = 2;
+  repeated TrajectoryValidationErrorProto validation_errors_ex = 3;
+}

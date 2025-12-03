@@ -1,0 +1,249 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/decision/proto/constraint";
+
+import "onboard/math/geometry/proto/halfplane.proto";
+import "onboard/math/geometry/proto/affine_transformation.proto";
+import "onboard/planner/decision/proto/stop_sign_state.proto";
+import "onboard/planner/decision/proto/crosswalk_state.proto";
+import "onboard/planner/decision/traffic_gap_v2/proto/traffic_gap.proto";
+import "onboard/math/proto/piecewise_linear_function.proto";
+
+message SourceProto {
+  message TrafficLight {
+    optional sfixed64 id = 1;
+    optional sfixed64 lane_id = 2;
+  }
+  message Crosswalk {
+    optional sfixed64 crosswalk_id = 1;
+    repeated string object_id = 2;
+  }
+  message NoBlock {
+    optional sfixed64 id = 1;
+  }
+  message SpeedBump {
+    optional sfixed64 id = 1;
+  }
+  message EndOfPathBoundary {
+    optional sfixed64 id = 1;
+  }
+  message Intersection {
+    optional sfixed64 id = 1;
+  }
+  message CloseObject {
+    optional string id = 1;
+  }
+  message EndOfCurrentLanePath {
+    optional sfixed64 id = 1;
+  }
+  message RouteDestination {
+    optional sfixed64 id = 1;
+  }
+  message LcEndOfCurrentLane {
+    optional string id = 1;
+  }
+  message ParkingBrakeRelease {
+    optional sfixed64 id = 1;
+  }
+  message BlockingStaticObject {
+    optional string id = 1;
+  }
+  message Pedestrian {
+    optional string id = 1;
+  }
+  message Toll {
+    optional sfixed64 id = 1;
+  }
+  message StopSign {
+    optional sfixed64 lane_id = 1;
+  }
+  // Note: Standby just used for visualization currently, if used as
+  // decision in the future, delete this comment.
+  message Standby {
+    optional string reason = 1;
+  }
+  message Standstill {
+    optional string reason = 1;
+  }
+  message PullOver {
+    optional string reason = 1;
+  }
+  message BrakeToStop {
+    optional string reason = 1;
+  }
+  // Freespace planner constraint.
+  message EndOfLocalPath {
+    optional string reason = 1;
+  }
+  message BeyondLengthAlongRoute {
+    optional string id = 1;
+  }
+  message SolidLineWithinBoundary {
+    optional string id = 1;
+  }
+  message OccludedObject {
+    optional string id = 1;
+  }
+  message DenseTrafficFlow {
+    optional string id = 1;
+  }
+  message StopPolyline {
+    optional sfixed64 id = 1;
+  }
+  oneof type {
+    TrafficLight traffic_light = 1;
+    Crosswalk crosswalk = 2;
+    NoBlock no_block = 3;
+    SpeedBump speed_bump = 4;
+    EndOfPathBoundary end_of_path_boundary = 5;
+    Intersection intersection = 6;
+    CloseObject close_object = 7;
+    EndOfCurrentLanePath end_of_current_lane_path = 8;
+    RouteDestination route_destination = 25;
+    LcEndOfCurrentLane lc_end_of_current_lane = 9;
+    ParkingBrakeRelease parking_brake_release = 10;
+    BlockingStaticObject blocking_static_object = 11;
+    Pedestrian pedestrian_object = 12;
+    Standby standby = 13;
+    Toll toll = 14;
+    Standstill standstill = 16;
+    PullOver pull_over = 17;
+    EndOfLocalPath end_of_local_path = 18;
+    BeyondLengthAlongRoute beyond_length_along_route = 19;
+    BrakeToStop brake_to_stop = 20;
+    SolidLineWithinBoundary solid_line_within_boundary = 22;
+    OccludedObject occluded_object = 23;
+    DenseTrafficFlow dense_traffic_flow = 24;
+    StopPolyline stop_polyline = 26;
+    StopSign stop_sign = 27;
+
+    // Next id: 28.
+  };
+  reserved 15, 21;
+}
+
+message ConstraintProto {
+  message AvoidLineProto {
+    repeated Vec2dProto xy_points = 1;
+    message SLPoint {
+      optional double s = 1;
+      optional double l = 2;
+    }
+    repeated SLPoint sl_points = 2;
+    optional SourceProto source = 3;
+    optional string id = 4;
+  }
+
+  message StopLineProto {
+    optional HalfPlaneProto half_plane = 1;
+    // Accumulated s on drive passage.
+    optional double s = 2;
+    // Expect AV to keep a distance from stop line.
+    optional double standoff = 3;
+    // Time remaining to active stop line.
+    optional double time = 4;
+    // Id of constraint.
+    optional string id = 5;
+    // Constraint source.
+    optional SourceProto source = 6;
+  }
+
+  message SpeedRegionProto {
+    optional Vec2dProto start_point = 1;
+    optional Vec2dProto end_point = 2;
+    // Accumulated s on drive passage.
+    optional double start_s = 3;
+    // Accumulated s on drive passage.
+    optional double end_s = 4;
+    optional double max_speed = 5;
+    optional double min_speed = 6;
+    optional string id = 7;
+    optional SourceProto source = 8;
+  }
+
+  message PathStopLineProto {
+    optional HalfPlaneProto half_plane = 1;
+    // Accumulated s on path for rac point.
+    optional double s = 2;
+    // Expect AV to keep a distance from stop line.
+    optional double standoff = 3;
+    // Time remaining to active stop line.
+    optional double time = 4;
+    // Id of constraint.
+    optional string id = 5;
+    // Constraint source.
+    optional SourceProto source = 6;
+  }
+
+  message PathSpeedRegionProto {
+    optional Vec2dProto start_point = 1;
+    optional Vec2dProto end_point = 2;
+    // Accumulated s on path.
+    optional double start_s = 3;
+    // Accumulated s on path.
+    optional double end_s = 4;
+    optional double max_speed = 5;
+    optional double min_speed = 6;
+    optional string id = 7;
+    optional SourceProto source = 8;
+  }
+
+  message LeadingObjectProto {
+    enum Reason {
+      BORROW_BOUNDARY = 1;
+      LANE_CHANGE_TARGET = 2;
+      BLOCKING_STATIC = 3;
+      TRAFFIC_WAITING = 4;
+      INTERSECTION = 5;
+      UNABLE_TO_OVERTAKE = 6;
+      DERIVED_FROM_CAPTAINNET = 7;
+    }
+    optional string traj_id = 1;
+    optional Reason reason = 2;
+    message STConstraint {
+      optional double t = 1;
+      optional double s = 2;
+    }
+    repeated STConstraint st_constraints = 3;
+  }
+
+  message SpeedProfileProto {
+    optional SourceProto source = 1;
+    optional PiecewiseLinearFunctionDoubleProto vt_upper_constraint = 2;
+  }
+
+  repeated StopLineProto stop_line = 1;
+  repeated SpeedRegionProto speed_region = 2;
+  repeated PathStopLineProto path_stop_line = 5;
+  repeated PathSpeedRegionProto path_speed_region = 6;
+  repeated AvoidLineProto avoid_line = 7;
+  repeated SpeedProfileProto speed_profile = 8;
+
+  optional TrafficGapProto traffic_gap = 9;
+  optional TrafficGapDebugProto traffic_gap_debug = 10;
+
+  reserved 3, 4;
+  // Next id: 11.
+}
+
+message TrafficLightDeciderStateProto {
+  optional bool last_tl_proceed = 1;
+  optional bool entry_with_left_light_not_red = 2;
+  optional bool has_received_known_traffic_light = 3;
+  optional sfixed64 last_tl_decision_lane_id = 4 [default = -1];
+}
+
+message StopPolylineDeciderStateProto {
+  optional Vec2dProto passable_stop_point = 1;
+}
+
+message DeciderStateProto {
+  optional TrafficLightDeciderStateProto traffic_light_decider_state = 1;
+  repeated qcraft.planner.CrosswalkStateProto crosswalk_state = 3;
+  optional StopPolylineDeciderStateProto stop_polyline_state = 4;
+  optional TrafficGapProto traffic_gap_state = 5;
+  repeated qcraft.planner.StopSignStateProto stop_sign_state = 6;
+
+  reserved 2;
+}

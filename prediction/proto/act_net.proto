@@ -1,0 +1,200 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/prediction/proto/act_net";
+
+import "onboard/math/geometry/proto/affine_transformation.proto";
+import "onboard/prediction/proto/prediction_common.proto";
+
+message ActNetDumpedFeatureProto {
+  message AgentDumpedFeature {
+    // Position sequence.
+    repeated float pos = 1 [packed = true];
+    // Position diff sequence.
+    repeated float pos_diff = 2 [packed = true];
+    // Speed sequence.
+    repeated float speed = 3 [packed = true];
+    // Yaw sequence.
+    repeated float yaw = 4 [packed = true];
+    // Shape sequence.
+    repeated float shape = 5 [packed = true];
+    // Time point sequence.
+    repeated float ts = 6 [packed = true];
+    // Mask of  history sequence, 1 for exist and 0 for non.
+    repeated float mask = 7 [packed = true];
+    // Agent type.
+    optional float type = 8;
+    // length & width.
+    repeated float lw = 9;
+    // stop time info. [0~1] mapped to 0 ~ 60s
+    repeated float stop_time_info = 10;
+  }
+  // First one is always AV.
+  message ObjectsDumpedFeature {
+    // Position sequence.
+    repeated float pos = 1 [packed = true];
+    // Position diff sequence
+    repeated float pos_diff = 2 [packed = true];
+    // Speed sequence.
+    repeated float speed = 3 [packed = true];
+    // Yaw sequence.
+    repeated float yaw = 4 [packed = true];
+    // Length & width of objects.
+    repeated float lw = 5 [packed = true];
+    // Mask of history sequence, 1 for exist and 0 for non.
+    repeated float mask = 6 [packed = true];
+    // Object type.
+    repeated float type = 7 [packed = true];
+    // Relative position diff w.r.t Agent of each time stemp: [x_o - x_a, y_o -
+    // y_a].
+    repeated float rel_pos = 8 [packed = true];
+    // Relative distance, norm of above rel_pos.
+    repeated float rel_dist = 9 [packed = true];
+    // Unit vector of relative position diff.
+    repeated float rel_yaw = 10 [packed = true];
+    // Yaw diff of object w.r.t agent at history point yaw - rel_yaw.
+    repeated float yaw_diff = 11 [packed = true];
+    // [v_xo - v_xa, v_yo - v_ya].
+    repeated float rel_speed = 12 [packed = true];
+    // Relative sequence mask, 1 for exist and 0 for non.
+    repeated float rel_mask = 13 [packed = true];
+    // Relative shape [x_oi - x_a, y_oi -  y_a].
+    repeated float rel_shape = 14 [packed = true];
+    // Time points.
+    repeated float ts = 15 [packed = true];
+    // Shape
+    repeated float shape = 16 [packed = true];
+  }
+
+  // Each map element is represented by one or more poly lines of 10 meters
+  // length. Each poly line is represented as 5 equal-distance segments.
+  // If a polyline is less than 10 meters length, invalid seg will be
+  // indicated by a flag.
+  message MapDumpedFeature {
+    // segment sequence [p0, p1] four dims.
+    repeated float seg = 1 [packed = true];
+    // unit vector of p1-p0.
+    repeated float unit_seg_vec = 2 [packed = true];
+    // segement length
+    repeated float seg_len = 3 [packed = true];
+    // unit tangent at p0
+    repeated float unit_tangent = 4 [packed = true];
+    // agent min distance to segment. Min dist point is r
+    repeated float dist = 5 [packed = true];
+    // unit vector of [0, r].
+    repeated float unit_dist_vec = 6 [packed = true];
+    // distance from p1 to r.
+    repeated float nearest_to_end_dist = 7 [packed = true];
+    // Yaw diff of segment heading & agent-segment perpendicular vector.
+    repeated float yaw_diff = 8 [packed = true];
+    // Consider lane center, curb, solid lane, double solid lane, pedestrian
+    // crossing.
+    repeated float type = 9 [packed = true];
+    // Consider red, yellow, green, unknown, none.
+    repeated float light = 10 [packed = true];
+    // Validity mask.
+    repeated float mask = 11 [packed = true];
+    // Speed limits (km/h).
+    repeated float speed_limits = 12 [packed = true];
+    repeated float boundary_type = 13 [packed = true];
+    repeated float seg_width = 14 [packed = true];
+    repeated float lb_seg = 15 [packed = true];
+  }
+
+  // Ground truth of agent & av (av is for future relation model).
+  message GroundTruthProto {
+    optional TrajectoryGroundTruth gt_traj = 1;
+    optional TrajectoryGroundTruth av_traj = 2;
+  }
+  enum LabelLaneType {
+    // General for any passenger vehicle
+    GENERAL = 1;
+    BICYCLE_ONLY = 2;
+    BUS_ONLY = 3;
+    VIRTUAL = 4;
+    EMERGENCY = 5;
+    RAMP = 6;
+    WALKING_STREET = 7;
+    // Parking lane: can drive on it, if not occupied
+    PARKING = 8;
+    // Basically means GENERAL + BICYCLE_ONLY
+    MIXED_WITH_CYCLIST = 9;
+    // HIGHWAY
+    HIGHWAY = 10;
+  }
+  message HistoryLabelsProto {
+    optional bool is_static = 1;
+    optional bool in_junction = 2;
+    optional float dist_to_junction = 3;
+    optional LabelLaneType lane_type = 4;
+    optional float dist_to_av = 5;
+    // obj relative position to av in av-x_axis coordinate.
+    optional float obj_rel_pos_x = 6;
+    optional float obj_rel_pos_y = 7;
+  }
+  enum TrajBehaviorType {
+    STRAIGHT = 0;
+    STRAIGHT_LEFT = 1;
+    STRAIGHT_RIGHT = 2;
+    LEFT = 3;
+    RIGHT = 4;
+    LEFT_UTURN = 5;
+    RIGHT_UTURN = 6;
+    STATIONARY = 7;
+    UNKNOWN = 8;
+  }
+  message GroundTruthLabelsProto {
+    optional float turn_angle = 1;
+    optional float speed_diff = 2;
+    // maximal acceleration in the horizon.
+    optional float max_acc = 3;
+    // hardes brake in the future horizon.
+    optional float max_brake = 4;
+    // is moving in 3s.
+    optional bool static_to_moving = 5;
+    optional TrajBehaviorType traj_behavior_type = 6;
+  }
+
+  message ActNetCutInInfo {
+    // AV previous path ground truth.
+    repeated float path_xy = 1 [packed = true];
+    repeated float headings = 2 [packed = true];
+    // agent min distance to segment. Min dist point is r
+    repeated float dist = 3 [packed = true];
+    // unit vector of [0, r].
+    repeated float unit_dist_vec = 4 [packed = true];
+    // Object gets into AV's path in n seconds.
+    optional bool obj_cutin = 5;
+    optional bool has_path = 6;
+    optional bool already_on_path = 7;
+    optional bool av_on_gt = 8;
+  }
+
+  optional AgentDumpedFeature agent_feature = 1;
+  optional ObjectsDumpedFeature objects_feature = 2;
+  // We put map features into three categories: lane centers, curbs & other map
+  // feature.
+  optional MapDumpedFeature lane_centers_feature = 3;
+  optional MapDumpedFeature lane_boundaries_feature = 4;
+  optional MapDumpedFeature crosswalks_feature = 5;
+  optional GroundTruthProto gt = 6;
+  optional double timestamp = 8;
+  optional string agent_id = 9;
+  repeated float objects_mask = 10;
+  repeated float lcs_mask = 11;
+  repeated float lbs_mask = 12;
+  repeated float cws_mask = 13;
+
+  // Not really feature, used for scene reconstruction.
+  optional Vec2dProto ref_pos = 14;
+  optional float rot_angle = 15;
+  optional Vec2dProto av_pos = 16;
+  optional float av_angle = 17;
+
+  optional HistoryLabelsProto hist_labels = 18;
+  optional GroundTruthLabelsProto gt_labels = 19;
+  optional ActNetCutInInfo cutin_info = 20;
+  optional MapDumpedFeature broken_lbs_feature = 21;
+  repeated float broken_lbs_mask = 22;
+  reserved 7;
+}

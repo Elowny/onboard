@@ -1,0 +1,32 @@
+speed_optimizer_params {
+  accel_kernel_weight: 7.0
+  jerk_kernel_weight: 14.0
+  s_follow_weak_weight: 0.6
+  s_lead_weak_weight: 1.5
+
+  ref_speed_bias: 3.0
+  ref_speed_time_gain {
+    x: 2.0
+    x: 4.0
+    x: 6.0
+    x: 8.0
+    y: 1.8
+    y: 1.1
+    y: 0.6
+    y: 0.2
+  }
+  ref_speed_static_limit_bias: 3.0
+  speed_limit_medium_weight: 8.0
+  speed_limit_weak_weight: 4.0
+}
+
+speed_limit_params { curvature_numerator: 0.59 curvature_bias2: 2.5 }
+
+follow_standstill_distance: 3.0
+
+extra_follow_standstill_distance_for_large_vehicle_plf {
+  x: 4.0
+  x: 6.0
+  y: 0.6
+  y: 0.0
+}

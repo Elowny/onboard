@@ -1,0 +1,58 @@
+# run: 20221228_180745_Q2404
+# relative_in_sec=700.024, channel=autonomy_state_proto
+header {
+  timestamp: 1672222768866433
+  domain: ""
+  seq_number: 109053
+  module_id: 15
+  channel: "autonomy_state_proto"
+  tag_number: 28
+  log_timestamp: 1672222768869468
+  channel_seq_number: 69685
+}
+autonomy_state: AUTO_DRIVE
+reason {
+  failed_issues: "\n ========WARNING MAIN REASON========\nseverity: QIS_WARNING\ntype: QIT_PERFORMANCE\nsub_type: QIST_CAMERA_TIMEOUT_PROCESS\nmessage: \"Check camera state: TIMEOUT(CAM_PBQ_FRONT_TELE)\"\nargs_message: \"process time: 0.103024 encode time: 0.0724654 transport time: 0.000186682 decode time: 0.0303724\"\n=====WARNING SECONDARY REASON=====\nseverity: QIS_WARNING\ntype: QIT_PERFORMANCE\nsub_type: QIST_CAMERA_TIMEOUT_PROCESS\nmessage: \"Check camera state: TIMEOUT(CAM_PBQ_REAR_LEFT)\"\nargs_message: \"process time: 0.100855 encode time: 0.0715632 transport time: 0.000190496 decode time: 0.0291011\"\nseverity: QIS_WARNING\ntype: QIT_PERFORMANCE\nsub_type: QIST_CAMERA_TIMEOUT_PROCESS\nmessage: \"Check camera state: TIMEOUT(CAM_PBQ_REAR_RIGHT)\"\nargs_message: \"process time: 0.104304 encode time: 0.0736904 transport time: 0.00022316 decode time: 0.0303907\"\n====================================\n"
+  issue {
+    severity: QIS_WARNING
+    type: QIT_PERFORMANCE
+    sub_type: QIST_CAMERA_TIMEOUT_PROCESS
+    message: "Check camera state: TIMEOUT(CAM_PBQ_FRONT_TELE)"
+    args_message: "process time: 0.103024 encode time: 0.0724654 transport time: 0.000186682 decode time: 0.0303724"
+  }
+  issue {
+    severity: QIS_WARNING
+    type: QIT_PERFORMANCE
+    sub_type: QIST_CAMERA_TIMEOUT_PROCESS
+    message: "Check camera state: TIMEOUT(CAM_PBQ_REAR_LEFT)"
+    args_message: "process time: 0.100855 encode time: 0.0715632 transport time: 0.000190496 decode time: 0.0291011"
+  }
+  issue {
+    severity: QIS_WARNING
+    type: QIT_PERFORMANCE
+    sub_type: QIST_CAMERA_TIMEOUT_PROCESS
+    message: "Check camera state: TIMEOUT(CAM_PBQ_REAR_RIGHT)"
+    args_message: "process time: 0.104304 encode time: 0.0736904 transport time: 0.00022316 decode time: 0.0303907"
+  }
+  issue {
+    severity: QIS_WARNING
+    type: QIT_PERFORMANCE
+    sub_type: QIST_CAMERA_TIMEOUT_PROCESS
+    message: "Check camera state: TIMEOUT(CAM_PBQ_FRONT_RIGHT)"
+    args_message: "process time: 0.103972 encode time: 0.0730956 transport time: 0.000285864 decode time: 0.0305903"
+  }
+  issue {
+    severity: QIS_WARNING
+    type: QIT_PERFORMANCE
+    sub_type: QIST_CAMERA_TIMEOUT_PROCESS
+    message: "Check camera state: TIMEOUT(CAM_PBQ_FRONT_LEFT)"
+    args_message: "process time: 0.101415 encode time: 0.0729766 transport time: 0.000217915 decode time: 0.0282209"
+  }
+  issue {
+    severity: QIS_WARNING
+    type: QIT_PERFORMANCE
+    sub_type: QIST_CAMERA_TIMEOUT_PROCESS
+    message: "Check camera state: TIMEOUT(CAM_PBQ_FRONT_WIDE)"
+    args_message: "process time: 0.10419 encode time: 0.0728459 transport time: 0.000260115 decode time: 0.0310838"
+  }
+}

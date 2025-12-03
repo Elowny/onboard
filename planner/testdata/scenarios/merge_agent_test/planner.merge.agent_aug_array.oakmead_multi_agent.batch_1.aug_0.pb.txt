@@ -1,0 +1,997 @@
+name: "planner.merge.agent_aug_array.oakmead_multi_agent.batch_0.aug_0.pb.txt"
+commandline_flags: "--map=global"
+commandline_flags: "--route_file=onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_s_to_lane1.pb.txt"
+edit_attr { test_sets: "merge_multi_agent_test" }
+execution {
+  playback_sources {
+    run_or_stf_path: "/media/log_data/20190918_112213_Q0001"
+    duration: 120
+    start_offset: 10
+  }
+  sim_modules {
+    vehicle_control_module { module: VEHICLE_CONTROL_MODULE enable: true }
+    planner_module { module: PLANNER_MODULE enable: true }
+    simulation_vehicle_module {
+      module: SIMULATION_VEHICLE_MODULE
+      enable: true
+      module_conf {
+        [qcraft.SimVehicleConf.sim_vehicle_conf] {
+          engage_start_time: 0.5
+          initial_pose {
+            pos_smooth { x: 6515.85 y: -306.96 z: 0.0 }
+            yaw: 1.57
+            vel_body { x: 11.0 y: 0.0 z: 0.0 }
+            accel_body { x: 0.0 y: 0.0 z: 0.0 }
+          }
+        }
+      }
+    }
+    virtual_object_module {
+      module: VIRTUAL_OBJECT_MODULE
+      enable: true
+      module_conf {
+        [qcraft.VirtualObjectsConfProto.virtual_objects_conf] {
+          objects {
+            virtual_perception_object {
+              id: "Agent00"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 0
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent01"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 4
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent02"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 8
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent03"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 12
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent04"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 16
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent05"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 20
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent06"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 24
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent07"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 28
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent08"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 32
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent09"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 36
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent10"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 40
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent11"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 44
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent12"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 48
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent13"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 52
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent14"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 56
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent15"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 60
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent16"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 64
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent17"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 68
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent18"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 72
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent19"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 76
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent20"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 80
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent21"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 84
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent22"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 88
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent23"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 92
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent24"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 96
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent25"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 100
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent26"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 104
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent27"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 108
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent28"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 112
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent29"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 116
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent30"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 120
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent31"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 124
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent32"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 128
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent33"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 132
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent34"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 136
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent35"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 140
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent36"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 144
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent37"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 148
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent38"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 152
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent39"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 156
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent40"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 160
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent41"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 164
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent42"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 168
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent43"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 172
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent44"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 176
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent45"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 180
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent46"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 184
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent47"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 188
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent48"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 192
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+          objects {
+            virtual_perception_object {
+              id: "Agent49"
+              type: OT_VEHICLE
+              length: 4.5
+              width: 2.0
+            }
+            start_sec: 196
+            agent_virtual_object {
+              type: AGENT_ACC
+              config {
+                acc_agent {
+                  init_route_s: 0.0
+                  init_speed: 16.0
+                  route_file: "onboard/planner/testdata/routes/merge_agent_test/route_oakmead_merge_lane2_to_lane1.pb.txt"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    perception_module { module: PERCEPTION_MODULE disable: true }
+    vision_module { module: VISION_MODULE disable: true }
+    positioning_module { module: POSITIONING_MODULE disable: true }
+    spin_publisher_module { module: SPIN_PUBLISHER_MODULE disable: true }
+    gnss_imu_driver_module { module: GNSS_IMU_DRIVER_MODULE disable: true }
+    image_publisher_module { module: IMAGE_PUBLISHER_MODULE disable: true }
+    vantage_forwarding_module { module: VANTAGE_FORWARDING_MODULE enable: true }
+    can_bus_module { module: CAN_BUS_MODULE disable: true }
+    autonomy_state_module { module: AUTONOMY_STATE_MODULE enable: true }
+  }
+}

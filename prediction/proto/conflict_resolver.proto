@@ -1,0 +1,172 @@
+syntax = "proto2";
+
+package qcraft;
+option go_package = "qcraft-proto.ai/onboard/prediction/proto/conflict_resolver";
+
+import "onboard/proto/perception/fusion/object.proto";
+
+enum ConflictResolutionLevel {
+  // Conflict resolution level:
+  // 0. No resolution.
+  // 1. Consider stationary object and traffic light/stopline infos.
+  CRL_NONE = 0;
+  CRL_STATIONARY = 1;
+
+  reserved 2, 3;
+}
+
+message ConflictResolutionConfigProto {
+  message SpeedFeatureCostConfig {
+    message StopLineFeature {
+      // weight.
+      optional double tl_red_light = 1;
+    }
+
+    message ObjectCollisionFeature {
+      // weight.
+      optional double stationary = 1;
+      reserved 2;
+    }
+
+    message ReferenceSpeedFeature {
+      // weight.
+      optional double abs_v_diff = 1;
+      optional double s_progress = 2;
+    }
+
+    optional StopLineFeature svt_stopline = 1;
+    optional ObjectCollisionFeature svt_object_collision = 2;
+    optional ReferenceSpeedFeature svt_reference_speed = 3;
+    reserved 4;
+  }
+
+  message ConflictResolverConfig {
+    // General sampling patterns.
+    optional double sampling_s_step_dp = 1;
+    optional double sampling_s_step_final = 2;
+    optional double v_discrete = 3;
+    optional double t_discrete = 4;
+    optional double min_s_seg_length = 5;
+
+    // Related to mapping.
+    optional double stationary_object_shrink_ratio = 6;
+    optional double dynamic_object_shrink_ratio = 7;
+
+    // Object filtering.
+    optional double min_width = 8;
+    optional double min_length = 9;
+    optional double max_aspect_ratio = 10;
+
+    // Next id: 11.
+  }
+
+  message ObjectConflictResolverConfig {
+    // Object specific params.
+
+    // Speed replan params.
+    optional ObjectType object_type = 1;
+    optional double ego_box_buffer = 2;
+    repeated double acc_samples = 3;
+    optional double stationary_follow_distance = 4;
+    optional double relative_speed_follow_distance_factor = 6;
+
+    // Trajectory cutoff params.
+    optional bool check_out_curb = 7;
+    optional double out_curb_max_threshold = 8;
+    optional double curb_cutoff_to_static_max_speed = 9;
+    optional double curb_safe_horizon = 10;
+    optional double curb_kept_horizon = 11;
+    optional double curb_nominal_brake = 12;
+
+    reserved 5;
+
+    // Next id: 13.
+  }
+
+  optional SpeedFeatureCostConfig dp_speed_cost_config = 1;
+  optional ConflictResolverConfig general_config = 2;
+  repeated ObjectConflictResolverConfig object_config = 3;
+  optional ObjectConflictResolverConfig default_object_config = 4;
+  optional ConflictResolutionLevel resolution_level = 5;
+}
+
+message ConflictResolverDebugProto {
+  message SvtStateProto {
+    optional double s = 1;
+    optional double v = 2;
+    optional double t = 3;
+  }
+
+  message FeatureCostProto {
+    optional string name = 1;
+    optional double cost = 2;
+  }
+
+  message SvtEdgeCostProto {
+    repeated FeatureCostProto feature_costs = 1;
+    optional double sum_cost = 2;
+  }
+
+  message SvtEdgeProto {
+    repeated SvtStateProto states = 1;
+    optional int32 index = 2;
+    optional int32 prev_edge_index = 3;
+    optional int32 start_node_index = 4;
+    optional int32 end_node_index = 5;
+    optional double a = 6;
+    optional double final_t = 7;
+    optional double final_v = 8;
+    optional SvtEdgeCostProto edge_cost = 9;
+  }
+
+  message SvtNodeProto {
+    optional SvtStateProto state = 1;
+    optional int32 index = 2;
+    optional int32 s_index = 3;
+  }
+
+  message SimpleSpeedProfile {
+    message Edge {
+      optional int32 index = 1;
+      optional double a = 2;
+      optional double length = 3;
+      optional SvtEdgeCostProto edge_cost = 4;
+    }
+    optional double total_cost = 1;
+    optional double eval_cost = 2;
+    optional double final_t = 3;
+    optional double final_v = 4;
+    optional double final_s = 5;
+    repeated Edge edges = 6;
+  }
+
+  message SpeedProfile {
+    message SpeedPoint {
+      optional double s = 1;
+      optional double v = 2;
+      optional double t = 3;
+      optional double a = 4;
+    }
+    repeated int32 edge_idxes = 1;
+    repeated SpeedPoint points = 2;
+  }
+
+  message ObjectSvtGraphProto {
+    optional string object_traj_id = 1;
+    repeated SvtNodeProto nodes = 2;
+    repeated SvtEdgeProto edges = 3;
+    optional SpeedProfile final_speed_profile = 4;
+    repeated double s_knots = 5;
+    optional string node_size_on_each_layer = 6;
+    reserved 7;
+    repeated SimpleSpeedProfile candidate_speed_profiles = 9;
+  }
+
+  message ModifiedTrajectory {
+    optional string traj_id = 1;
+    optional string annotation = 2;
+  }
+
+  repeated ObjectSvtGraphProto svt_graphs = 1;
+  repeated ModifiedTrajectory modified_trajs = 2;
+}

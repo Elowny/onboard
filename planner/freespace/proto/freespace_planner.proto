@@ -1,0 +1,240 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/freespace/proto/freespace_planner";
+
+import "onboard/proto/trajectory_point.proto";
+import "onboard/math/geometry/proto/affine_transformation.proto";
+import "onboard/planner/optimization/proto/optimizer.proto";
+import "onboard/planner/speed/proto/speed_finder.proto";
+import "onboard/planner/decision/proto/constraint.proto";
+
+// **************FreespacePlannerCommonProto **************
+
+message DirectionalPathProto {
+  repeated PathPoint path = 1;
+  optional bool forward = 2;
+}
+
+message FreespaceTaskProto {
+  enum TaskType {
+    UNKNOWN_TASK = 0;
+    PERPENDICULAR_PARKING = 1;
+    PARALLEL_PARKING = 2;
+    THREE_POINT_TURN = 3;
+    DRIVING_TO_LANE = 4;
+    FREE_DRIVING = 5;
+    CUSTOM_PARKING = 6;
+  }
+}
+
+message FreespaceMapProto {
+  enum BoundaryType {
+    CURB = 1;
+    BARRIER = 2;
+    YELLOW_SOLID_LANE = 3;
+    YELLOW_DASHED_LANE = 4;
+    WHITE_SOLID_LANE = 5;
+    WHITE_DASHED_LANE = 6;
+    PARKING_SPOT = 7;
+    PARKING_STOPPER = 8;
+    OTHER = 9;
+    VIRTUAL = 10;
+
+    reserved 11;
+  }
+
+  enum SpecialBoundaryType {
+    // Consider only when driving backward.
+    GEAR_REVERSE_STOPPER = 1;
+    // Consider in ha* but only as costs.
+    SOFT_PARKING_SPOT_LINE = 2;
+    // Consider in local smoother but not in ha*.
+    CROSSABLE_LANE_LINE = 3;
+  }
+}
+
+message FreespaceReplanReasonProto {
+  enum ReplanReason {
+    NONE = 0;
+    NEW_TASK = 1;
+    NO_PATHS = 2;
+    PATH_NOT_SAFE = 3;
+    CONTROL_ERROR = 4;
+    PARALLEL_PARKING_FINAL_PATH = 5;
+  }
+  optional ReplanReason replan_reason = 1;
+}
+
+// **************FreespacePlannerStateProto **************
+
+// This is for corrdinate transformation of existing paths. When source type is
+// HdMapRefProto, we record the goal (same as the last point of paths) in global
+// frame, and then restore it to current smooth, so we can get the transform
+// matrix by comparing two goals. When source type is ParkingSpotRefProto, we
+// record the goal's pose in parking spot's local frame (centriod as origin,
+// direction as X axis), we can also restore the goal in current smooth, and the
+// rest is same as HD_MAP. When source type is NoneRefProto, we just record the
+// smooth goal.
+message GlobalGoalReferenceProto {
+  enum Type {
+    NONE = 0;
+    HD_MAP = 1;
+    PARKING_SPOT = 2;
+  }
+
+  message Pose {
+    optional Vec2dProto pos = 1;
+    optional double theta = 2;
+  }
+
+  message NoneRefProto {
+    optional Pose smooth_goal = 1;
+  }
+
+  message HdMapRefProto {
+    optional Pose global_goal = 1;
+  }
+
+  message ParkingSpotRefProto {
+    optional int64 parking_spot_id = 1 [default = -1];
+    optional Pose spot_local_goal = 2;
+  }
+
+  optional Type source_type = 1;
+  oneof reference {
+    NoneRefProto none_ref = 2;
+    HdMapRefProto hd_map_ref = 3;
+    ParkingSpotRefProto parking_spot_ref = 4;
+  }
+}
+
+message PathManagerStateProto {
+  repeated DirectionalPathProto paths = 4;
+  optional int64 curr_path_idx = 5;
+  enum DriveState {
+    UNKNOWN = 0;
+    // Gear shifting and stationary steering to fit next path segment.
+    SWITCHING_TO_NEXT = 1;
+    DRIVING = 2;
+    // Steering wheel back to center, Gear shifting to matched position.
+    CENTER_STEER = 3;
+    REACH_FINAL_GOAL = 4;
+  }
+  optional DriveState drive_state = 6;
+
+  reserved 1, 2, 3, 7, 8, 9, 10, 11, 12, 13;
+}
+
+message FreespacePlannerStateProto {
+  optional FreespaceTaskProto.TaskType task_type = 5;
+  optional PathManagerStateProto path_manager_state = 1;
+  repeated PathPoint prev_local_smoother_path = 2;
+  optional GlobalGoalReferenceProto global_goal_ref = 4;
+  optional PathPoint prev_force_stop_point = 6;
+  optional double path_unsafe_time = 7;
+  optional double path_blocked_time = 8;
+
+  reserved 3;
+}
+
+// **************FreespacePlannerDebugProto **************
+
+message FreespaceMapDebugProto {
+  repeated double region = 1;
+
+  message FreespaceBoundaryProto {
+    optional string id = 1;
+    optional FreespaceMapProto.BoundaryType type = 2;
+    optional Vec2dProto start = 3;
+    optional Vec2dProto end = 4;
+  }
+
+  message FreespaceSpecialBoundaryProto {
+    optional string id = 1;
+    optional FreespaceMapProto.SpecialBoundaryType type = 2;
+    optional Vec2dProto start = 3;
+    optional Vec2dProto end = 4;
+  }
+
+  repeated FreespaceSpecialBoundaryProto special_boundaries = 4;
+  repeated string boundary_ids = 5;
+
+  reserved 2, 3;
+}
+
+message FreespaceTaskDebugProto {
+  optional FreespaceTaskProto.TaskType task_type = 1;
+  optional int64 parking_spot_id = 2;
+  optional PathPoint freespace_goal = 4;
+  optional int64 target_lane_id = 5;
+
+  reserved 3;
+}
+
+message PathFinderDebugProto {
+  enum FinderType {
+    UNKNOWN_TYPE = 1;
+    GEOMETRY = 2;
+    HYBRID_A_STAR = 3;
+  }
+  enum Status {
+    UNKNOWN_STATUS = 1;
+    SUCCESS = 2;
+    START_INVALID = 3;
+    GOAL_INVALID = 4;
+    TASK_TYPE_INVALID = 5;
+    HA_COST_MAP_FAIL = 6;
+    SEARCH_FAIL = 7;
+    PATH_ABNORMAL = 8;
+    NO_PARKING_SPOT = 9;
+  }
+  optional FinderType finder_type = 1;
+  optional int64 ha_iters = 2;
+  optional Status ha_status = 3;
+  optional Status geo_status = 4;
+  optional double find_path_time_consuming_ms = 7;
+
+  reserved 5, 6;
+}
+
+message FreespaceLocalSmootherDebugProto {
+  enum InitTrajType {
+    PREV_PATH = 1;
+    PURE_PURSUIT = 2;
+  }
+  message EndPoseError {
+    optional double xy = 1;
+    optional double theta = 2;
+  }
+  message CrossableBoundaryProto {
+    optional string id = 1;
+    optional Vec2dProto start = 2;
+    optional Vec2dProto end = 3;
+  }
+  optional string status = 1;
+  optional EndPoseError end_pose_error = 2;
+  repeated TrajectoryPointProto init_traj = 3;
+  repeated TrajectoryPointProto res_traj = 4;
+  optional TrajectoryOptimizerCostInfo init_costs = 5;
+  optional TrajectoryOptimizerCostInfo final_costs = 6;
+  repeated TrajectoryOptimizerCostInfo iter_costs = 7;
+  optional InitTrajType init_traj_type = 8;
+  repeated string enabled_crossable_boundary_ids = 10;
+
+  reserved 9;
+}
+
+message FreespacePlannerDebugProto {
+  optional FreespaceLocalSmootherDebugProto local_smoother_debug = 2;
+  optional FreespaceMapDebugProto freespace_map_debug = 3;
+  optional ConstraintProto decision_constraint = 4;
+  optional SpeedFinderDebugProto speed_finder_debug = 5;
+  repeated string stalled_object_ids = 7;
+  optional FreespaceTaskDebugProto freespace_task_debug = 8;
+  optional string planner_status = 9;
+  optional PathFinderDebugProto path_finder_debug = 10;
+  optional FreespaceReplanReasonProto freespace_replan_reason_debug = 12;
+
+  reserved 1, 6, 11;
+}

@@ -1,0 +1,10 @@
+destinations { global_point { longitude: -2.127364103 latitude: 0.651565653 } }
+destinations { global_point { longitude: -2.127341705 latitude: 0.651605304 } }
+destinations { global_point { longitude: -2.127305533 latitude: 0.651589292 } }
+destinations { global_point { longitude: -2.127268396 latitude: 0.651572931 } }
+destinations { global_point { longitude: -2.127321838 latitude: 0.651564850 } }
+destinations { global_point { longitude: -2.127244590 latitude: 0.651663758 } }
+destinations { global_point { longitude: -2.127154252 latitude: 0.651587609 } }
+destinations { global_point { longitude: -2.127158807 latitude: 0.651571395 } }
+destinations { global_point { longitude: -2.127209247 latitude: 0.651581623 } }
+destinations { global_point { longitude: -2.127225322 latitude: 0.651548654 } }

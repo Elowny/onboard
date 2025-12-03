@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package qcraft.planner;
+option go_package = "qcraft-proto.ai/onboard/planner/proto/async_planner_state";
+
+import "onboard/proto/autonomy_state.proto";
+
+message AsyncPlannerStateProto {
+  optional int64 counter = 1 [default = -1];
+  optional bool task_transition = 4;
+  optional int64 secondary_counter = 5;
+
+  optional DriverAction.LaneChangeCommand pending_lane_change_command = 6;
+  optional bool pending_alc_confirmation = 8;
+
+  // Used for switching route
+  optional bool wait_path_switch_route = 2;
+  optional bool wait_speed_switch_route = 3;
+
+  // Next ID: 9.
+  reserved 7;
+}
